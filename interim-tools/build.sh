@@ -26,7 +26,16 @@ else
   exit 1
 fi
 
-mkdir -p ~/workspace/$package
+if [ ! -e ~/workspace/$package/.git ]; then
+  mkdir -p ~/workspace
+  git clone https://github.com/mozilla/$package ~/workspace/$package
+fi
+
+if [ ! -e ~/workspace/$package/locale ]; then
+  cd ~/workspace/$package
+  svn co http://svn.mozilla.org/projects/l10n-misc/trunk/browserid/locale
+fi
+
 cd ~/workspace/$package
 git pull
 git checkout $train
