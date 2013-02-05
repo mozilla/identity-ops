@@ -14,16 +14,14 @@ if [ -z "$package" -o -z "$train" ]; then
   echo "$0 PACKAGE TRAIN [CODE_REV] [LOCALE_REV]"
   echo "$0 browserid train-2013.02.01 7a2f1e479a279246316a1ed5d23fe1c507c35b8e"
   echo "$0 browserid-bigtent train-2013.02.01 7a2f1e479a279246316a1ed5d23fe1c507c35b8e"
+  echo "$0 browserid-certifier train-2013.02.01 7a2f1e479a279246316a1ed5d23fe1c507c35b8e"
   exit 1
 fi
 
 if [ "$package" = "browserid" -o "$package" = "browserid_private" ]; then
   rpmname="browserid-server"
-elif [ "$package" = "browserid-bigtent" ]; then
-  rpmname="browserid-bigtent"
 else
-  echo "Package \"$package\" not recognized. Aborting..."
-  exit 1
+  rpmname="$package"
 fi
 
 if [ ! -e ~/workspace/$package/.git ]; then
@@ -31,7 +29,7 @@ if [ ! -e ~/workspace/$package/.git ]; then
   git clone https://github.com/mozilla/$package ~/workspace/$package
 fi
 
-if [ ! -e ~/workspace/$package/locale ]; then
+if [ "$package" = "browserid" -a ! -e ~/workspace/$package/locale ]; then
   cd ~/workspace/$package
   svn co http://svn.mozilla.org/projects/l10n-misc/trunk/browserid/locale
 fi
