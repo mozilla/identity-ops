@@ -52,11 +52,11 @@ function push {
   remotehost=$1
   localfile=$2
 
-  if ping -c 1 -W 1 $remotehost >/dev/null; then
+  if ssh -o ConnectTimeout=1 $remotehost 'true' >/dev/null; then
     cat < $localfile | ssh $remotehost "
       cd /home/`whoami` && cat > `basename $localfile`
     "
-  elif ping -c 1 -W 1 $adm >/dev/null; then
+  elif ssh -o ConnectTimeout=1 $adm 'true' >/dev/null; then
     cat < $localfile | ssh -A $adm "
       ssh $remotehost \"
         cd /home/`whoami` && cat > `basename $localfile`
@@ -97,7 +97,7 @@ if [ "$package" = "browserid" ]; then
     clientlist="$clientlist client${i}.scl2.svc.mozilla.com"
   done
 
-  if ping -c 1 -W 1 client4.scl2.svc.mozilla.com >/dev/null; then
+  if ssh -o ConnectTimeout=1 client4.scl2.svc.mozilla.com 'true' >/dev/null; then
     xapply -xP25 "scp $rpmfilename %1: 2>&1 | sed -e 's/^/%1: /'" $clientlist
   else
     ssh -A boris.mozilla.com "
@@ -117,7 +117,7 @@ echo "Starting install to stage"
 # /usr/local/bin/install_browserid.sh
 # sysadmins r57717
 
-if ping -c 1 -W 1 adm1.scl2.stage.svc.mozilla.com >/dev/null; then
+if ssh -o ConnectTimeout=1 adm1.scl2.stage.svc.mozilla.com 'true' >/dev/null; then
   ssh -A adm1.scl2.stage.svc.mozilla.com "
     xapply -P9 \"
       scp $rpmfilename %1: && 
@@ -141,7 +141,7 @@ fi
 
 echo "Starting install to QA loadtesting clientN machines"
 if [ "$package" = "browserid" ]; then
-  if ping -c 1 -W 1 client4.scl2.svc.mozilla.com >/dev/null; then
+  if ssh -o ConnectTimeout=1 client4.scl2.svc.mozilla.com 'true' >/dev/null; then
     xapply -P25 "ssh %1 \"test -e $rpmfilename && 
       sudo /usr/local/bin/install_browserid.sh $rpmfilename\" 2>&1 | sed -e 's/^/%1: /'" $clientlist
   else
