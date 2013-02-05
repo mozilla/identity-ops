@@ -13,19 +13,17 @@ if [ -z "$package" -o -z "$train" ]; then
   echo "$0 PACKAGE TRAIN"
   echo "$0 browserid train-2013.02.01"
   echo "$0 browserid-bigtent train-2013.02.01"
+  echo "$0 browserid-certifier train-2013.02.01"
   exit 1
 fi
 
 if [ "$package" = "browserid" -o "$package" = "browserid_private" ]; then
   rpmname="browserid-server"
-elif [ "$package" = "browserid-bigtent" ]; then
-  rpmname="browserid-bigtent"
 else
-  echo "Package $package not recognized. Aborting..."
-  exit 1
+  rpmname="$package"
 fi
 
-if [ "$package" = "browserid-bigtent" ]; then
+if [ "$package" = "browserid-bigtent" -o "$package" = "browserid-certifier" ]; then
   targets="bigtent-yahoo1.idweb bigtent-yahoo2.idweb"
 elif [ "$package" = "browserid" ]; then
   SERVERS_web="web1.idweb web2.idweb web3.idweb"
