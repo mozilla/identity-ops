@@ -87,17 +87,16 @@ if [ "$package" = "browserid-bigtent" -o "$package" = "browserid" ]; then
 fi
 
 if [ "$package" = "browserid" ]; then
-  echo "Distributing to adm1.scl2.svc.mozilla.com"
-  push adm1.scl2.svc.mozilla.com $rpmfilename
-
-  echo "Distributing to clientN QA loadtesting machines"
   for i in `seq 4 9` `seq 11 30`; do
     clientlist="$clientlist client${i}.scl2.svc.mozilla.com"
   done
 
   if ssh -o ConnectTimeout=1 client4.scl2.svc.mozilla.com 'true' >/dev/null; then
+    echo "Distributing to clientN QA loadtesting machines"
     xapply -xP25 "scp $rpmfilename %1: 2>&1 | sed -e 's/^/%1: /'" $clientlist
   else
+    echo "Distributing to adm1.scl2.svc.mozilla.com"
+    push adm1.scl2.svc.mozilla.com $rpmfilename
     ssh -A boris.mozilla.com "
       ssh -A adm1.scl2.svc.mozilla.com \"
         xapply -xP25 \\\"scp $rpmfilename %1: 2>&1 | sed -e 's/^/%1: /' \\\" $clientlist
