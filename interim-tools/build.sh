@@ -30,10 +30,12 @@ mkdir -p ~/workspace/$package
 cd ~/workspace/$package
 git pull
 git checkout $train
-if [ "$locale_rev" ]; then
-  svn up -r $locale_rev locale
-else
-  svn up locale
+if [ "$package" = "browserid" ]; then
+  if [ "$locale_rev" ]; then
+    svn up -r $locale_rev locale
+  else
+    svn up locale
+  fi
 fi
 
 if [ -n "$code_rev" -a "`git rev-parse HEAD`" != "$code_rev" ]; then
