@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # This shabby script is supposed to hold us over for Q1 2013 while we spin up persona
 # in AWS. During that time this should enable jrgm to do build his own packages for staging deploys
