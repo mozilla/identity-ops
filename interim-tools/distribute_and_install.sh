@@ -52,19 +52,19 @@ function push {
 
   if ssh -o ConnectTimeout=1 $remotehost 'true' >/dev/null; then
     cat < $localfile | ssh $remotehost "
-      cd /home/`whoami` && cat > `basename $localfile`
+      cat > `basename $localfile`
     "
   elif ssh -o ConnectTimeout=1 $adm 'true' >/dev/null; then
     cat < $localfile | ssh -A $adm "
       ssh $remotehost \"
-        cd /home/`whoami` && cat > `basename $localfile`
+        cat > `basename $localfile`
       \"
     "
   else
     cat < $localfile | ssh -A $jump "
       ssh -A $adm \"
         ssh $remotehost \\\"
-          cd /home/`whoami` && cat > `basename $localfile`
+          cat > `basename $localfile`
         \\\"
       \"
     "
