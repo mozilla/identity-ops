@@ -108,7 +108,9 @@ function multissh {
   pidlistfile="`mktemp $tempfiletemplate`"
   exitstatus=0
   for host in $hostlist; do
-    bash -c "ssh $host \"$remotecommand\" 2>&1 | sed -e \"s/^/$host: /\"" &
+    bash -c "ssh $host \"$remotecommand\" 2>&1 | sed -e \"s/^/$host: /\"
+      test ${PIPESTATUS[0]} -eq 0 ||
+      (echo \"Encountered an error running command on to $host\" && false)" &
     echo "$!" >>$pidlistfile
   done
   for pid in `cat $pidlistfile`; do
@@ -148,7 +150,7 @@ if [ "$package" = "browserid" ]; then
     push adm1.scl2.svc.mozilla.com $rpmfilename
     ssh -A boris.mozilla.com "
       ssh -A adm1.scl2.svc.mozilla.com \"
-        xapply -xP25 \\\"scp $rpmfilename %1: 2>&1 | sed -e 's/^/%1: /' \\\" $clientlist
+        xapply -xP25 \\\"scp $rpmfilename %1: 2>&1 | sed -e 's/^/%1: /'; test ${PIPESTATUS[0]} -eq 0\\\" $clientlist
       \"
     "
   fi
@@ -169,7 +171,8 @@ if ssh -o ConnectTimeout=1 adm1.scl2.stage.svc.mozilla.com 'true' >/dev/null; th
       scp $rpmfilename %1: && 
       ssh %1 \\\"test -e $rpmfilename && 
         sudo /usr/local/bin/install_browserid.sh $rpmfilename
-      \\\" 2>&1 | sed -e 's/^/%1: /'
+      \\\" 2>&1 | sed -e 's/^/%1: /'; test ${PIPESTATUS[0]} -eq 0 ||
+      (echo \\\"Encountered an error installing to %1\\\" && false)
     \" $targets
   "
 else
@@ -179,7 +182,8 @@ else
         scp $rpmfilename %1: && 
         ssh %1 \\\\\\\"test -e $rpmfilename && 
           sudo /usr/local/bin/install_browserid.sh $rpmfilename
-        \\\\\\\" 2>&1 | sed -e 's/^/%1: /'
+        \\\\\\\" 2>&1 | sed -e 's/^/%1: /'; test ${PIPESTATUS[0]} -eq 0 ||
+        (echo \\\\\\\"Encountered an error installing to %1\\\\\\\" && false)
       \\\" $targets
     \"
   "
@@ -196,7 +200,8 @@ if [ "$package" = "browserid" ]; then
         xapply -P25 \\\"
           ssh %1 \\\\\\\"test -e $rpmfilename && 
             sudo /usr/local/bin/install_browserid.sh $rpmfilename
-          \\\\\\\" 2>&1 | sed -e 's/^/%1: /'
+          \\\\\\\" 2>&1 | sed -e 's/^/%1: /'; test ${PIPESTATUS[0]} -eq 0 ||
+          (echo \\\\\\\"Encountered an error installing to %1\\\\\\\" && false)
         \\\" $clientlist
       \"
     "
