@@ -87,7 +87,26 @@ function multiscp {
     fi
   done
   rm $pidlistfile
-  exit $exitstatus
+  return $exitstatus
+}
+
+function multissh {
+  hostlist=$1
+  remotecommand=$2
+  tempfiletemplate="/tmp/`basename $0`-XXXXXX"
+  pidlistfile="`mktemp $tempfiletemplate`"
+  exitstatus=0
+  for host in $hostlist; do
+    bash -c "ssh $host \"$remotecommand\" | sed -e \"s/^/$host: /\"" &
+    echo "$!" >>$pidlistfile
+  done
+  for pid in `cat $pidlistfile`; do
+    if ! wait $pid; then
+      let exitstatus++
+    fi
+  done
+  rm $pidlistfile
+  return $exitstatus
 }
 
 fullrpmname="`ssh r6.build.mtv1.svc.mozilla.com \"ls -t1 ~/workspace/$package/rpmbuild/RPMS/x86_64/$rpmname-*${train#train-}*.rpm | grep -v debug | head -1\"`"
@@ -158,8 +177,8 @@ fi
 echo "Starting install to QA loadtesting clientN machines"
 if [ "$package" = "browserid" ]; then
   if ssh -o ConnectTimeout=1 client4.scl2.svc.mozilla.com 'true' >/dev/null; then
-    xapply -P25 "ssh %1 \"test -e $rpmfilename && 
-      sudo /usr/local/bin/install_browserid.sh $rpmfilename\" 2>&1 | sed -e 's/^/%1: /'" $clientlist
+    multissh "$clientlist" "test -e $rpmfilename && 
+      sudo /usr/local/bin/install_browserid.sh $rpmfilename"
   else
     ssh -A boris.mozilla.com "
       ssh -A adm1.scl2.svc.mozilla.com \"
