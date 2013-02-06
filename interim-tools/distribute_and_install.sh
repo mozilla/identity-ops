@@ -132,7 +132,7 @@ fi
 
 echo "Preparing to distribute $rpmfilename"
 
-if [ "$package" = "browserid-bigtent" -o "$package" = "browserid" ]; then
+if [ "$package" = "browserid-bigtent" -o "$package" = "browserid-certifier" -o "$package" = "browserid" ]; then
   echo "Distributing to adm1.scl2.stage.svc.mozilla.com"
   push adm1.scl2.stage.svc.mozilla.com $rpmfilename
 fi
