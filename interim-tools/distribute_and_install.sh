@@ -74,7 +74,8 @@ function push {
 function multiscp {
   hostlist=$1
   filename=$2
-  pidlistfile="$(mktemp)"
+  tempfiletemplate="/tmp/`basename $0`-XXXXXX"
+  pidlistfile="`mktemp $tempfiletemplate`"
   exitstatus=0
   for host in $hostlist; do
     scp $filename $host: &
