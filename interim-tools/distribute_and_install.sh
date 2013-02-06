@@ -108,7 +108,7 @@ function multissh {
   pidlistfile="`mktemp $tempfiletemplate`"
   exitstatus=0
   for host in $hostlist; do
-    bash -c "ssh $host \"$remotecommand\" | sed -e \"s/^/$host: /\"" &
+    bash -c "ssh $host \"$remotecommand\" 2>&1 | sed -e \"s/^/$host: /\"" &
     echo "$!" >>$pidlistfile
   done
   for pid in `cat $pidlistfile`; do
