@@ -8,10 +8,13 @@
 
 package=$1
 train=$2
+loadtesttargets=$3
 
 if [ -z "$package" -o -z "$train" ]; then
-  echo "$0 PACKAGE TRAIN"
+  echo "$0 PACKAGE TRAIN [LOADTEST MACHINE NUMBERS]"
   echo "$0 browserid train-2013.02.01"
+  echo "$0 browserid train-2013.02.01 \"11 12 13 14\""
+  echo "$0 browserid train-2013.02.01 ALL"
   echo "$0 browserid-bigtent train-2013.02.01"
   echo "$0 browserid-certifier train-2013.02.01"
   exit 1
@@ -31,6 +34,14 @@ elif [ "$package" = "browserid" ]; then
   SERVERS_sign="sign1.idkeysign sign2.idkeysign sign3.idkeysign"
   SERVERS_all="$SERVERS_web $SERVERS_sweb $SERVERS_sign"
   targets="$SERVERS_all"
+fi
+
+if [ -z "$loadtesttargets" ]; then
+  loadtesttargets="11 12"
+fi
+
+if [ "$loadtesttargets" = "ALL" ]; then
+  loadtesttargets="`seq 4 9` `seq 11 30`"
 fi
 
 function fetch {
@@ -125,7 +136,7 @@ if [ "$package" = "browserid-bigtent" -o "$package" = "browserid" ]; then
 fi
 
 if [ "$package" = "browserid" ]; then
-  for i in `seq 4 9` `seq 11 30`; do
+  for i in $loadtesttargets; do
     clientlist="$clientlist client${i}.scl2.svc.mozilla.com"
   done
 
