@@ -1,6 +1,6 @@
 from netaddr import * # sudo pip install netaddr
 
-def one_time_provision(secrets):
+def one_time_provision(secrets, path):
     # 1 region
     # 2 VPCs, prod and nonprod
     # 3 AZs in each VPC
@@ -10,7 +10,6 @@ def one_time_provision(secrets):
     region = 'us-west-2'
     availability_zones = ['a','b','c']
     subnet_size = 24
-    path = "/identity/"
     desired_security_groups_json = '''
 [
     [
@@ -156,10 +155,12 @@ def one_time_provision(secrets):
         # Create subnets
         for availability_zone in [region + x for x in availability_zones]:
             vpcs[region][environment]['availability_zones'][availability_zone] = {}
+            vpcs[region][environment]['availability_zones'][availability_zone]['subnets'] = {}
             subnet = conn_vpc.create_subnet(vpc.id, available_subnets.next(), availability_zone=availability_zone)
-            vpcs[region][environment]['availability_zones'][availability_zone]['public-subnet']=subnet
+            vpcs[region][environment]['availability_zones'][availability_zone]['subnets']['public']=subnet
             subnet = conn_vpc.create_subnet(vpc.id, available_subnets.next(), availability_zone=availability_zone)
-            vpcs[region][environment]['availability_zones'][availability_zone]['private-subnet']=subnet
+            vpcs[region][environment]['availability_zones'][availability_zone]['subnets']['private']=subnet
+            # http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-ItemType-SubnetType.html
 
         # Create all security groups
         conn_ec2 = boto.ec2.connect_to_region(region)
@@ -231,33 +232,574 @@ def one_time_provision(secrets):
 
     return vpcs
 
-def create_stack(region, environment, vpc):
-    desired_elbs_json = '''
+def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
+    desired_elbs_json = {}
+    # I'm not sure the best way to do this. I don't want to deviate from the prod/dev environment split
+    # but I need to do 3 stack types, prod stage and dev here.
+    desired_elbs_json['stage'] = '''
 [
     {
-        "name": "public-persona",
+        "name": "public-anosrep.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
         "listeners" : 
         [
-            {
-                "LoadBalancerPortNumber": 443,
-                "InstancePortNumber": 80,
-                "Protocol": "HTTPS",
-                "CertName" : "multisan-www.persona.org"
-            },
-            {
-                "LoadBalancerPortNumber": 80,
-                "InstancePortNumber": 80,
-                "Protocol": "HTTP"
-            },
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.anosrep.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
         ]
+    },
+    {
+        "name": "public-login.anosrep.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "public-diresworb.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.diresworb.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "public-bigtent.login.anosrep.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ]
+        ]
+    },
+    {
+        "name": "private-keysign",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-dbwrite",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-dbread",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "private-proxy",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-proxy-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                8888,
+                8888,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:8888",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    }
+]
+'''
+    desired_elbs_json['dev'] = '''
+[
+    {
+        "name": "public-personatest.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.personatest.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "public-bigtent.login.personatest.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.personatest.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-keysign",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-dbwrite",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-dbread",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "private-proxy",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-proxy-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                8888,
+                8888,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:8888",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    }
+
+]
+'''
+    desired_elbs_json['prod'] = '''
+[
+    {
+        "name": "public-persona.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "multisan-www.persona.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "public-browserid.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "www.browserid.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "public-bigtent.login.persona.org",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-public-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "bigtent.login.persona.org"
+            ]
+        ]
+    },
+    {
+        "name": "private-keysign",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-dbwrite",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "private-dbread",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "private-proxy",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-proxy-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                8888,
+                8888,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:8888",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
     }
 ]
 '''
     import boto.ec2
+    from boto.ec2.elb import HealthCheck
+    stack = {}
     availability_zones = vpc[region][environment]['availability_zones'].keys()
     conn_elb = boto.ec2.elb.connect_to_region(region)
-    lb = conn.create_load_balancer('my-lb', availability_zones, ports)            
+    stack['loadbalancer'] = []
+    for load_balancers in json.loads(desired_elbs_json[stack_type]):
+        if len(load_balancer['listeners']) == 4:
+            # http://docs.aws.amazon.com/IAM/latest/UserGuide/Using_Identifiers.html
+            load_balancer['listeners'][3] = "%s:server-certificate%s%s" % (arn_prefix, path, load_balancer['listeners'][3])
+        subnets = []
+        for availability_zone in availability_zones:
+            for subnet_name in load_balancer['subnets']:
+                subnets.append(vpc[region][environment]['availability_zones'][availability_zone]['subnets'][subnet_name].subnetId)
+
+        lb = conn.create_load_balancer(load_balancer[name], 
+                                       availability_zones, 
+                                       load_balancer[listeners],
+                                       subnets,
+                                       [environment + '-' + x for x in load_balancer['security_groups']],
+                                       'internal' if load_balancer['is_internal'] else 'internet-facing'
+                                       )
+        healthcheck_params = load_balancer['healthcheck'] if 'healthcheck' in load_balancer else {
+            "interval" : 30,
+            "target" : "HTTP:80/__heartbeat__",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+        # healthcheck_params['access_point'] = load_balancer[name]
+        lb.configure_health_check(HealthCheck(**healthcheck_params))
+        stack['loadbalancer'].append(lb)
+    
+    # autoscale
+
+    return stack
 
 if __name__ == '__main__':
     secrets = json.load('secrets.json')
-    vpcs = one_time_provision(secrets)
+    path = "/identity/"
+    arn_prefix = "arn:aws:iam::351644144250"
+    vpcs = one_time_provision(secrets, path)
