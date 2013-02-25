@@ -12,7 +12,7 @@ def one_time_provision(secrets, path):
     # 32 /26 subnets in the VPC's /21
 
     import pickle
-    pkl_filename = 'vpcs.pkl'
+    pkl_filename = '/home/gene/Documents/vpcs.pkl'
     try:
         with open(pkl_filename, 'rb') as pkl_file:
             logging.debug('loading vpcs from %s' % pkl_filename)
@@ -193,7 +193,13 @@ def one_time_provision(secrets, path):
         # http://docs.aws.amazon.com/IAM/latest/APIReference/API_ServerCertificateMetadata.html
     
     
+    vpcs[region] = {}
     conn_vpc = boto.vpc.connect_to_region(region)
+
+    # Create internet gateway
+    internet_gateway = conn_vpc.create_internet_gateway()
+    # not testing to validate that the ig exists
+    vpcs[region]['internet_gateway'] = internet_gateway
 
     desired_vpcs = [{'Name':'identity-dev',
                      'App':'identity',
@@ -206,7 +212,6 @@ def one_time_provision(secrets, path):
                     ]
     for desired_vpc in desired_vpcs:
         environment=desired_vpc['Name']
-        vpcs[region] = {}
         vpcs[region][environment] = {}
 
         # Create VPCs
@@ -223,6 +228,15 @@ def one_time_provision(secrets, path):
 
         ip = IPNetwork(vpc.cidr_block)
         available_subnets = ip.subnet(subnet_size)
+
+        # Attach the public subnet to the internet gateway
+        if not conn_vpc.attach_internet_gateway(internet_gateway.id, vpc.id):
+            logging.error('failed to attach internet gateway %s to vpc %s' % (internet_gateway.id, vpc.id))
+
+        # TODO : Setup a NAT instance for the proxy server in the private subnet
+        # http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_NAT_Instance.html
+        # unless maybe we just give the proxy server an EIP and put it in the public subnet
+        
 
         vpcs[region][environment]['availability_zones'] = {}
         # Create subnets
@@ -1208,3 +1222,4 @@ if __name__ == '__main__':
     path = "/identity/"
     arn_prefix = "arn:aws:iam::351644144250"
     vpcs = one_time_provision(secrets, path)
+    logging.debug('vpcs created')
