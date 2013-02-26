@@ -3,7 +3,42 @@ logging.basicConfig(level=logging.DEBUG)
 import json
 import time
 
-def one_time_provision(secrets, path):
+def global_one_time_provision():
+    region = 'universal'
+    import pickle
+    pkl_filename = "/home/gene/Documents/vpcs.%s.pkl" % region
+    try:
+        with open(pkl_filename, 'rb') as pkl_file:
+            logging.debug('loading data from %s' % pkl_filename)
+            data = pickle.load(pkl_file)
+            return data
+    except IOError as e:
+        # We haven't run this before and the vpcs object hasn't been created
+        pass
+
+    # Upload certificates
+    import boto.iam
+    # Note here we don't use region because IAM isn't bound to a region
+    conn_iam = boto.iam.connect_to_region(region)
+
+    data = {}
+    data['certs'] = {}
+
+    # Temp workaround to max cert limit of 10
+    #secrets['certs'] = []
+
+    for cert_params in secrets['certs']:
+        if 'path' not in cert_params:
+            cert_params['path'] = path
+
+        data['certs'][cert.server_certificate_name] = conn_iam.upload_server_cert(**cert_params)
+        logging.debug('added certificate %s with id %s' % (cert.server_certificate_name, cert.server_certificate_id))
+        # cert.ServerCertificateId
+        # http://docs.aws.amazon.com/IAM/latest/APIReference/API_ServerCertificateMetadata.html
+    logging.debug('certs added')
+    pickle.dump(data, open(pkl_filename, 'wb'))
+
+def one_time_provision(secrets, path, region):
     # 1 region
     # 2 VPCs, prod and nonprod
     # 3 AZs in each VPC
@@ -12,7 +47,7 @@ def one_time_provision(secrets, path):
     # 32 /26 subnets in the VPC's /21
 
     import pickle
-    pkl_filename = '/home/gene/Documents/vpcs.pkl'
+    pkl_filename = "/home/gene/Documents/vpcs.%s.pkl" % region
     try:
         with open(pkl_filename, 'rb') as pkl_file:
             logging.debug('loading vpcs from %s' % pkl_filename)
@@ -23,11 +58,28 @@ def one_time_provision(secrets, path):
         pass
     
     from netaddr import IPNetwork # sudo pip install netaddr
-    region = 'us-west-2'
-    availability_zones = ['a','b','c']
+
+    
+    
+    #availability_zones = ['a','b','c']
+    # temp workaround to deploying in us-west-1
+    # where we only have 1 availability zones
+    availability_zones = ['b','c']
+    
     subnet_size = 24
     desired_security_groups_json = '''
 [
+    [
+        "admin-loadbalancer",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 22,
+                "to_port": 22,
+                "cidr_ip": "0.0.0.0/0"
+            }
+        ]
+    ],
     [
         "admin",
         [
@@ -35,7 +87,7 @@ def one_time_provision(secrets, path):
                 "ip_protocol": "tcp",
                 "from_port": 22,
                 "to_port": 22,
-                "cidr_ip": "0.0.0.0/0"
+                "src_security_group_name": "admin-loadbalancer"
             }
         ]
     ],
@@ -116,7 +168,7 @@ def one_time_provision(secrets, path):
         ]
     ],
     [
-        "db-rw",
+        "db-loadbalancer",
         [
             {
                 "ip_protocol": "tcp",
@@ -129,6 +181,17 @@ def one_time_provision(secrets, path):
                 "from_port": 3306,
                 "to_port": 3306,
                 "src_security_group_name": "dbwrite"
+            }
+        ]
+    ],
+    [
+        "db-rw",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "db-loadbalancer"
             }
         ]
     ],
@@ -172,34 +235,8 @@ def one_time_provision(secrets, path):
 
     vpcs = {}
 
-    # Upload certificates
-    import boto.iam
-    # Note here we don't use region because IAM isn't bound to a region
-    conn_iam = boto.iam.connect_to_region('universal')
-
-    vpcs['certs'] = {}
-
-    # Temp workaround to max cert limit of 10
-    secrets['certs'] = []
-
-    for cert_params in secrets['certs']:
-        if 'path' not in cert_params:
-            cert_params['path'] = path
-
-        cert = conn_iam.upload_server_cert(**cert_params)
-        logging.debug('added certificate %s with id %s' % (cert.server_certificate_name, cert.server_certificate_id))
-        vpcs['certs'][cert.server_certificate_name] = cert
-        # cert.ServerCertificateId
-        # http://docs.aws.amazon.com/IAM/latest/APIReference/API_ServerCertificateMetadata.html
-    
-    
     vpcs[region] = {}
     conn_vpc = boto.vpc.connect_to_region(region)
-
-    # Create internet gateway
-    internet_gateway = conn_vpc.create_internet_gateway()
-    # not testing to validate that the ig exists
-    vpcs[region]['internet_gateway'] = internet_gateway
 
     desired_vpcs = [{'Name':'identity-dev',
                      'App':'identity',
@@ -228,6 +265,11 @@ def one_time_provision(secrets, path):
 
         ip = IPNetwork(vpc.cidr_block)
         available_subnets = ip.subnet(subnet_size)
+
+        # Create internet gateway (a seperate one is required for each VPC)
+        vpcs[region][environment]['internet_gateway'] = conn_vpc.create_internet_gateway()
+        # not testing to validate that the ig exists
+        internet_gateway = vpcs[region][environment]['internet_gateway']
 
         # Attach the public subnet to the internet gateway
         if not conn_vpc.attach_internet_gateway(internet_gateway.id, vpc.id):
@@ -321,18 +363,26 @@ def one_time_provision(secrets, path):
                         logging.error('failed to add egress rule %s to security group %s' % (rule,security_group_name))
                 logging.debug('added rule %s to security group %s' % (rule, security_group_name))
 
+    logging.debug('vpcs created')
     pickle.dump(vpcs, open(pkl_filename, 'wb'))
     logging.debug('pickled vpcs to %s' % pkl_filename)
     return vpcs
 
-def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
+def create_stack(region, environment, stack_type, vpc, availability_zones, arn_prefix, path, name=None):
+    if name == None:
+        # Maybe we set the stack name to the username of the user creating with a number suffix?
+        import random
+        name = str(random.randint(1,9999))
+    if len(name) > 4:
+        raise ValueError("name must not exceed 4 characters in length. '%s' is too long" % name)
+    
     desired_elbs_json = {}
     # I'm not sure the best way to do this. I don't want to deviate from the prod/dev environment split
     # but I need to do 3 stack types, prod stage and dev here.
     desired_elbs_json['stage'] = '''
 [
     {
-        "name": "public-anosrep.org",
+        "name": "anosrep-org",
         "subnets" : 
         [
             "public"
@@ -358,7 +408,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "public-login.anosrep.org",
+        "name": "login-anosrep-org",
         "subnets" : 
         [
             "public"
@@ -384,7 +434,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "public-diresworb.org",
+        "name": "diresworb-org",
         "subnets" : 
         [
             "public"
@@ -410,7 +460,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "public-bigtent.login.anosrep.org",
+        "name": "bt-login-anosrep-org",
         "subnets" : 
         [
             "public"
@@ -431,7 +481,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-keysign",
+        "name": "keysign",
         "subnets" : 
         [
             "private"
@@ -451,7 +501,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-dbwrite",
+        "name": "dbwrite",
         "subnets" : 
         [
             "private"
@@ -471,7 +521,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-dbread",
+        "name": "dbread",
         "subnets" : 
         [
             "private"
@@ -499,7 +549,35 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         }
     },
     {
-        "name": "private-proxy",
+        "name": "db",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-db-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "proxy",
         "subnets" : 
         [
             "private"
@@ -521,6 +599,34 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         {
             "interval" : 30,
             "target" : "TCP:8888",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "admin",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-admin-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                22,
+                22,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:22",
             "healthy_threshold" : 3,
             "timeout" : 5,
             "unhealthy_threshold" : 5
@@ -531,7 +637,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
     desired_elbs_json['dev'] = '''
 [
     {
-        "name": "public-personatest.org",
+        "name": "personatest-org",
         "subnets" : 
         [
             "public"
@@ -557,7 +663,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "public-bigtent.login.personatest.org",
+        "name": "bt-login-personatest-org",
         "subnets" : 
         [
             "public"
@@ -583,7 +689,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-keysign",
+        "name": "keysign",
         "subnets" : 
         [
             "private"
@@ -603,7 +709,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-dbwrite",
+        "name": "dbwrite",
         "subnets" : 
         [
             "private"
@@ -623,7 +729,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-dbread",
+        "name": "dbread",
         "subnets" : 
         [
             "private"
@@ -651,7 +757,35 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         }
     },
     {
-        "name": "private-proxy",
+        "name": "db",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-db-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "proxy",
         "subnets" : 
         [
             "private"
@@ -677,14 +811,41 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
             "timeout" : 5,
             "unhealthy_threshold" : 5
         }
+    },
+    {
+        "name": "admin",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-admin-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                22,
+                22,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:22",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
     }
-
 ]
 '''
     desired_elbs_json['prod'] = '''
 [
     {
-        "name": "public-persona.org",
+        "name": "persona-org",
         "subnets" : 
         [
             "public"
@@ -710,7 +871,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "public-browserid.org",
+        "name": "browserid-org",
         "subnets" : 
         [
             "public"
@@ -736,7 +897,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "public-bigtent.login.persona.org",
+        "name": "bt-login-persona-org",
         "subnets" : 
         [
             "public"
@@ -757,7 +918,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-keysign",
+        "name": "keysign",
         "subnets" : 
         [
             "private"
@@ -777,7 +938,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-dbwrite",
+        "name": "dbwrite",
         "subnets" : 
         [
             "private"
@@ -797,7 +958,7 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         ]
     },
     {
-        "name": "private-dbread",
+        "name": "dbread",
         "subnets" : 
         [
             "private"
@@ -825,7 +986,35 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
         }
     },
     {
-        "name": "private-proxy",
+        "name": "db",
+        "subnets" : 
+        [
+            "private"
+        ],
+        "security_groups" :
+        [
+            "identity-db-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "proxy",
         "subnets" : 
         [
             "private"
@@ -851,32 +1040,62 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
             "timeout" : 5,
             "unhealthy_threshold" : 5
         }
+    },
+    {
+        "name": "admin",
+        "subnets" : 
+        [
+            "public"
+        ],
+        "security_groups" :
+        [
+            "identity-admin-loadbalancer"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                22,
+                22,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:22",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
     }
 ]
 '''
     import boto.ec2
     from boto.ec2.elb import HealthCheck
     stack = {}
-    availability_zones = vpc[region][environment]['availability_zones'].keys()
     conn_elb = boto.ec2.elb.connect_to_region(region)
     stack['loadbalancer'] = []
-    for load_balancers in json.loads(desired_elbs_json[stack_type]):
-        if len(load_balancer['listeners']) == 4:
+    for load_balancers_params in json.loads(desired_elbs_json[stack_type]):
+        if len(load_balancers_params['listeners']) == 4:
             # http://docs.aws.amazon.com/IAM/latest/UserGuide/Using_Identifiers.html
-            load_balancer['listeners'][3] = "%s:server-certificate%s%s" % (arn_prefix, path, load_balancer['listeners'][3])
-        subnets = []
-        for availability_zone in availability_zones:
-            for subnet_name in load_balancer['subnets']:
-                subnets.append(vpc[region][environment]['availability_zones'][availability_zone]['subnets'][subnet_name].subnetId)
+            load_balancers_params['listeners'][3] = "%s:server-certificate%s%s" % (arn_prefix, path, load_balancers_params['listeners'][3])
+        #subnets = []
+        #for availability_zone in availability_zones.keys():
+        #    for subnet_name in load_balancers_params['subnets']:
+        #        subnets.append(availability_zones[availability_zone]['subnets'][subnet_name].id)
 
-        lb = conn.create_load_balancer(load_balancer[name], 
-                                       availability_zones, 
-                                       load_balancer[listeners],
-                                       subnets,
-                                       [environment + '-' + x for x in load_balancer['security_groups']],
-                                       'internal' if load_balancer['is_internal'] else 'internet-facing'
-                                       )
-        healthcheck_params = load_balancer['healthcheck'] if 'healthcheck' in load_balancer else {
+        stack['loadbalancer'].append(conn_elb.create_load_balancer(
+                                       name=load_balancers_params['name'] + '-' + name, 
+                                       zones=availability_zones.keys(),
+                                       listeners=load_balancers_params['listeners'],
+                                       security_groups=[environment + '-' + x for x in load_balancers_params['security_groups']],
+                                       scheme='internal' if load_balancers_params['is_internal'] else 'internet-facing'
+                                       ))
+        load_balancer = stack['loadbalancer'][-1]
+        # TODO : tag the load_balancer
+        
+        healthcheck_params = load_balancers_params['healthcheck'] if 'healthcheck' in load_balancers_params else {
             "interval" : 30,
             "target" : "HTTP:80/__heartbeat__",
             "healthy_threshold" : 3,
@@ -884,285 +1103,474 @@ def create_stack(region, environment, stack_type, vpc, arn_prefix, path):
             "unhealthy_threshold" : 5
         }
         # healthcheck_params['access_point'] = load_balancer[name]
-        lb.configure_health_check(HealthCheck(**healthcheck_params))
-        stack['loadbalancer'].append(lb)
+        load_balancer.configure_health_check(HealthCheck(**healthcheck_params))
+        stack['loadbalancer'].append(load_balancer)
 
-    desired_launch_configuration_json = {}
+    desired_autoscale_json = {}
+    desired_autoscale_json['prod'] = '''
+[
+    {
+        'launch_configuration': 
+        {
+            "name" : "webhead",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-frontend",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'persona-org'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "bigtent",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-frontend",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'bt-login-persona-org'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "keysign",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-middleware",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'keysign'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbwrite",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-middleware",
+                "identity-dbwrite",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'dbwrite'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbread",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-db-ro",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'dbread'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbmaster",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-db-rw",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'db'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "proxy",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-proxy",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'proxy'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "admin",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-admin"
+            ]
+        },
+        'load_balancers':
+        [
+            'admin'
+        ]
+    }
+]
+'''
+    desired_autoscale_json['stage'] = '''
+[
+    {
+        'launch_configuration': 
+        {
+            "name" : "webhead",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-frontend",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'anosrep-org',
+            'login-anosrep-org'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "bigtent",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-frontend",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'bt-login-anosrep-org'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "keysign",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-middleware",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'keysign'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbwrite",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-middleware",
+                "identity-dbwrite",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'dbwrite'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbread",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-db-ro",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'dbread'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbmaster",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-db-rw",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'db'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "proxy",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-proxy",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'proxy'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "admin",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-admin"
+            ]
+        },
+        'load_balancers':
+        [
+            'admin'
+        ]
+    }
+]
+'''
+    desired_autoscale_json['dev'] = '''
+[
+    {
+        'launch_configuration': 
+        {
+            "name" : "webhead",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-frontend",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'personatest-org'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "bigtent",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-frontend",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'bt-login-personatest-org'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "keysign",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-middleware",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'keysign'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbwrite",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-middleware",
+                "identity-dbwrite",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'dbwrite'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbread",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-db-ro",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'dbread'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "dbmaster",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-db-rw",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'db'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "proxy",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-proxy",
+                "identity-administrable"
+            ]
+        },
+        'load_balancers':
+        [
+            'proxy'
+        ]
+    },
+    {
+        'launch_configuration': 
+        {
+            "name" : "admin",
+            "image_id" : "ami-5867ec68",
+            "key_name" : "svcops-sl62-base-key-us-west-2",
+            "security_groups" : 
+            [
+                "identity-admin"
+            ]
+        },
+        'load_balancers':
+        [
+            'admin'
+        ]
+    }
+]
+'''
     # image_id will need to be variable in a multi-region context
-    desired_launch_configuration_json['prod'] = '''
-[
-    {
-        "name" : "webhead",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-frontend",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "bigtent",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-frontend",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "keysign",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-middleware",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbwrite",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-middleware",
-            "identity-dbwrite",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbread",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-db-ro",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbmaster",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-db-rw",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "proxy",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-proxy",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "admin",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-admin"
-        ]
-    }
-]
-'''
-    desired_launch_configuration_json['stage'] = '''
-[
-    {
-        "name" : "webhead",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-frontend",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "bigtent",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-frontend",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "keysign",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-middleware",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbwrite",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-middleware",
-            "identity-dbwrite",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbread",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-db-ro",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbmaster",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-db-rw",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "proxy",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-proxy",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "admin",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-admin"
-        ]
-    }
-]
-'''
-    desired_launch_configuration_json['dev'] = '''
-[
-    {
-        "name" : "webhead",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-frontend",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "bigtent",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-frontend",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "keysign",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-middleware",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbwrite",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-middleware",
-            "identity-dbwrite",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbread",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-db-ro",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "dbmaster",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-db-rw",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "proxy",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-proxy",
-            "identity-administrable"
-        ]
-    },
-    {
-        "name" : "admin",
-        "image_id" : "ami-5867ec68",
-        "key_name" : "svcops-sl62-base-key-us-west-2",
-        "security_groups" : 
-        [
-            "identity-admin"
-        ]
-    }
-]
-'''
+    
+    #TODO : simplify these launch config jsons since only a few things differ in each
    
     # auto scale
     import boto.ec2.autoscale
     conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
 
+    stack['launch_configuration'] = []
+    stack['autoscale_group'] = []
+
     # I'm going to combine launch configuration and autoscale group because I don't
     # see us having more than one autoscale group for each launch configuration
     # A scenario where we would need this would be if 
-    for launch_configuration in json.loads(desired_launch_configuration_json[stack_type]):
-        launch_configuration['name'] = environment + '-' + launch_configuration['name']
-        lc = boto.ec2.autoscale.LaunchConfiguration(**launch_configuration)
-        conn_autoscale.create_launch_configuration(lc)
+    for autoscale_params in json.loads(desired_autoscale_json[stack_type]):
+        launch_configuration_params = autoscale_params['launch_configuration']
+        launch_configuration_params['name'] = environment + '-' + stack_type + '-' + launch_configuration_params['name'] + '-' + name
+        # TODO : pull the "key_name" out of the json config
+        # and set this per stack_type. prod keys for prod servers etc.
+        
+        stack['launch_configuration'].append(boto.ec2.autoscale.LaunchConfiguration(**launch_configuration_params))
+        launch_configuration = stack['launch_configuration'][-1]
 
-        ag = boto.ec2.autoscale.AutoScalingGroup(group_name='my_group', 
-                                                 load_balancers=['my-lb'],
-                                                 availability_zones=availability_zones,
-                                                 launch_config=lc, 
-                                                 min_size=4, 
-                                                 max_size=8,
-                                                 connection=conn_autoscale)
-        conn_autoscale.create_auto_scaling_group(ag)
+        # Don't know what this returns, maybe I should use the return object from create_launch_configuration
+        # instead of the instance from the LaunchConfiguration constructor
+        # http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_CreateLaunchConfiguration.html
+        # https://github.com/boto/boto/blob/7d1c814c4fecaa69b887e5f1b723ab1f8361cde0/boto/ec2/autoscale/__init__.py#L240
+        conn_autoscale.create_launch_configuration(launch_configuration)
 
+        stack['autoscale_group'].append(boto.ec2.autoscale.AutoScalingGroup(
+                group_name=launch_configuration_params['name'], 
+                load_balancers=[x + '-' + name for x in autoscale_params['load_balancers']],
+                availability_zones=availability_zones,
+                launch_config=launch_configuration, 
+                min_size=1, 
+                max_size=1,
+                connection=conn_autoscale))
+        autoscale_group = stack['autoscale_group'][-1]
+        conn_autoscale.create_auto_scaling_group(autoscale_group)
+
+    stack_filename = "/home/gene/Documents/identity-stack-%s.pkl" % name
+    pickle.dump(stack, open(stack_filename, 'wb'))
+    logging.info('pickled stack to %s' % stack_filename)
     return stack
 
 def get_secrets():
@@ -1221,5 +1629,14 @@ if __name__ == '__main__':
     secrets = get_secrets()
     path = "/identity/"
     arn_prefix = "arn:aws:iam::351644144250"
-    vpcs = one_time_provision(secrets, path)
-    logging.debug('vpcs created')
+    region = 'us-west-1'
+    vpcs = one_time_provision(secrets, path, region)
+    
+    environment = 'identity-dev'
+    stack = create_stack(region, 
+                         environment, 
+                         'dev', 
+                         vpcs[region][environment]['vpc'], 
+                         vpcs[region][environment]['availability_zones'], 
+                         arn_prefix, path, 
+                         'g1')
