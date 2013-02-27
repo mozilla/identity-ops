@@ -2,10 +2,10 @@ import logging
 logging.basicConfig(level=logging.DEBUG)
 import json
 import time
+import pickle
 
 def global_one_time_provision():
     region = 'universal'
-    import pickle
     pkl_filename = "/home/gene/Documents/vpcs.%s.pkl" % region
     try:
         with open(pkl_filename, 'rb') as pkl_file:
@@ -53,7 +53,6 @@ def one_time_provision(secrets, path, region, availability_zones):
     # 6*3 = 18 subnets
     # 32 /26 subnets in the VPC's /21
 
-    import pickle
     pkl_filename = "/home/gene/Documents/vpcs.%s.pkl" % region
     try:
         with open(pkl_filename, 'rb') as pkl_file:
@@ -1048,7 +1047,8 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "persona-org"
-        ]
+        ],
+        "subnet": "private"
     },
     {
         "launch_configuration": 
@@ -1065,7 +1065,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "bt-login-persona-org"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1082,7 +1084,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "keysign"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1100,7 +1104,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "dbwrite"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1117,7 +1123,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "dbread"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1134,7 +1142,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "db"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1151,7 +1161,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "proxy"
-        ]
+        ],
+        "subnet": "public"
+
     },
     {
         "launch_configuration": 
@@ -1166,7 +1178,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         },
         "load_balancers":
         [
-        ]
+        ],
+        "subnet": "public"
+
     }
 ]
 '''
@@ -1188,7 +1202,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         [
             "anosrep-org",
             "login-anosrep-org"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1205,7 +1221,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "bt-login-anosrep-org"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1222,7 +1240,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "keysign"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1240,7 +1260,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "dbwrite"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1257,7 +1279,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "dbread"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1274,7 +1298,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "db"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1291,7 +1317,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "proxy"
-        ]
+        ],
+        "subnet": "public"
+
     },
     {
         "launch_configuration": 
@@ -1306,7 +1334,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         },
         "load_balancers":
         [
-        ]
+        ],
+        "subnet": "public"
+
     }
 ]
 '''
@@ -1327,7 +1357,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "personatest-org"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1344,7 +1376,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "bt-login-personatest-org"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1361,7 +1395,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "keysign"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1379,7 +1415,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "dbwrite"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1396,7 +1434,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "dbread"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1413,7 +1453,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "db"
-        ]
+        ],
+        "subnet": "private"
+
     },
     {
         "launch_configuration": 
@@ -1430,7 +1472,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         "load_balancers":
         [
             "proxy"
-        ]
+        ],
+        "subnet": "public"
+
     },
     {
         "launch_configuration": 
@@ -1445,7 +1489,9 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         },
         "load_balancers":
         [
-        ]
+        ],
+        "subnet": "public"
+
     }
 ]
 '''
@@ -1484,6 +1530,11 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
         # https://github.com/boto/boto/blob/7d1c814c4fecaa69b887e5f1b723ab1f8361cde0/boto/ec2/autoscale/__init__.py#L240
         conn_autoscale.create_launch_configuration(launch_configuration)
 
+        subnets = []
+        for availability_zone in vpc['availability_zones'].keys():
+            subnets.append(vpc['availability_zones'][availability_zone]['subnets'][autoscale_params['subnet']].id)
+        vpc_zone_identifier = ','.join(subnets)
+
         autoscale_group = boto.ec2.autoscale.AutoScalingGroup(
                 group_name=launch_configuration_params['name'], 
                 load_balancers=[x + '-' + name for x in autoscale_params['load_balancers']],
@@ -1491,6 +1542,7 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
                 launch_config=launch_configuration, 
                 min_size=1, 
                 max_size=1,
+                vpc_zone_identifier=vpc_zone_identifier,
                 desired_capacity=0,
                 connection=conn_autoscale)
         conn_autoscale.create_auto_scaling_group(autoscale_group)
@@ -1512,6 +1564,8 @@ def create_stack(region, environment, stack_type, vpc, global_data, arn_prefix, 
                                                                      resource_id=launch_configuration_params['name'])])
 
         # Now we set_desired_capacity up from 0 so instances start spinning up
+        conn_autoscale.set_desired_capacity(launch_configuration_params['name'],
+                                            1)
 
     stack_filename = "/home/gene/Documents/identity-stack-%s.pkl" % name
     pickle.dump(stack, open(stack_filename, 'wb'))
