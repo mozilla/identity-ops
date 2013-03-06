@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-normal["daemontools"]["service_dir"] = "/service"
+node.normal[:daemontools][:service_dir] = "/service"
 
 cookbook_file "/etc/yum.repos.d/djbware.repo" do
   backup false
