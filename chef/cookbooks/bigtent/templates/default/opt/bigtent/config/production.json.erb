@@ -1,0 +1,28 @@
+{
+  "var_path": "/var/browserid",
+  "browserid_server": "<%= node[:bigtent][:browserid_server] %>",
+  "certifier_host": "127.0.0.1",
+  "certifier_port": 8080,
+  "client_sessions": {
+    "cookie_name": "session_state",
+    "secret": "<%= node[:bigtent][:client_session_secret] %>",
+    "duration": 86400000
+  },
+  "env": "production",
+  "issuer": "<%= <%= node[:bigtent][:issuer] %> %>",
+  "use_https": false,
+  "domain_info": {
+    "yahoo.com": {
+      "strategy": "yahoo",
+      "providerName": "Yahoo",
+      "providerURL": "https://mail.yahoo.com"
+    }
+  },
+  "pub_key_ttl": 120,
+  "pub_key_path": "/var/browserid/certifier/key.publickey",
+  "http_proxy": {
+    "host": "<%= node[:proxy][:host] %>",
+    "port": <%= node[:proxy][:port] %>
+  },
+  "translation_directory": "/opt/bigtent/static/i18n"
+}

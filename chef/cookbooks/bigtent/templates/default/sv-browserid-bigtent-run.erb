@@ -1,0 +1,11 @@
+#!/bin/bash
+
+exec 2>&1 # fix stderr logging for daemontools
+
+export PATH=/usr/local/bin:$PATH
+export NODE_ENV=production
+export CONFIG_FILES="/opt/bigtent/config/production.json,/opt/bigtent/config/l10n-prod.json"
+
+cd /opt/bigtent/server
+ulimit -n 8192
+exec setuidgid browserid bin/bigtent
