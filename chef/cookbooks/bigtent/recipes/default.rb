@@ -43,11 +43,12 @@ end
 
 for dir in ["/var/browserid/certifier",
             "/var/browserid/log",
-            ]
-directory dir do
-  owner "browserid"
-  group "browserid"
-  recursive true
+            ] do
+  directory dir do
+    owner "browserid"
+    group "browserid"
+    recursive true
+  end
 end
 
 package "browserid-nodejs" do
@@ -60,12 +61,6 @@ end
 
 package "browserid-bigtent" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:bigtent][:rpms][:bigtent]}"
-end
-
-directory "/opt/bigtent/config/" do
-  owner "root"
-  group "root"
-  recursive true
 end
 
 template "/opt/bigtent/config/production.json" do
