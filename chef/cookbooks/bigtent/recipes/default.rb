@@ -52,28 +52,28 @@ end
 
 template "/opt/bigtent/config/production.json" do
   source "opt/bigtent/config/production.json.erb"
-  owner root
-  group root
+  owner "root"
+  group "root"
   mode 0644
 end
 
 template "/opt/certifier/config/production.json" do
   source "opt/certifier/config/production.json.erb"
-  owner root
-  group root
+  owner "root"
+  group "root"
   mode 0644
 end
 
 file "/var/browserid/certifier/key.publickey" do
-  owner root
-  group root
+  owner "root"
+  group "root"
   mode 0644
   content node[:bigtent][:publickey]
 end
 
 file "/var/browserid/certifier/key.secretkey" do
-  owner root
-  group root
+  owner "root"
+  group "root"
   mode 0644
   content node[:bigtent][:secretkey]
 end
