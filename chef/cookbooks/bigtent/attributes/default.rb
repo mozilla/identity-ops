@@ -9,4 +9,4 @@ default["proxy"]["port"] = 3128
 
 default["bigtent"]["rpms"]["bigtent"] = 'browserid-bigtent-0.2013.01.17-10.el6_112837.x86_64.rpm'
 default["bigtent"]["rpms"]["certifier"] = 'browserid-certifier-0.2013.02.14-2.el6.x86_64.rpm'
-default["bigtent"]["rpms"]["nodejs"] = 'browserid-certifier-0.2013.02.14-2.el6.x86_64.rpm'
+default["bigtent"]["rpms"]["nodejs"] = 'nodejs-0.8.17-1.el6.x86_64.rpm'
