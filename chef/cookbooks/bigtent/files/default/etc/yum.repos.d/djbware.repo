@@ -1,4 +1,5 @@
 [memphis]
 name=Djbware in Memphis
 baseurl=http://djbware.csi.hu
+gpgcheck=0
 includepkgs=daemontools

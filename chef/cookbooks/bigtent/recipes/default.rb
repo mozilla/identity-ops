@@ -79,11 +79,3 @@ file "/var/browserid/certifier/key.secretkey" do
 end
 
 include_recipe "bigtent::daemontools"
-
-service "browserid-certifier" do
-  action :start
-end
-
-service "browserid-bigent" do
-  action :start
-end
