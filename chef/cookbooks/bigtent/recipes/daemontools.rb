@@ -8,20 +8,25 @@
 #
 
 node.normal[:daemontools][:service_dir] = "/service"
+node.normal[:daemontools][:install_method] = 'package'
 
 cookbook_file "/etc/yum.repos.d/djbware.repo" do
-  source "etc/yum.repos.d/djware.repo"
+  source "etc/yum.repos.d/djbware.repo"
   backup false
 end  
+
+directory node.normal[:daemontools][:service_dir]
+
+directory "/var/services"
 
 include_recipe "daemontools::default"
 
 daemontools_service "browserid-certifier" do
-  directory "/service/browserid-certifier"
+  directory "/var/services/browserid-certifier"
   action [:enable]
 end
 
 daemontools_service "browserid-bigtent" do
-  directory "/service/browserid-bigtent"
+  directory "/var/services/browserid-bigtent"
   action [:enable]
 end
