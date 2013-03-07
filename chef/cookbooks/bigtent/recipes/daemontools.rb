@@ -10,6 +10,7 @@
 node.normal[:daemontools][:service_dir] = "/service"
 
 cookbook_file "/etc/yum.repos.d/djbware.repo" do
+  source "etc/yum.repos.d/djware.repo"
   backup false
 end  
 

@@ -38,7 +38,7 @@ for dir in ["/var/browserid/certifier",
   end
 end
 
-package "browserid-nodejs" do
+package "nodejs" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:bigtent][:rpms][:nodejs]}"
 end
 
