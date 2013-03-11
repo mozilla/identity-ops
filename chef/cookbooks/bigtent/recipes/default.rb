@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "bigtent::daemontools"
+
 rpms = [node[:bigtent][:rpms][:bigtent],
         node[:bigtent][:rpms][:certifier],
         node[:bigtent][:rpms][:nodejs]]
@@ -78,6 +80,19 @@ file "/var/browserid/certifier/key.secretkey" do
   content node[:bigtent][:secretkey]
 end
 
+daemontools_service "browserid-certifier" do
+  directory "/var/services/browserid-certifier"
+  template "browserid-certifier"
+  action [:enable, :start]
+  log true
+end
+
+daemontools_service "browserid-bigtent" do
+  directory "/var/services/browserid-bigtent"
+  template "browserid-bigtent"
+  action [:enable, :start]
+  log true
+end
+
 include_recipe "bigtent::nginx"
 
-include_recipe "bigtent::daemontools"

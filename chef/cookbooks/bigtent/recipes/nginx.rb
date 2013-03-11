@@ -21,11 +21,19 @@ end
 
 package "nginx"
 
+daemontools_service "nginx" do
+  directory "/var/services/nginx"
+  template "nginx"
+  action [:enable, :start]
+  log true
+end
+
 cookbook_file "/etc/nginx/nginx.conf" do
   source "etc/nginx/nginx.conf"
   owner "root"
   group "root"
   mode 0644
+  notifies :restart, "daemontools_service[nginx]", :delayed
 end
 
 cookbook_file "/etc/nginx/conf.d/idbigtent.conf" do
@@ -33,10 +41,14 @@ cookbook_file "/etc/nginx/conf.d/idbigtent.conf" do
   owner "root"
   group "root"
   mode 0644
+  notifies :restart, "daemontools_service[nginx]", :delayed
 end
 
-daemontools_service "nginx" do
-  directory "/var/services/nginx"
-  template "nginx"
-  action [:enable, :start]
+for filename in ["/etc/nginx/conf.d/default.conf",
+                 "/etc/nginx/conf.d/ssl.conf",
+                 "/etc/nginx/conf.d/virtual.conf"] do
+  file filename do
+    action :delete
+    notifies :restart, "daemontools_service[nginx]", :delayed
+  end
 end
