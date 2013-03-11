@@ -1,0 +1,23 @@
+#!/bin/bash
+
+exec 2>&1 # fix stderr logging for daemontools
+
+# Crafted from /etc/init.d/nginx.
+
+# Source networking configuration.
+. /etc/sysconfig/network
+
+# Check that networking is up.
+[ "$NETWORKING" = "no" ] && exit 0
+
+nginx="/usr/sbin/nginx"
+NGINX_CONF_FILE="/etc/nginx/nginx.conf"
+
+[ -x $nginx ] || exit 5
+[ -f $NGINX_CONF_FILE ] || exit 6
+
+[ -f /etc/sysconfig/nginx ] && . /etc/sysconfig/nginx
+
+ulimit -n 32768
+
+exec $nginx -c $NGINX_CONF_FILE -g 'daemon off;'

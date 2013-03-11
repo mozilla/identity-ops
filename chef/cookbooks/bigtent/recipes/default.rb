@@ -78,4 +78,6 @@ file "/var/browserid/certifier/key.secretkey" do
   content node[:bigtent][:secretkey]
 end
 
+include_recipe "bigtent::nginx"
+
 include_recipe "bigtent::daemontools"

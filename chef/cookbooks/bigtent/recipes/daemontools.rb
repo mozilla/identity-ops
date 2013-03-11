@@ -38,13 +38,3 @@ cookbook_file "/etc/init/svscan.conf" do
   notifies :run, 'execute[initctl reload-configuration]', :immediately
   notifies :run, 'execute[initctl start svscan]', :immediately
 end
-
-daemontools_service "browserid-certifier" do
-  directory "/var/services/browserid-certifier"
-  action [:enable, :start]
-end
-
-daemontools_service "browserid-bigtent" do
-  directory "/var/services/browserid-bigtent"
-  action [:enable, :start]
-end
