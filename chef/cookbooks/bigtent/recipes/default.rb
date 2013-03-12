@@ -57,6 +57,7 @@ template "/opt/bigtent/config/production.json" do
   owner "root"
   group "root"
   mode 0644
+  notifies :restart, "daemontools_service[browserid-bigtent]", :delayed
 end
 
 template "/opt/certifier/config/production.json" do
@@ -64,6 +65,7 @@ template "/opt/certifier/config/production.json" do
   owner "root"
   group "root"
   mode 0644
+  notifies :restart, "daemontools_service[browserid-certifier]", :delayed
 end
 
 file "/var/browserid/certifier/key.publickey" do

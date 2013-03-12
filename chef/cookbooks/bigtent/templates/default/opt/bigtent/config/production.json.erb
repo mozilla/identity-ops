@@ -20,10 +20,12 @@
   },
   "pub_key_ttl": 120,
   "pub_key_path": "/var/browserid/certifier/key.publickey",
+<% if node[:proxy][:host] %>
   "http_proxy": {
     "host": "<%= node[:proxy][:host] %>",
     "port": <%= node[:proxy][:port] %>
   },
+<% end %>
   "translation_directory": "/opt/bigtent/static/i18n",
   "supported_languages": ["en-US"]
 }
