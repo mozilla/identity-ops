@@ -30,14 +30,22 @@ user "browserid" do
   home "/opt/browserid"
 end
 
-for dir in ["/var/browserid/certifier",
-            "/var/browserid/log",
-            ] do
-  directory dir do
-    owner "browserid"
-    group "browserid"
-    recursive true
-  end
+directory "/var/browserid" do
+  owner "root"
+  group "browserid"
+  mode 0755
+end
+
+directory "/var/browserid/certifier" do
+  owner "browserid"
+  group "browserid"
+  mode 0700
+end
+
+directory "/var/browserid/log" do
+  owner "browserid"
+  group "browserid"
+  mode 0755
 end
 
 package "nodejs" do
@@ -69,16 +77,16 @@ template "/opt/certifier/config/production.json" do
 end
 
 file "/var/browserid/certifier/key.publickey" do
-  owner "root"
-  group "root"
-  mode 0644
+  owner "browserid"
+  group "browserid"
+  mode 0600
   content node[:bigtent][:publickey]
 end
 
 file "/var/browserid/certifier/key.secretkey" do
-  owner "root"
-  group "root"
-  mode 0644
+  owner "browserid"
+  group "browserid"
+  mode 0600
   content node[:bigtent][:secretkey]
 end
 
