@@ -19,6 +19,10 @@ for rpm in rpms do
   end
 end
 
+service "ntpd" do
+  action :start
+end
+
 group "browserid" do
   gid 450
 end
