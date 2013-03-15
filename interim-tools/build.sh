@@ -32,12 +32,15 @@ fi
 if [ "$package" = "browserid" -a ! -e ~/workspace/$package/locale ]; then
   cd ~/workspace/$package
   svn co http://svn.mozilla.org/projects/l10n-misc/trunk/browserid/locale
+elif [ "$package" = "browserid-bigtent" -a ! -e ~/workspace/$package/locale ]; then
+  cd ~/workspace/$package
+  svn co http://svn.mozilla.org/projects/l10n-misc/trunk/browserid-bigtent/locale
 fi
 
 cd ~/workspace/$package
 git pull
 git checkout $train
-if [ "$package" = "browserid" ]; then
+if [ "$package" = "browserid" -o "$package" = "browserid-bigtent" ]; then
   if [ "$locale_rev" ]; then
     svn up -r $locale_rev locale
   else
