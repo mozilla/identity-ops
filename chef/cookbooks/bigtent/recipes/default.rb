@@ -54,7 +54,6 @@ end
 
 package "nodejs" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:bigtent][:rpms][:nodejs]}"
-  notifies :restart, "daemontools_service[nodejs]", :delayed
 end
 
 package "browserid-certifier" do
