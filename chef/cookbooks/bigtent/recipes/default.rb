@@ -54,14 +54,17 @@ end
 
 package "nodejs" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:bigtent][:rpms][:nodejs]}"
+  notifies :restart, "daemontools_service[nodejs]", :delayed
 end
 
 package "browserid-certifier" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:bigtent][:rpms][:certifier]}"
+  notifies :restart, "daemontools_service[browserid-certifier]", :delayed
 end
 
 package "browserid-bigtent" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:bigtent][:rpms][:bigtent]}"
+  notifies :restart, "daemontools_service[browserid-bigtent]", :delayed
 end
 
 template "/opt/bigtent/config/production.json" do
