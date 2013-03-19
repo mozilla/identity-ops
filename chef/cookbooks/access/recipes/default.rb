@@ -13,7 +13,7 @@ directory "/root/.ssh" do
   mode 0700
 end
 
-file "/root/.ssh/authorized_keys" do
+cookbook_file "/root/.ssh/authorized_keys" do
   source "root/.ssh/authorized_keys"
   owner "root"
   group "root"
