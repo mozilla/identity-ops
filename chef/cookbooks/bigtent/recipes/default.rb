@@ -87,6 +87,7 @@ file "/var/browserid/certifier/key.publickey" do
   group "browserid"
   mode 0600
   content node[:bigtent][:publickey]
+  notifies :restart, "daemontools_service[browserid-certifier]", :delayed
 end
 
 file "/var/browserid/certifier/key.secretkey" do
@@ -94,6 +95,7 @@ file "/var/browserid/certifier/key.secretkey" do
   group "browserid"
   mode 0600
   content node[:bigtent][:secretkey]
+  notifies :restart, "daemontools_service[browserid-certifier]", :delayed
 end
 
 daemontools_service "browserid-certifier" do
