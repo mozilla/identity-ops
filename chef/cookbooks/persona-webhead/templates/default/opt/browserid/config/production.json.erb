@@ -1,0 +1,57 @@
+{
+  "env": "production",
+  "public_url": "<%= node[:pesona][:webhead][:public_url] =%>",
+  "public_static_url": "<%= node[:pesona][:webhead][:public_static_url] =%>",
+  "bind_to": {
+    "host": "127.0.0.1"
+  },
+  "use_minified_resources": true,
+  "database": {
+    "driver": "mysql",
+    "name": "browserid",
+    "create_schema": false
+  },
+  "smtp": {
+    "host": "127.0.0.1"
+  },
+  "statsd": {
+    "enabled": true
+  },
+  "bcrypt_work_factor": 12,
+  "max_compute_processes": null,
+  "max_compute_duration": 10,
+  "disable_primary_support": false,
+  "enable_code_version": false,
+  "default_lang": "en",
+  "express_log_format": "default",
+  "email_to_console": false,
+  "var_path": "/var/browserid",
+
+  "keysigner": { "bind_to": { "port": 62700 } },
+  "browserid": { "bind_to": { "port": 62700 } },
+  "router": { "bind_to": { "port": 63300 } },
+  "verifier": { "bind_to": { "port": 62800 } },
+  "dbwriter": { "bind_to": { "port": 62700 } },
+  "static": { "bind_to": { "port": 63400 } },
+
+  "static_url": "http://127.0.0.1:63400",
+  "verifier_url": "<%= node[:pesona][:webhead][:verifier_url] =%>",
+  "keysigner_url": "<%= node[:pesona][:webhead][:keysigner_url] =%>",
+  "dbwriter_url": "<%= node[:pesona][:webhead][:dbwriter_url] =%>",
+  "browserid_url": "http://127.0.0.1:62700",
+  "proxy_idps": <%= JSON.generate(node[:pesona][:webhead][:proxy_idps]) =%>,
+  "kpi_backend_sample_rate": <%= node[:pesona][:webhead][:kpi_backend_sample_rate] =%>,
+  "kpi_backend_db_url": "<%= node[:pesona][:webhead][:kpi_backend_db_url] =%>",
+  "database": {
+    "host": "<%= node[:pesona][:webhead][:database][:host] =%>",
+    "user": "<%= node[:pesona][:webhead][:database][:user] =%>",
+    "password": "<%= node[:pesona][:webhead][:database][:password] =%>"
+  },
+
+  "http_proxy": {
+    "host": "<%= node[:pesona][:proxy][:host] =%>",
+    "port": 8888
+  }
+}
+
+
