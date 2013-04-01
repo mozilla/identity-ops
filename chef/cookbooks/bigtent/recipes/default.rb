@@ -7,7 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "bigtent::daemontools"
+include_recipe "persona-common::default"
+include_recipe "persona-common::daemontools"
 
 rpms = [node[:bigtent][:rpms][:bigtent],
         node[:bigtent][:rpms][:certifier],
@@ -19,37 +20,10 @@ for rpm in rpms do
   end
 end
 
-service "ntpd" do
-  action :start
-end
-
-group "browserid" do
-  gid 450
-end
-
-user "browserid" do
-  comment "Browserid Application User"
-  uid 450
-  gid 450
-  home "/opt/browserid"
-end
-
-directory "/var/browserid" do
-  owner "root"
-  group "browserid"
-  mode 0755
-end
-
 directory "/var/browserid/certifier" do
   owner "browserid"
   group "browserid"
   mode 0700
-end
-
-directory "/var/browserid/log" do
-  owner "browserid"
-  group "browserid"
-  mode 0755
 end
 
 package "nodejs" do
@@ -112,5 +86,12 @@ daemontools_service "browserid-bigtent" do
   log true
 end
 
-include_recipe "bigtent::nginx"
+include_recipe "persona-common::nginx"
 
+cookbook_file "/etc/nginx/conf.d/idbigtent.conf" do
+  source "etc/nginx/conf.d/idbigtent.conf"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :restart, "daemontools_service[nginx]", :delayed
+end

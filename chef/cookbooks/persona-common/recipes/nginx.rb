@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: bigtent
+# Cookbook Name:: persona-common
 # Recipe:: nginx
 #
 # Copyright 2013, YOUR_COMPANY_NAME
@@ -8,13 +8,13 @@
 #
 
 group "nginx" do
-  gid 452
+  gid node[:persona][:nginx_uid]
 end
 
 user "nginx" do
   comment "Nginx User"
-  uid 452
-  gid 452
+  uid node[:persona][:nginx_uid]
+  gid node[:persona][:nginx_uid]
   home "/var/lib/nginx"
   shell "/bin/false"
 end
@@ -30,14 +30,6 @@ end
 
 cookbook_file "/etc/nginx/nginx.conf" do
   source "etc/nginx/nginx.conf"
-  owner "root"
-  group "root"
-  mode 0644
-  notifies :restart, "daemontools_service[nginx]", :delayed
-end
-
-cookbook_file "/etc/nginx/conf.d/idbigtent.conf" do
-  source "etc/nginx/conf.d/idbigtent.conf"
   owner "root"
   group "root"
   mode 0644
