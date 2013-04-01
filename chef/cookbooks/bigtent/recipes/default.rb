@@ -13,7 +13,7 @@ rpms = [node[:bigtent][:rpms][:bigtent],
 
 for rpm in rpms do
   remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
-    source "https://s3-us-west-2.amazonaws.com/svcops-us-west-2/identity/rpms/#{rpm}"
+    source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpm}"
   end
 end
 
