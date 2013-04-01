@@ -7,9 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "persona-common::default"
-include_recipe "persona-common::daemontools"
-
 rpms = [node[:bigtent][:rpms][:bigtent],
         node[:bigtent][:rpms][:certifier],
         node[:bigtent][:rpms][:nodejs]]
