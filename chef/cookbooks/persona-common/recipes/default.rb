@@ -8,6 +8,11 @@
 #
 
 include_recipe "persona-common::daemontools"
+include_recipe "persona-common::iptables"
+
+service "ntpd" do
+  action :start
+end
 
 group "browserid" do
   gid node[:persona][:browserid_uid]
@@ -18,10 +23,6 @@ user "browserid" do
   uid node[:persona][:browserid_uid]
   gid node[:persona][:browserid_uid]
   home "/opt/browserid"
-end
-
-service "ntpd" do
-  action :start
 end
 
 directory "/var/browserid" do
@@ -35,3 +36,4 @@ directory "/var/browserid/log" do
   group "browserid"
   mode 0755
 end
+

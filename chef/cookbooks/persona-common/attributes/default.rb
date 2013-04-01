@@ -1,4 +1,5 @@
 default["persona"]["browserid_uid"] = 450
+default["persona"]["nginx_uid"] = 452
 
 # Setting these to false bypasses the proxy
 # default["proxy"]["host"] = "proxy.example.com"
