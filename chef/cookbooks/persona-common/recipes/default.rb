@@ -23,6 +23,7 @@ user "browserid" do
   uid node[:persona][:browserid_uid]
   gid node[:persona][:browserid_uid]
   home "/opt/browserid"
+  supports { :manage_home => true }
 end
 
 directory "/var/browserid" do

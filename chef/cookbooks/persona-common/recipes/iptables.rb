@@ -12,4 +12,9 @@ cookbook_file "/etc/sysconfig/iptables" do
   owner "root"
   group "root"
   mode 0600
+  notifies :restart, "service[iptables]", :delayed
+end
+
+service "iptables" do
+  action :nothing
 end
