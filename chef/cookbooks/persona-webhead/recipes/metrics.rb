@@ -42,8 +42,8 @@ file "/etc/cron.daily/logrotate" do
   action :delete
 end
 
-cookbook_file "/etc/cron.d/logrotate" do
-  source "etc/cron.d/logrotate"
+cookbook_file "/usr/local/bin/logrotate.cron" do
+  source "usr/local/bin/logrotate.cron"
   owner "root"
   group "root"
   mode 0644

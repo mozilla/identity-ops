@@ -5,14 +5,14 @@ exec 2>&1 # fix stderr logging for daemontools
 export PATH=/usr/local/bin:$PATH
 export NODE_ENV=production
 export NODE_EXTRA_CONFIG=/opt/browserid/lib/configuration_local.js
-<% if svc == "webhead" or svc == "static" %>
+<% if @variables[:svc] == "webhead" or @variables[:svc] == "static" %>
 export CONFIG_FILES="/opt/browserid/config/l10n-prod.json,"
 <% end %>
 export CONFIG_FILES="${CONFIG_FILES}/opt/browserid/config/production.json"
-<% if node[:persona][:loadtest] and svc == "webhead" %>
+<% if node[:persona][:loadtest] and @variables[:svc] == "webhead" %>
 export BROWSERID_FAKE_VERIFICATION=1
 <% end %>
 
 cd /opt/browserid
 ulimit -n 8192
-exec setuidgid browserid bin/<%= svc == "webhead" ? "browserid" : svc =%>
+exec setuidgid browserid bin/<%= @variables[:svc] == "webhead" ? "browserid" : @variables[:svc] %>
