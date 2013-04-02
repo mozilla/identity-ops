@@ -28,11 +28,49 @@ package "browserid-server" do
 end
 
 template "/opt/browserid/config/production.json" do
-
+  path "opt/browserid/config/production.json.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :restart, "daemontools_service[browserid-webhead]", :delayed
 end
 
-template "/opt/browserid/config/webhead.json" do
+file "/var/browserid/browserid_cookie.sekret" do
+  content node[:persona][:webhead][:cookie_sekret]
+  mode 0640
+  user "root"
+  group "browserid"
+  notifies :restart, "daemontools_service[browserid-webhead]", :delayed
+  notifies :restart, "daemontools_service[browserid-verifier]", :delayed
+  notifies :restart, "daemontools_service[browserid-router]", :delayed
+  notifies :restart, "daemontools_service[browserid-static]", :delayed
 end
 
-template "/opt/browserid/config/webhead.json" do
+file "/var/browserid/root.cert" do
+  content node[:persona][:webhead][:root_cert]
+  mode 0644
+  user "root"
+  group "browserid"
+  notifies :restart, "daemontools_service[browserid-webhead]", :delayed
+end
+
+for svc in ["webhead", "verifier", "router", "static" ] do
+  daemontools_service "browserid-#{svc}" do
+    directory "/var/services/browserid-#{svc}"
+    template "browserid-#{svc}"
+    action [:enable, :start]
+    log true
+  end
+end
+
+include_recipe "persona-webhead::metrics"
+
+include_recipe "persona-common::nginx"
+
+cookbook_file "/etc/nginx/conf.d/idweb.conf" do
+  source "etc/nginx/conf.d/idweb.conf"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :restart, "daemontools_service[nginx]", :delayed
 end
