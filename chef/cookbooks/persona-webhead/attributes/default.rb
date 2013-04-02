@@ -14,3 +14,4 @@ default["persona"]["webhead"]["kpi_backend_db_url"] = "https://kpi.example.com/w
 default["persona"]["webhead"]["database"]["host"] = "dbread-example-123456.us-west-2.elb.amazonaws.com"
 default["persona"]["webhead"]["database"]["user"] = "browseridro"
 default["persona"]["webhead"]["database"]["password"] = "password-goes-here"
+

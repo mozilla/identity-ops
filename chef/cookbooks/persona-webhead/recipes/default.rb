@@ -28,7 +28,7 @@ package "browserid-server" do
 end
 
 template "/opt/browserid/config/production.json" do
-  path "opt/browserid/config/production.json.erb"
+  source "opt/browserid/config/production.json.erb"
   owner "root"
   group "root"
   mode 0644
@@ -36,7 +36,7 @@ template "/opt/browserid/config/production.json" do
 end
 
 file "/var/browserid/browserid_cookie.sekret" do
-  content node[:persona][:webhead][:cookie_sekret]
+  content node[:persona][:cookie_sekret]
   mode 0640
   user "root"
   group "browserid"
@@ -47,7 +47,7 @@ file "/var/browserid/browserid_cookie.sekret" do
 end
 
 file "/var/browserid/root.cert" do
-  content node[:persona][:webhead][:root_cert]
+  content node[:persona][:root_cert]
   mode 0644
   user "root"
   group "browserid"
@@ -57,7 +57,8 @@ end
 for svc in ["webhead", "verifier", "router", "static" ] do
   daemontools_service "browserid-#{svc}" do
     directory "/var/services/browserid-#{svc}"
-    template "browserid-#{svc}"
+    template "browserid-generic"
+    variables :svc => svc
     action [:enable, :start]
     log true
   end

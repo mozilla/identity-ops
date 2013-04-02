@@ -1,0 +1,14 @@
+/var/browserid/log/verifier-metrics.json /var/browserid/log/router-metrics.json {
+    daily
+    compress
+    copytruncate
+    dateext
+    dateformat=%Y-%m-%d
+    create 0600 bid_metrics nobody
+    olddir /opt/bid_metrics/queue
+    rotate 14
+    sharedscripts
+    postrotate 
+        chmod -w /opt/bid_metrics/queue/* 
+    endscript 
+}
