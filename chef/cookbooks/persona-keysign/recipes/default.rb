@@ -32,7 +32,7 @@ template "/opt/browserid/config/production.json" do
   owner "root"
   group "root"
   mode 0644
-  notifies :restart, "daemontools_service[browserid-keysigner]", :delayed
+  notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
 file "/var/browserid/browserid_cookie.sekret" do
@@ -40,7 +40,7 @@ file "/var/browserid/browserid_cookie.sekret" do
   mode 0640
   user "root"
   group "browserid"
-  notifies :restart, "daemontools_service[browserid-keysigner]", :delayed
+  notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
 file "/var/browserid/root.cert" do
@@ -48,7 +48,7 @@ file "/var/browserid/root.cert" do
   mode 0644
   user "root"
   group "browserid"
-  notifies :restart, "daemontools_service[browserid-keysigner]", :delayed
+  notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
 file "/var/browserid/root.secretkey" do
@@ -56,13 +56,13 @@ file "/var/browserid/root.secretkey" do
   mode 0640
   user "root"
   group "browserid"
-  notifies :restart, "daemontools_service[browserid-keysigner]", :delayed
+  notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
 
-daemontools_service "browserid-keysigner" do
-  directory "/var/services/browserid-keysigner"
-  template "browserid-keysigner"
+daemontools_service "browserid-keysign" do
+  directory "/var/services/browserid-keysign"
+  template "browserid-keysign"
   action [:enable, :start]
   log true
 end
