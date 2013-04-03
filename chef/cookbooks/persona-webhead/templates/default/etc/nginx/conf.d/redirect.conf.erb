@@ -1,0 +1,127 @@
+
+server {
+    # HTTP <%= @site_name %>
+    listen   8000 default;
+    server_name <%= @site_name %>;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://<%= @site_name %>$request_uri? permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}
+
+
+server {
+    # HTTP verifier.<%= @site_name %>
+    listen   8000 default;
+    server_name verifier.<%= @site_name %>;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://<%= @site_name %>/ permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}
+
+server {
+    # HTTP static.<%= @site_name %>
+    listen   8000 default;
+    server_name static.<%= @site_name %>;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://<%= @site_name %>/ permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}
+
+server {
+    # HTTP browserid.org www.browserid.org
+    listen   8000 default;
+    server_name browserid.org www.browserid.org;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://login.persona.org$request_uri? permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}
+
+server {
+    # HTTP diresworb.org www.diresworb.org
+    listen   8000 default;
+    server_name browserid.org www.diresworb.org;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://login.anosrep.org$request_uri? permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}
+
+server {
+    # HTTP persona.org www.persona.org
+    listen   8000 default;
+    server_name persona.org www.persona.org;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://login.persona.org/ permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}
+
+server {
+    # HTTP anosrep.org www.anosrep.org
+    listen   8000 default;
+    server_name anosrep.org www.anosrep.org;
+    # Set STS Header
+    add_header Strict-Transport-Security "max-age=10886400; includeSubdomains";
+
+    # redirect
+    # http://wiki.nginx.org/IfIsEvil
+    if ($request_method ~ GET|HEAD ) {
+        rewrite        ^ https://login.anosrep.org/ permanent;
+    }
+
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
+    }
+}

@@ -68,10 +68,19 @@ include_recipe "persona-webhead::metrics"
 
 include_recipe "persona-common::nginx"
 
-cookbook_file "/etc/nginx/conf.d/idweb.conf" do
-  source "etc/nginx/conf.d/idweb.conf"
+temlpate "/etc/nginx/conf.d/idweb.conf" do
+  source "etc/nginx/conf.d/idweb.conf.erb"
   owner "root"
   group "root"
   mode 0644
+  variables(:site_name => node[:persona][:webhead][:public_url][/https?:\/\/([^\/]*)/, 1])
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
+
+#cookbook_file "/etc/nginx/conf.d/redirect.conf" do
+#  source "etc/nginx/conf.d/redirect.conf"
+#  owner "root"
+#  group "root"
+#  mode 0644
+#  notifies :restart, "daemontools_service[nginx]", :delayed
+#end
