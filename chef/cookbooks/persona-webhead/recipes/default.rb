@@ -73,7 +73,7 @@ template "/etc/nginx/conf.d/idweb.conf" do
   owner "root"
   group "root"
   mode 0644
-  variables(:site_name => node[:persona][:webhead][:public_url][/https?:\/\/([^\/]*)/, 1])
+  variables(:site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1])
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
 
