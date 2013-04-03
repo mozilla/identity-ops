@@ -1,6 +1,6 @@
 server {
     listen       80 default;
-    server_name <%= @site_name %>
+    server_name <%= @site_name %>;
     # do not expose to public
     location /code_update {
         allow 127.0.0.0/8;
@@ -56,8 +56,8 @@ server {
 }
 
 server {
-    listen       80 default;
-    server_name verifier.<%= @site_name %>
+    listen       80;
+    server_name verifier.<%= @site_name %>;
     location /verify/code_update {
         allow 127.0.0.0/8;
         deny all;

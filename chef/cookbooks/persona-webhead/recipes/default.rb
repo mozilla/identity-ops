@@ -68,7 +68,7 @@ include_recipe "persona-webhead::metrics"
 
 include_recipe "persona-common::nginx"
 
-temlpate "/etc/nginx/conf.d/idweb.conf" do
+template "/etc/nginx/conf.d/idweb.conf" do
   source "etc/nginx/conf.d/idweb.conf.erb"
   owner "root"
   group "root"
