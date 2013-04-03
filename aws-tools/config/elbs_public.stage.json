@@ -38,7 +38,7 @@
                 443,
                 80,
                 "HTTPS",
-                "wildcard.login.anosrep.org"
+                "wildcard.anosrep.org"
             ],
             [
                 80,
