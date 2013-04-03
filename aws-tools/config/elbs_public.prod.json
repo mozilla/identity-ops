@@ -1,0 +1,69 @@
+[
+    {
+        "name": "persona-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "multisan-www.persona.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "browserid-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "www.browserid.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "bt-login-persona-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "multisan-bigtent.login.persona.org"
+            ]
+        ]
+    }
+]

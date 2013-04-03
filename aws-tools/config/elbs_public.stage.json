@@ -1,0 +1,93 @@
+[
+    {
+        "name": "anosrep-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.anosrep.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "login-anosrep-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "diresworb-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.diresworb.org"
+            ],
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "bt-login-anosrep-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ]
+        ]
+    }
+]

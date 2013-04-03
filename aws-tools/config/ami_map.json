@@ -1,0 +1,32 @@
+{
+	"identity-bigtent-0.1": {
+		"us-west-2": "ami-f461f4c4",
+		"us-east-1": "ami-e0e17a89"
+	},
+	"identity-bigtent-0.2": {
+		"us-west-2": "ami-7eb4204e",
+		"us-east-1": "ami-62af340b"
+	},
+    "persona-webhead-0.1": {
+        "us-west-2": "ami-cc6df9fc",
+        "us-east-1": ""
+    },
+	"manual-identity-proxy-2013030401-ebs": {
+		"us-west-2": "ami-42b92c72",
+		"us-east-1": "ami-b6b229df"
+	},
+	"Scientific Linux 6.3 x86_64": {
+		"us-west-2": "ami-d033bce0",
+		"us-east-1": "ami-313b8e58"
+	},
+	"ami-vpc-nat-1.0.0-beta.i386-ebs": {
+		"us-west-2": "ami-6eff725e",
+		"us-east-1": "ami-2e1bc047"
+	},
+	"SvcOps SL62 v1.0": {
+		"us-west-2": "ami-16c25626",
+		"us-east-1": "ami-89c249e0"
+	}	
+
+
+ }

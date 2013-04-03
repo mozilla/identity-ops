@@ -1,0 +1,111 @@
+[
+    {
+        "name": "keysign",
+        "subnet" : "private",
+        "security_groups" :
+        [
+            "private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "dbwrite",
+        "subnet" : "private",
+        "security_groups" :
+        [
+            "private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                80,
+                80,
+                "HTTP"
+            ]
+        ]
+    },
+    {
+        "name": "dbread",
+        "subnet" : "private",
+        "security_groups" :
+        [
+            "private-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "db",
+        "subnet" : "private",
+        "security_groups" :
+        [
+            "db-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                3306,
+                3306,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:3306",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "proxy",
+        "subnet" : "private",
+        "security_groups" :
+        [
+            "proxy-loadbalancer"
+        ],
+        "is_internal" : true,
+        "listeners" : 
+        [
+            [
+                8888,
+                8888,
+                "TCP"
+            ]
+        ],
+        "healthcheck" :
+        {
+            "interval" : 30,
+            "target" : "TCP:8888",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    }
+]

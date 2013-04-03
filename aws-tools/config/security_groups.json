@@ -1,0 +1,183 @@
+[
+    [
+        "admin",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 22,
+                "to_port": 22,
+                "cidr_ip": "0.0.0.0/0"
+            },
+            {
+                "direction": "egress",
+                "ip_protocol": -1,
+                "cidr_ip": "0.0.0.0/0"
+            }
+        ]
+    ],
+    [
+        "administrable",
+        [
+            {
+                "ip_protocol": "-1",
+                "src_security_group_name": "admin"
+            }
+        ]
+    ],
+    [
+        "public-loadbalancer",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "cidr_ip": "0.0.0.0/0"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 443,
+                "to_port": 443,
+                "cidr_ip": "0.0.0.0/0"
+            }
+        ]
+    ],
+    [
+        "frontend",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "src_security_group_name": "public-loadbalancer"
+            }
+        ]
+    ],
+    [
+        "private-loadbalancer",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "src_security_group_name": "frontend"
+            }
+        ]
+    ],
+    [
+        "middleware-http",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "src_security_group_name": "private-loadbalancer"
+            }
+        ]
+    ],
+    [
+        "dbwrite",
+        []
+    ],
+    [
+        "db-ro",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "private-loadbalancer"
+            }
+        ]
+    ],
+    [
+        "db-loadbalancer",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "db-ro"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "dbwrite"
+            }
+        ]
+    ],
+    [
+        "db-rw",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "db-loadbalancer"
+            }
+        ]
+    ],
+    [
+        "internet-outbound",
+        []
+    ],
+    [
+        "proxy-loadbalancer",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 8888,
+                "to_port": 8888,
+                "src_security_group_name": "internet-outbound"
+            }
+        ]
+    ],
+    [
+        "proxy",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 8888,
+                "to_port": 8888,
+                "src_security_group_name": "proxy-loadbalancer"
+            },
+            {
+                "direction": "egress",
+                "ip_protocol": -1,
+                "cidr_ip": "0.0.0.0/0"
+            }
+        ]
+    ],
+    [
+        "natsg",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "cidr_ip": "vpc"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 443,
+                "to_port": 443,
+                "cidr_ip": "vpc"
+            },
+            {
+                "direction": "egress",
+                "ip_protocol": -1,
+                "cidr_ip": "0.0.0.0/0"
+            }
+        ]
+    ],
+    [
+        "temp-internet",
+        [
+            {
+                "direction": "egress",
+                "ip_protocol": -1,
+                "cidr_ip": "0.0.0.0/0"
+            }
+        ]
+    ]
+]

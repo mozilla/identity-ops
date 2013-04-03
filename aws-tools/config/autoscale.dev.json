@@ -1,0 +1,148 @@
+[
+    {
+        "launch_configuration": 
+        {
+            "tier" : "webhead",
+            "image_id" : "persona-webhead-0.1",
+            "security_groups" : 
+            [
+                "frontend",
+                "internet-outbound",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "personatest-org"
+        ],
+        "subnet": "private"
+
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "bigtent",
+            "image_id" : "identity-bigtent-0.2",
+            "security_groups" : 
+            [
+                "frontend",
+                "internet-outbound",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "bt-login-personatest-org"
+        ],
+        "subnet": "private"
+
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "keysign",
+            "image_id" : "Scientific Linux 6.3 x86_64",
+            "security_groups" : 
+            [
+                "middleware-http",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "keysign"
+        ],
+        "subnet": "private"
+
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "dbwrite",
+            "image_id" : "Scientific Linux 6.3 x86_64",
+            "security_groups" : 
+            [
+                "middleware-http",
+                "dbwrite",
+                "internet-outbound",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "dbwrite"
+        ],
+        "subnet": "private"
+
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "dbread",
+            "image_id" : "Scientific Linux 6.3 x86_64",
+            "security_groups" : 
+            [
+                "db-ro",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "dbread"
+        ],
+        "subnet": "private"
+
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "dbmaster",
+            "image_id" : "Scientific Linux 6.3 x86_64",
+            "security_groups" : 
+            [
+                "db-rw",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "db"
+        ],
+        "subnet": "private"
+
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "proxy",
+            "image_id" : "manual-identity-proxy-2013030401-ebs",
+            "security_groups" : 
+            [
+                "proxy",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+            "proxy"
+        ],
+        "subnet": "private",
+        "eip": true
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "admin",
+            "image_id" : "Scientific Linux 6.3 x86_64",
+            "security_groups" : 
+            [
+                "admin"
+            ]
+        },
+        "load_balancers":
+        [
+        ],
+        "subnet": "public"
+
+    }
+]
