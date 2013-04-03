@@ -1,0 +1,12 @@
+#!/bin/bash
+
+exec 2>&1 # fix stderr logging for daemontools
+
+export PATH=/usr/local/bin:$PATH
+export NODE_ENV=production
+export NODE_EXTRA_CONFIG=/opt/browserid/lib/configuration_local.js
+export CONFIG_FILES="/opt/browserid/config/production.json"
+
+cd /opt/browserid
+ulimit -n 8192
+exec setuidgid browserid bin/keysigner

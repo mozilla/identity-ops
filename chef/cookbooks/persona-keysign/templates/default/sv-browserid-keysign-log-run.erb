@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# t means "add djb timestamps", which can be decoded with tai64nlocal
+# s1048576 means "rotate every 1MB", which is basically an eternity when ok
+# n64 means "keep 64 rotated logs", which is usually 64 times an eternity.
+exec multilog t s1048576 n64 ./main
