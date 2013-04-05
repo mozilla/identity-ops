@@ -7,10 +7,14 @@
 		"us-west-2": "ami-7eb4204e",
 		"us-east-1": "ami-62af340b"
 	},
-    "persona-webhead-0.1": {
-        "us-west-2": "ami-cc6df9fc",
-        "us-east-1": ""
-    },
+  "persona-webhead-0.1": {
+      "us-west-2": "ami-cc6df9fc",
+      "us-east-1": "ami-4093f629"
+  },
+  "persona-keysign-0.1": {
+      "us-west-2": "ami-121d8922",
+      "us-east-1": "ami-0e92f767"
+  },
 	"manual-identity-proxy-2013030401-ebs": {
 		"us-west-2": "ami-42b92c72",
 		"us-east-1": "ami-b6b229df"
