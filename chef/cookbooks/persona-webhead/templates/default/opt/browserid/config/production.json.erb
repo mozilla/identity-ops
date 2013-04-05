@@ -6,11 +6,6 @@
     "host": "127.0.0.1"
   },
   "use_minified_resources": true,
-  "database": {
-    "driver": "mysql",
-    "name": "browserid",
-    "create_schema": false
-  },
   "smtp": {
     "host": "127.0.0.1"
   },
@@ -45,7 +40,10 @@
   "database": {
     "host": "<%= node[:persona][:webhead][:database][:host] %>",
     "user": "<%= node[:persona][:webhead][:database][:user] %>",
-    "password": "<%= node[:persona][:webhead][:database][:password] %>"
+    "password": "<%= node[:persona][:webhead][:database][:password] %>",
+    "driver": "mysql",
+    "name": "browserid",
+    "create_schema": false
   },
 
   "http_proxy": {
