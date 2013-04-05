@@ -1,6 +1,6 @@
 [
     {
-        "name": "anosrep-org",
+        "name": "w-anosrep-org",
         "subnet" : "public",
         "security_groups" :
         [
@@ -24,7 +24,7 @@
         ]
     },
     {
-        "name": "login-anosrep-org",
+        "name": "w-login-anosrep-org",
         "subnet" : "public",
         "security_groups" :
         [
@@ -38,7 +38,7 @@
                 443,
                 80,
                 "HTTPS",
-                "wildcard.anosrep.org"
+                "wildcard.login.anosrep.org"
             ],
             [
                 80,
