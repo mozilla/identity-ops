@@ -14,8 +14,9 @@
         },
         "load_balancers":
         [
-            "anosrep-org",
-            "login-anosrep-org"
+            "w-anosrep-org",
+            "w-login-anosrep-org",
+            "diresworb-org"
         ],
         "subnet": "private",
         "desired_capacity": 3
@@ -44,25 +45,26 @@
         "launch_configuration": 
         {
             "tier" : "keysign",
-            "image_id" : "Scientific Linux 6.3 x86_64",
+            "image_id" : "persona-keysign-0.1",
             "security_groups" : 
             [
                 "middleware-http",
                 "administrable"
-            ]
+            ],
+            "instance_type" : "m1.small"
         },
         "load_balancers":
         [
             "keysign"
         ],
-        "subnet": "private"
-
+        "subnet": "private",
+        "desired_capacity": 2
     },
     {
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "Scientific Linux 6.3 x86_64",
+            "image_id" : "SvcOps SL62 v1.0",
             "security_groups" : 
             [
                 "middleware-http",
@@ -138,7 +140,7 @@
         "launch_configuration": 
         {
             "tier" : "admin",
-            "image_id" : "Scientific Linux 6.3 x86_64",
+            "image_id" : "SvcOps SL62 v1.0",
             "security_groups" : 
             [
                 "admin"

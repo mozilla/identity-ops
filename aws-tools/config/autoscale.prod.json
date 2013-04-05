@@ -43,7 +43,7 @@
         "launch_configuration": 
         {
             "tier" : "keysign",
-            "image_id" : "Scientific Linux 6.3 x86_64",
+            "image_id" : "persona-keysign-0.1",
             "security_groups" : 
             [
                 "middleware-http",
