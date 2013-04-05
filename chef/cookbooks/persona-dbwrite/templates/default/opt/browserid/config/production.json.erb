@@ -1,0 +1,55 @@
+{
+  "env": "production",
+  "public_url": "<%= node[:persona][:public_url] %>",
+  "public_static_url": "<%= node[:persona][:public_static_url] %>",
+  "bind_to": {
+    "host": "127.0.0.1"
+  },
+  "use_minified_resources": true,
+  "database": {
+    "driver": "mysql",
+    "name": "browserid",
+    "create_schema": false
+  },
+  "smtp": {
+    "host": "127.0.0.1"
+  },
+  "statsd": {
+    "enabled": true
+  },
+  "bcrypt_work_factor": 12,
+  "max_compute_processes": null,
+  "max_compute_duration": 10,
+  "disable_primary_support": false,
+  "enable_code_version": false,
+  "default_lang": "en",
+  "express_log_format": "default",
+  "email_to_console": false,
+  "var_path": "/var/browserid",
+
+  "keysigner": { "bind_to": { "port": 62700 } },
+  "browserid": { "bind_to": { "port": 62700 } },
+  "router": { "bind_to": { "port": 63300 } },
+  "verifier": { "bind_to": { "port": 62800 } },
+  "dbwriter": { "bind_to": { "port": 62700 } },
+  "static": { "bind_to": { "port": 63400 } },
+
+  "static_url": "http://127.0.0.1:63400",
+  "verifier_url": "<%= node[:persona][:verifier_url] %>",
+  "keysigner_url": "<%= node[:persona][:keysigner_url] %>",
+  "dbwriter_url": "<%= node[:persona][:dbwriter_url] %>",
+  "browserid_url": "http://127.0.0.1:62700",
+
+  "http_proxy": {
+    "host": "<%= node[:proxy][:host] %>",
+    "port": 8888
+  },
+  "database": {
+    "host": "<%= node[:persona][:dbwrite][:database][:host] %>",
+    "user": "<%= node[:persona][:dbwrite][:database][:user] %>",
+    "password": "<%= node[:persona][:dbwrite][:database][:password] %>"
+  },
+}
+
+
+}
