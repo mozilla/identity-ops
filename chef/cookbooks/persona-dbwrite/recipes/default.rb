@@ -10,8 +10,8 @@
 include_recipe "persona-common::default"
 include_recipe "persona-common::daemontools"
 
-rpms = [node[:persona][:keysign][:rpms]["browserid-server"],
-        node[:persona][:keysign][:rpms][:nodejs]]
+rpms = [node[:persona][:dbwrite][:rpms]["browserid-server"],
+        node[:persona][:dbwrite][:rpms][:nodejs]]
 
 for rpm in rpms do
   remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
@@ -20,11 +20,11 @@ for rpm in rpms do
 end
 
 package "nodejs" do
-  source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:keysign][:rpms][:nodejs]}"
+  source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:dbwrite][:rpms][:nodejs]}"
 end
 
 package "browserid-server" do
-  source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:keysign][:rpms]["browserid-server"]}"
+  source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:dbwrite][:rpms]["browserid-server"]}"
 end
 
 template "/opt/browserid/config/production.json" do
