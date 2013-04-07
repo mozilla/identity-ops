@@ -52,13 +52,12 @@ file "/var/browserid/root.cert" do
 end
 
 file "/var/browserid/root.secretkey" do
-  content node[:persona][:root_secretkey]
+  content node[:persona][:keysign][:root_secretkey]
   mode 0640
   user "root"
   group "browserid"
   notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
-
 
 daemontools_service "browserid-keysign" do
   directory "/var/services/browserid-keysign"
