@@ -48,33 +48,36 @@
             [
                 "middleware-http",
                 "administrable"
-            ]
+            ],
+            "instance_type" : "m1.small"
         },
         "load_balancers":
         [
             "keysign"
         ],
-        "subnet": "private"
-
+        "subnet": "private",
+        "desired_capacity": 2
     },
     {
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "Scientific Linux 6.3 x86_64",
+            "image_id" : "persona-dbwrite-0.1",
             "security_groups" : 
             [
                 "middleware-http",
                 "dbwrite",
                 "internet-outbound",
                 "administrable"
-            ]
+            ],
+            "instance_type" : "m1.small"
         },
         "load_balancers":
         [
             "dbwrite"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "desired_capacity": 2
 
     },
     {
@@ -86,14 +89,15 @@
             [
                 "db-ro",
                 "administrable"
-            ]
+            ],
+            "instance_type" : "m1.large"
         },
         "load_balancers":
         [
             "dbread"
         ],
-        "subnet": "private"
-
+        "subnet": "private",
+        "desired_capacity": 2
     },
     {
         "launch_configuration": 
