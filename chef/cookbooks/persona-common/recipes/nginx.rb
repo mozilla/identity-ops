@@ -21,6 +21,15 @@ end
 
 package "nginx"
 
+for filename in ["/etc/nginx/conf.d/default.conf",
+                 "/etc/nginx/conf.d/ssl.conf",
+                 "/etc/nginx/conf.d/virtual.conf"] do
+  file filename do
+    action :delete
+    notifies :restart, "daemontools_service[nginx]", :delayed
+  end
+end
+
 daemontools_service "nginx" do
   directory "/var/services/nginx"
   template "nginx"
@@ -36,11 +45,3 @@ cookbook_file "/etc/nginx/nginx.conf" do
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
 
-for filename in ["/etc/nginx/conf.d/default.conf",
-                 "/etc/nginx/conf.d/ssl.conf",
-                 "/etc/nginx/conf.d/virtual.conf"] do
-  file filename do
-    action :delete
-    notifies :restart, "daemontools_service[nginx]", :delayed
-  end
-end
