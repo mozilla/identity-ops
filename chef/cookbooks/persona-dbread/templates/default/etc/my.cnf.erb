@@ -1,0 +1,164 @@
+# http://dev.mysql.com/doc/refman/5.1/en/server-options.html
+# http://dev.mysql.com/doc/refman/5.1/en/server-system-variables.html
+# http://dev.mysql.com/doc/refman/5.1/en/innodb-parameters.html
+
+[client]
+port            = 3306
+socket          = /var/run/mysqld/mysqld.sock
+
+# Here is entries for some specific programs
+# The following values assume you have at least 32M ram
+
+# This was formally known as [safe_mysqld]. Both versions are currently parsed.
+[mysqld_safe]
+socket          = /var/run/mysqld/mysqld.sock
+nice            = 0
+log_error   = /var/log/mysql.err
+
+[mysqld]
+user            = mysql
+pid-file        = /var/run/mysqld/mysqld.pid
+socket          = /var/run/mysqld/mysqld.sock
+port            = 3306
+basedir         = /usr
+datadir         = /data/mysql
+tmpdir          = /tmp
+skip_external_locking
+skip_name_resolve
+
+open_files_limit   = 8192
+max_allowed_packet = 64M
+thread_stack       = 192K
+thread_cache_size  = 8
+query_cache_limit  = 1M
+query_cache_size=0
+query_cache_type=0
+
+# max tables in a join * max connections, give or take
+table_cache        = 8192
+
+# stock mysql requires this to be > 0 or else global locks expose a perf bug.
+# unnecessary with recent (mid-2010) xtradb-class variants (maria, percona).
+innodb_thread_concurrency = 0
+
+# Here you can see queries with especially long duration
+slow_query_log  = 1 ## boolean
+slow_query_log_file     = /var/log/mysql-slow.log
+long_query_time = 10 ## Let's find the super-bad queries first, then lower this threshold once that's done
+#log_error = /var/log/mysql.err ## Let's leave this off. $hostname.err is a better name so we can copy them to a common place for forensic exams
+log-queries-not-using-indexes
+
+# Be aware that this log type is a performance killer.
+# As of 5.1 you can enable the log at runtime!
+#general_log_file        = /data/mysql/all-queries.log
+#general_log             = 1
+
+# Replication configuration
+expire_logs_days        = 3
+max_binlog_size         = 100M
+innodb_locks_unsafe_for_binlog = 0
+slave-net-timeout       = 15
+master-connect-retry    = 15
+master-retry-count      = 0
+
+# we always enable binlogs, because whether or not we are the master,
+# we may be promoted to the master.
+log-bin                = mysql-bin
+server-id              = <%= node[:ipaddress].split('.').collect(&:to_i).pack('C*').unpack('N').first %>
+sync_binlog            = 1
+log_slave_updates      = 1
+relay_log_purge        = 0
+replicate-do-db        = browserid
+
+<% if node[:persona][:dbread][:mysql][:replication_type] != "master" %>
+master-host            = <%= node[:persona][:dbread][:mysql]["master-host"] %>
+master-user            = <%= node[:persona][:dbread][:mysql]["master-user"] %>
+master-password        = <%= node[:persona][:dbread][:mysql]["master-password"] %>
+read_only = 1
+<% end -%>
+
+relay_log        = mysqld-relay-bin
+relay_log_index  = mysqld-relay-index
+
+# max_connections * maxTablesInCommonJoin
+table_open_cache       = 6144
+max_connections        = 1536
+
+# commented out means all interfaces?
+#bind-address           = 127.0.0.1
+
+
+# MyISAM options ==============================================
+key_buffer              = 1024M
+myisam-recover  = BACKUP
+
+# innodb options ========================================
+#large-pages
+innodb_buffer_pool_size=<% @innodb_buffer_pool_size %>
+
+# some xtradb variants support 2x4GB of innodb logs, helps write perf
+innodb_log_file_size=4G
+innodb_log_files_in_group=2
+
+innodb_log_buffer_size=75M
+innodb_read_io_threads=4
+innodb_write_io_threads=4
+innodb_lock_wait_timeout=50
+innodb_flush_log_at_trx_commit=1
+innodb_file_per_table
+innodb_data_file_path=innodb.db:1000M:autoextend
+
+# flush method "O_DIRECT" still uses fsync() on log files;
+# "ALL_O_DIRECT" uses O_DIRECT on both log and data files.
+# (as of percona 5.1.54-12.5)
+innodb_flush_method=ALL_O_DIRECT
+innodb_max_purge_lag=1024
+innodb_use_purge_thread=4
+innodb_open_files=1536
+
+# allocate lots of extra room for concurrent transactions
+# (aka "user rollback segments")
+# NOTE: must SET GLOBAL innodb_fast_shutdown=0;, restart mysql
+#       for necessary data file changes
+innodb_extra_rsegments=64
+
+# improved data page checksum algorithm. on older data, will incur small
+# read performance penalty due to conversion of older checksums.
+innodb_fast_checksum=1
+
+# prevent mysql from arbitrarily using 20GB of virtual swap memory so that
+# we can actually predict what will happen under load.
+# the default is to grow without bound nor pruning.  this enables pruning.
+# this is also a target. if more ram is required, then more ram is used.
+#innodb_dict_size_limit=1024M
+
+# write the table of contents of the buffer pool to disk once a minute,
+# so that innodb can start up with a warm cache rather than a cold cache.
+innodb_auto_lru_dump=60
+
+# permit innodb to waste a few% of the autoincrement number space of a key
+# to improve performance of concurrent writes.  this changes the behavior
+# of autoincrement in that it may arbitrarily skip numbers now and then.
+# it will not return to them. the skipped numbers are banished forever, gone.
+# if an application presumes to calculate LAST_INSERT_ID() rather than
+# asking mysql for it, it will fail. two less table/row locks per insert
+# is a big boost to concurrent performance with many clients.
+innodb_autoinc_lock_mode=2
+
+
+# mysqldump
+[mysqldump]
+quick
+quote-names
+max_allowed_packet      = 16M
+socket          = /var/run/mysqld/mysqld.sock
+
+
+# mysql
+[mysql]
+#no-auto-rehash # faster start of mysql but no tab completition
+socket          = /var/run/mysqld/mysqld.sock
+
+[isamchk]
+key_buffer              = 16M
+socket          = /var/run/mysqld/mysqld.sock

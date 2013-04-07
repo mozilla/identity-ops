@@ -1,0 +1,5 @@
+#!/bin/bash
+
+exec 2>&1 # fix stderr logging for daemontools
+
+exec setuidgid mysql /usr/bin/pt-heartbeat --create-table -D browserid -u root --update
