@@ -64,18 +64,18 @@ master-retry-count      = 0
 # we always enable binlogs, because whether or not we are the master,
 # we may be promoted to the master.
 log-bin                = mysql-bin
-server-id              = <%= node[:ipaddress].split('.').collect(&:to_i).pack('C*').unpack('N').first %>
+server-id              = <%= @server_id %>
 sync_binlog            = 1
 log_slave_updates      = 1
 relay_log_purge        = 0
 replicate-do-db        = browserid
 
-<% if node[:persona][:dbread][:mysql][:replication_type] != "master" %>
-master-host            = <%= node[:persona][:dbread][:mysql]["master-host"] %>
-master-user            = <%= node[:persona][:dbread][:mysql]["master-user"] %>
-master-password        = <%= node[:persona][:dbread][:mysql]["master-password"] %>
+<% if node[:persona][:db][:mysql][:replication_type] != "master" and node[:persona][:db][:mysql]["master-host"] %>
+master-host            = <%= node[:persona][:db][:mysql]["master-host"] %>
+master-user            = <%= node[:persona][:db][:mysql]["master-user"] %>
+master-password        = <%= node[:persona][:db][:mysql]["master-password"] %>
 read_only = 1
-<% end -%>
+<% end %>
 
 relay_log        = mysqld-relay-bin
 relay_log_index  = mysqld-relay-index
@@ -94,7 +94,7 @@ myisam-recover  = BACKUP
 
 # innodb options ========================================
 #large-pages
-innodb_buffer_pool_size=<% @innodb_buffer_pool_size %>
+innodb_buffer_pool_size=<%= @innodb_buffer_pool_size %>
 
 # some xtradb variants support 2x4GB of innodb logs, helps write perf
 innodb_log_file_size=4G

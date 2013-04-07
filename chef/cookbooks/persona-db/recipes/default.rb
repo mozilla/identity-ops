@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: persona-dbread
+# Cookbook Name:: persona-db
 # Recipe:: default
 #
 # Copyright 2013, YOUR_COMPANY_NAME
@@ -8,6 +8,12 @@
 #
 
 include_recipe "persona-common::default"
+
+directory "/data" do
+  owner "root"
+  group "root"
+  mode 0755
+end
 
 group "mysql" do
   gid node[:persona][:mysql_uid]
@@ -19,12 +25,6 @@ user "mysql" do
   gid node[:persona][:mysql_uid]
   home "/data/mysql"
   supports :manage_home => true
-end
-
-directory "/data" do
-  owner "root"
-  group "root"
-  mode 0755
 end
 
 directory "/data/mysql" do
@@ -48,16 +48,20 @@ for pkg in ["mha4mysql-node",
             "Percona-Server-client-51",
             "Percona-Server-server-51",
             "Percona-Server-devel-51"] do
-  remote_file "#{Chef::Config[:file_cache_path]}/#{node[:persona][:dbread][:rpms][pkg]}" do
-    source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{node[:persona][:dbread][:rpms][pkg]}"
+  remote_file "#{Chef::Config[:file_cache_path]}/#{node[:persona][:db][:rpms][pkg]}" do
+    source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{node[:persona][:db][:rpms][pkg]}"
   end
   package pkg do
-    source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:dbread][:rpms][pkg]}"
+    source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:db][:rpms][pkg]}"
   end
 end
 
 service "mysql" do
-  action :enable
+  action :stop
+end
+
+execute "mv /var/lib/mysql/mysql /data/mysql/mysql" do
+  not_if { ::File.directory?("/data/mysql/mysql")}
 end
 
 cookbook_file "/etc/init.d/mysql" do
@@ -77,10 +81,11 @@ template "/etc/my.cnf" do
   mode 0644
   # :innodb_buffer_pool_size : 75% of total memory
   # :server_id : ip address in integer form ( http://dev.mysql.com/doc/refman/5.1/en/replication-options.html#option_mysqld_server-id )
-  variables(:innodb_buffer_pool_size => ((node[:memory][:total][0..-3].
-              to_i) * 0.75).to_i.to_s + node[:memory][:total][-2..-1],
-            :server_id => node[:ipaddress].split('.').collect(&:to_i).
-              pack('C*').unpack('N').first)
+  variables({
+    :innodb_buffer_pool_size => ((node[:memory][:total][0..-3].to_i) * 0.75).to_i.to_s + 
+      node[:memory][:total][-2..-1],
+    :server_id => node[:ipaddress].split('.').collect(&:to_i).pack('C*').unpack('N').first
+  })
   notifies :restart, "service[mysql]", :delayed
 end
 
@@ -106,5 +111,5 @@ daemontools_service "heartbeat-browserid" do
 end
 
 service "mysql" do
-  action :start
+  action [:enable, :start]
 end
