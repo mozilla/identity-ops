@@ -8,7 +8,7 @@
 #
 
 include_recipe "persona-common::default"
-include_recipe "persona-common::daemontools"
+include_recipe "persona-common::app"
 
 rpms = [node[:persona][:keysign][:rpms]["browserid-server"],
         node[:persona][:keysign][:rpms][:nodejs]]

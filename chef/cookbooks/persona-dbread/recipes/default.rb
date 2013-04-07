@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "persona-common::default"
+
 group "mysql" do
   gid node[:persona][:mysql_uid]
 end
