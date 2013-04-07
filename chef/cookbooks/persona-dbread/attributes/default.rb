@@ -5,9 +5,9 @@ default["persona"]["dbread"]["rpms"]["Percona-Server-devel-51"] = "Percona-Serve
 default["persona"]["dbread"]["rpms"]["Percona-Server-server-51"] = "Percona-Server-server-51-5.1.68-rel14.5.513.rhel6.x86_64.rpm"
 default["persona"]["dbread"]["rpms"]["Percona-Server-shared-51"] = "Percona-Server-shared-51-5.1.68-rel14.5.513.rhel6.x86_64.rpm"
 
-node["persona"]["dbread"]["mysql"]["replication_type"] = "slave"
-node["persona"]["dbread"]["mysql"]["master-host"] = "dbmaster.example.com"
-node["persona"]["dbread"]["mysql"]["master-user"] = "replicationuser"
-node["persona"]["dbread"]["mysql"]["master-password"] = "password-goes-here"
+default["persona"]["dbread"]["mysql"]["replication_type"] = "slave"
+default["persona"]["dbread"]["mysql"]["master-host"] = "dbmaster.example.com"
+default["persona"]["dbread"]["mysql"]["master-user"] = "replicationuser"
+default["persona"]["dbread"]["mysql"]["master-password"] = "password-goes-here"
 
-node["persona"]["mysql_uid"] = 451
+default["persona"]["mysql_uid"] = 451
