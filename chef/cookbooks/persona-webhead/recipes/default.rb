@@ -33,6 +33,9 @@ template "/opt/browserid/config/production.json" do
   group "root"
   mode 0644
   notifies :restart, "daemontools_service[browserid-webhead]", :delayed
+  notifies :restart, "daemontools_service[browserid-router]", :delayed
+  notifies :restart, "daemontools_service[browserid-verifier]", :delayed
+  notifies :restart, "daemontools_service[browserid-static]", :delayed
 end
 
 file "/var/browserid/browserid_cookie.sekret" do

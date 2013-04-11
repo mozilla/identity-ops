@@ -58,6 +58,7 @@ end
 
 service "mysql" do
   action :stop
+  not_if { ::File.directory?("/data/mysql/mysql")}
 end
 
 execute "mv /var/lib/mysql/mysql /data/mysql/mysql" do
