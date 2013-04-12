@@ -4,7 +4,6 @@ exec 2>&1 # fix stderr logging for daemontools
 
 export PATH=/usr/local/bin:$PATH
 export NODE_ENV=production
-export NODE_EXTRA_CONFIG=/opt/browserid/lib/configuration_local.js
 <% if @variables[:svc] == "webhead" or @variables[:svc] == "static" %>
 export CONFIG_FILES="/opt/browserid/config/l10n-prod.json,"
 <% end %>
