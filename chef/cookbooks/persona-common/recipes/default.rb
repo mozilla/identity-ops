@@ -10,6 +10,10 @@
 include_recipe "persona-common::daemontools"
 include_recipe "persona-common::iptables"
 
+link "/etc/localtime" do
+  to "/usr/share/zoneinfo/America/Los_Angeles"
+end
+
 service "ntpd" do
   action :start
 end
