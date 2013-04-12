@@ -2,11 +2,13 @@
 
 exec 2>&1 # fix stderr logging for daemontools
 
+l10n_config="/opt/browserid/config/l10n-prod.json"
+
 export PATH=/usr/local/bin:$PATH
 export NODE_ENV=production
 export NODE_EXTRA_CONFIG=/opt/browserid/lib/configuration_local.js
-export CONFIG_FILES="/opt/browserid/config/production.json"
+export CONFIG_FILES="${l10n_config},/opt/browserid/config/production.json"
 
 cd /opt/browserid
 ulimit -n 8192
-exec setuidgid browserid bin/keysigner
+exec setuidgid browserid bin/dbwriter
