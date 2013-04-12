@@ -19,3 +19,7 @@ cookbook_file "/root/.ssh/authorized_keys" do
   group "root"
   mode 0600
 end
+
+package "emacs"
+package "ngrep"
+
