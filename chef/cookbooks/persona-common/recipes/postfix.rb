@@ -7,8 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-package "postmap"
-service "postmap" do
+package "postfix"
+service "postfix" do
   action [:enable, :start]
 end
 
@@ -40,7 +40,7 @@ if node[:persona][:postfix][:smtp_host] then
   end
 end
 
-temlpate "/etc/postfix/main.cf" do
+template "/etc/postfix/main.cf" do
   source "etc/postfix/main.cf.erb"
   owner "root"
   group "root"

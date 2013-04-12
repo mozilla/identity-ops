@@ -677,7 +677,7 @@ readme_directory = /usr/share/doc/postfix-2.6.6/README_FILES
 
 <% if node[:persona][:postfix][:smtp_host] %>
 # Custom Socketlabs Directives
-relayhost = <%= node[:persona][:postfix][:smtp_host] %>
+relayhost = <%= node[:persona][:postfix][:smtp_host] %><%= node[:persona][:postfix][:smtp_port] ? ":" + node[:persona][:postfix][:smtp_port] : "" %>
 smtp_sasl_auth_enable = yes
 smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
 smtp_sasl_security_options =

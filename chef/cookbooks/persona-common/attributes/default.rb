@@ -17,6 +17,7 @@ default["persona"]["keysigner_url"] = "http://keysign-example-123456.us-west-2.e
 default["persona"]["dbwriter_url"] = "http://dbwrite-example-123456.us-west-2.elb.amazonaws.com"
 
 default["persona"]["postfix"]["smtp_host"] = false
+default["persona"]["postfix"]["smtp_port"] = false
 default["persona"]["postfix"]["smtp_user"] = false
 default["persona"]["postfix"]["smtp_password"] = false
 
