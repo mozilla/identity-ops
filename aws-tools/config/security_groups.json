@@ -60,6 +60,12 @@
                 "from_port": 80,
                 "to_port": 80,
                 "src_security_group_name": "frontend"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "frontend"
             }
         ]
     ],
@@ -90,7 +96,7 @@
         ]
     ],
     [
-        "db-loadbalancer",
+        "db-rw",
         [
             {
                 "ip_protocol": "tcp",
@@ -103,17 +109,6 @@
                 "from_port": 3306,
                 "to_port": 3306,
                 "src_security_group_name": "dbwrite"
-            }
-        ]
-    ],
-    [
-        "db-rw",
-        [
-            {
-                "ip_protocol": "tcp",
-                "from_port": 3306,
-                "to_port": 3306,
-                "src_security_group_name": "db-loadbalancer"
             }
         ]
     ],
