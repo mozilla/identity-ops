@@ -15,3 +15,8 @@ default["persona"]["public_static_url"] = "https://static.login.example.com"
 default["persona"]["verifier_url"] = "https://example.com"
 default["persona"]["keysigner_url"] = "http://keysign-example-123456.us-west-2.elb.amazonaws.com"
 default["persona"]["dbwriter_url"] = "http://dbwrite-example-123456.us-west-2.elb.amazonaws.com"
+
+default["persona"]["postfix"]["smtp_host"] = false
+default["persona"]["postfix"]["smtp_user"] = false
+default["persona"]["postfix"]["smtp_password"] = false
+

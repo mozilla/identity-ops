@@ -9,6 +9,7 @@
 
 include_recipe "persona-common::default"
 include_recipe "persona-common::app"
+include_recipe "persona-common::postfix"
 
 rpms = [node[:persona][:dbwrite][:rpms]["browserid-server"],
         node[:persona][:dbwrite][:rpms][:nodejs]]
