@@ -45,11 +45,12 @@
     "name": "browserid",
     "create_schema": false
   },
-
+  <% if node[:proxy][:host] %>
   "http_proxy": {
     "host": "<%= node[:proxy][:host] %>",
     "port": 8888
   }
+  <% end %>
 }
 
 
