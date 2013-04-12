@@ -34,56 +34,6 @@
         ]
     },
     {
-        "name": "dbread",
-        "subnet" : "private",
-        "security_groups" :
-        [
-            "private-loadbalancer"
-        ],
-        "is_internal" : true,
-        "listeners" : 
-        [
-            [
-                3306,
-                3306,
-                "TCP"
-            ]
-        ],
-        "healthcheck" :
-        {
-            "interval" : 30,
-            "target" : "TCP:3306",
-            "healthy_threshold" : 3,
-            "timeout" : 5,
-            "unhealthy_threshold" : 5
-        }
-    },
-    {
-        "name": "db",
-        "subnet" : "private",
-        "security_groups" :
-        [
-            "db-loadbalancer"
-        ],
-        "is_internal" : true,
-        "listeners" : 
-        [
-            [
-                3306,
-                3306,
-                "TCP"
-            ]
-        ],
-        "healthcheck" :
-        {
-            "interval" : 30,
-            "target" : "TCP:3306",
-            "healthy_threshold" : 3,
-            "timeout" : 5,
-            "unhealthy_threshold" : 5
-        }
-    },
-    {
         "name": "proxy",
         "subnet" : "private",
         "security_groups" :

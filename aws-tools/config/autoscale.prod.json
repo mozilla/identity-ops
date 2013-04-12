@@ -78,44 +78,6 @@
         ],
         "subnet": "private",
         "desired_capacity": 2
-
-    },
-    {
-        "launch_configuration": 
-        {
-            "tier" : "dbread",
-            "image_id" : "Scientific Linux 6.3 x86_64",
-            "security_groups" : 
-            [
-                "db-ro",
-                "administrable"
-            ],
-            "instance_type" : "m1.large"
-        },
-        "load_balancers":
-        [
-            "dbread"
-        ],
-        "subnet": "private",
-        "desired_capacity": 2
-    },
-    {
-        "launch_configuration": 
-        {
-            "tier" : "dbmaster",
-            "image_id" : "Scientific Linux 6.3 x86_64",
-            "security_groups" : 
-            [
-                "db-rw",
-                "administrable"
-            ]
-        },
-        "load_balancers":
-        [
-            "db"
-        ],
-        "subnet": "private"
-
     },
     {
         "launch_configuration": 
@@ -141,7 +103,7 @@
         "launch_configuration": 
         {
             "tier" : "admin",
-            "image_id" : "Scientific Linux 6.3 x86_64",
+            "image_id" : "persona-admin-0.1",
             "security_groups" : 
             [
                 "admin"

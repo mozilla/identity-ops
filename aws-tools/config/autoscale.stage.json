@@ -84,43 +84,6 @@
     {
         "launch_configuration": 
         {
-            "tier" : "dbread",
-            "image_id" : "SvcOps SL62 v1.0",
-            "security_groups" : 
-            [
-                "db-ro",
-                "administrable"
-            ],
-            "instance_type" : "m1.large"
-        },
-        "load_balancers":
-        [
-            "dbread"
-        ],
-        "subnet": "private",
-        "desired_capacity": 2
-    },
-    {
-        "launch_configuration": 
-        {
-            "tier" : "dbmaster",
-            "image_id" : "Scientific Linux 6.3 x86_64",
-            "security_groups" : 
-            [
-                "db-rw",
-                "administrable"
-            ]
-        },
-        "load_balancers":
-        [
-            "db"
-        ],
-        "subnet": "private"
-
-    },
-    {
-        "launch_configuration": 
-        {
             "tier" : "proxy",
             "image_id" : "manual-identity-proxy-2013030401-ebs",
             "security_groups" : 
@@ -142,7 +105,7 @@
         "launch_configuration": 
         {
             "tier" : "admin",
-            "image_id" : "SvcOps SL62 v1.0",
+            "image_id" : "persona-admin-0.1",
             "security_groups" : 
             [
                 "admin"
