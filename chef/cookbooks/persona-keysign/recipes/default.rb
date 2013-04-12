@@ -21,10 +21,12 @@ end
 
 package "nodejs" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:keysign][:rpms][:nodejs]}"
+  notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
 package "browserid-server" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:keysign][:rpms]["browserid-server"]}"
+  notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
 template "/opt/browserid/config/production.json" do

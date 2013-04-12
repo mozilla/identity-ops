@@ -22,10 +22,12 @@ end
 
 package "nodejs" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:dbwrite][:rpms][:nodejs]}"
+  notifies :restart, "daemontools_service[browserid-dbwrite]", :delayed
 end
 
 package "browserid-server" do
   source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:dbwrite][:rpms]["browserid-server"]}"
+  notifies :restart, "daemontools_service[browserid-dbwrite]", :delayed
 end
 
 template "/opt/browserid/config/production.json" do
