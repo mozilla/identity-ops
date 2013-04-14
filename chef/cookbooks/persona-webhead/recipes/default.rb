@@ -84,14 +84,18 @@ template "/etc/nginx/conf.d/idweb.conf" do
   owner "root"
   group "root"
   mode 0644
-  variables(:site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1])
+  # example public_url : "https://login.anosrep.org"
+  variables(:site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1],
+            :base_site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1].split('.')[-2..-1].join('.'))
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
 
-#cookbook_file "/etc/nginx/conf.d/redirect.conf" do
-#  source "etc/nginx/conf.d/redirect.conf"
-#  owner "root"
-#  group "root"
-#  mode 0644
-#  notifies :restart, "daemontools_service[nginx]", :delayed
-#end
+template "/etc/nginx/conf.d/redirect.conf" do
+  source "etc/nginx/conf.d/redirect.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  variables(:site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1],
+            :base_site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1].split('.')[-2..-1].join('.'))
+  notifies :restart, "daemontools_service[nginx]", :delayed
+end

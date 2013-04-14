@@ -43,7 +43,7 @@ server {
         gzip on;
         gzip_disable "MSIE [1-6]\.(?!.*SV1)";
         gzip_proxied any;
-        gzip_types text/html application/javascript text/css;
+        gzip_types application/javascript text/css;
     }
 
     # The ELB provides :
@@ -53,24 +53,4 @@ server {
 
     # ELB does not provide "X-Forwarded-Protocol: https"   
 
-}
-
-server {
-    listen       80;
-    server_name verifier.<%= @site_name %>;
-    location /verify/code_update {
-        allow 127.0.0.0/8;
-        deny all;
-    }
-    
-    # verifier
-    location = /verify {
-        proxy_set_header X-Real-IP $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:62800;
-    }
-    location = /verify/__heartbeat__ {
-        rewrite /verify/__heartbeat__ /__heartbeat__ break;
-        proxy_set_header X-Real-IP $proxy_add_x_forwarded_for;
-        proxy_pass http://127.0.0.1:62800;
-    }
 }
