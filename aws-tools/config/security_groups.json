@@ -165,6 +165,12 @@
                 "cidr_ip": "vpc"
             },
             {
+                "ip_protocol": "udp",
+                "from_port": 2525,
+                "to_port": 2525,
+                "cidr_ip": "vpc"
+            },
+            {
                 "direction": "egress",
                 "ip_protocol": -1,
                 "cidr_ip": "0.0.0.0/0"
