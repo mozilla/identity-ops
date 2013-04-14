@@ -37,6 +37,12 @@
   "proxy_idps": <%= JSON.generate(node[:persona][:webhead][:proxy_idps]) %>,
   "kpi_backend_sample_rate": <%= node[:persona][:webhead][:kpi_backend_sample_rate] %>,
   "kpi_backend_db_url": "<%= node[:persona][:webhead][:kpi_backend_db_url] %>",
+  <% if node[:proxy][:host] %>
+  "http_proxy": {
+    "host": "<%= node[:proxy][:host] %>",
+    "port": 8888
+  },
+  <% end %>
   "database": {
     "host": "<%= node[:persona][:webhead][:database][:host] %>",
     "user": "<%= node[:persona][:webhead][:database][:user] %>",
@@ -44,13 +50,7 @@
     "driver": "mysql",
     "name": "browserid",
     "create_schema": false
-  },
-  <% if node[:proxy][:host] %>
-  "http_proxy": {
-    "host": "<%= node[:proxy][:host] %>",
-    "port": 8888
   }
-  <% end %>
 }
 
 
