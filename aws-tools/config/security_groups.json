@@ -49,6 +49,12 @@
                 "from_port": 80,
                 "to_port": 80,
                 "src_security_group_name": "public-loadbalancer"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 8000,
+                "to_port": 8000,
+                "src_security_group_name": "public-loadbalancer"
             }
         ]
     ],
