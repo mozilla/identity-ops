@@ -48,7 +48,7 @@ server {
     rewrite        ^/include\.js$ https://<%= @site_name %>/include.js permanent;
     rewrite        ^/include\.orig\.js$ https://<%= @site_name %>/include.orig.js permanent;
     rewrite        ^/provisioning_api\.js$ https://<%= @site_name %>/provisioning_api.js permanent;
-    rewirte        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
+    rewrite        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
 }
 
 server {
@@ -142,7 +142,7 @@ server {
         rewrite        ^/include\.js$ https://<%= @site_name %>/include.js permanent;
         rewrite        ^/include\.orig\.js$ https://<%= @site_name %>/include.orig.js permanent;
         rewrite        ^/provisioning_api\.js$ https://<%= @site_name %>/provisioning_api.js permanent;
-        rewirte        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
+        rewrite        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
     }
 
     location /verify/code_update {
@@ -178,7 +178,7 @@ server {
         rewrite        ^/include\.js$ https://<%= @site_name %>/include.js permanent;
         rewrite        ^/include\.orig\.js$ https://<%= @site_name %>/include.orig.js permanent;
         rewrite        ^/provisioning_api\.js$ https://<%= @site_name %>/provisioning_api.js permanent;
-        rewirte        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
+        rewrite        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
     }
 
     location /verify/code_update {
