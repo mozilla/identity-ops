@@ -143,6 +143,7 @@ server {
         rewrite        ^/include\.orig\.js$ https://<%= @site_name %>/include.orig.js permanent;
         rewrite        ^/provisioning_api\.js$ https://<%= @site_name %>/provisioning_api.js permanent;
         rewrite        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
+        return 404;
     }
 
     location /verify/code_update {
@@ -160,8 +161,9 @@ server {
         proxy_set_header X-Real-IP $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:62800;
     }  
-
-    return 400 "{\"error\": \"This is not a valid URL to POST to\"}";
+    if ($request_method !~ GET|HEAD ) {
+        return 400 "{\"error\": \"This is not a valid URL to POST to\"}";
+    }
 }
 
 server {
