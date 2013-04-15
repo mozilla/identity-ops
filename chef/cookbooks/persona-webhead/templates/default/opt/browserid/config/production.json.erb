@@ -34,7 +34,7 @@
   "keysigner_url": "<%= node[:persona][:keysigner_url] %>",
   "dbwriter_url": "<%= node[:persona][:dbwriter_url] %>",
   "browserid_url": "http://127.0.0.1:62700",
-  "proxy_idps": <%= JSON.generate(node[:persona][:webhead][:proxy_idps]) %>,
+  "proxy_idps": <%= JSON.generate(node[:persona][:proxy_idps]) %>,
   "kpi_backend_sample_rate": <%= node[:persona][:webhead][:kpi_backend_sample_rate] %>,
   "kpi_backend_db_url": "<%= node[:persona][:webhead][:kpi_backend_db_url] %>",
   <% if node[:proxy][:host] %>
