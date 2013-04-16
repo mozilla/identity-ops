@@ -10,7 +10,7 @@
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "m1.small"
+            "instance_type" : "c1.medium"
         },
         "load_balancers":
         [
@@ -19,7 +19,7 @@
             "diresworb-org"
         ],
         "subnet": "private",
-        "desired_capacity": 3
+        "desired_capacity": 8
     },
     {
         "launch_configuration": 
@@ -32,7 +32,7 @@
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "m1.small"
+            "instance_type" : "c1.medium"
         },
         "load_balancers":
         [
@@ -51,7 +51,7 @@
                 "middleware-http",
                 "administrable"
             ],
-            "instance_type" : "m1.small"
+            "instance_type" : "c1.medium"
         },
         "load_balancers":
         [
@@ -72,14 +72,14 @@
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "m1.small"
+            "instance_type" : "c1.medium"
         },
         "load_balancers":
         [
             "dbwrite"
         ],
         "subnet": "private",
-        "desired_capacity": 2
+        "desired_capacity": 3
     },
     {
         "launch_configuration": 
