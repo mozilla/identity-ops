@@ -111,7 +111,7 @@ server {
         rewrite        ^(.*)$ https://<%= @site_name %>$1 permanent;
     }
 
-    location /verify/code_update {
+    location = /verify/code_update {
         allow 127.0.0.0/8;
         deny all;
     }
@@ -146,7 +146,7 @@ server {
         return 404;
     }
 
-    location /verify/code_update {
+    location = /verify/code_update {
         allow 127.0.0.0/8;
         deny all;
     }
@@ -183,7 +183,7 @@ server {
         rewrite        ^/authentication_api\.js$ https://<%= @site_name %>/authentication_api.js permanent;
     }
 
-    location /verify/code_update {
+    location = /verify/code_update {
         allow 127.0.0.0/8;
         deny all;
     }
@@ -210,7 +210,8 @@ server {
         gzip_disable "MSIE [1-6]\.(?!.*SV1)";
         gzip_proxied any;
         gzip_types application/javascript text/css;
+        if ($request_method !~ GET|HEAD) {
+            return 400 "{\"error\": \"This is not a valid URL to POST to\"}";
+        }
     }
-
-
 }
