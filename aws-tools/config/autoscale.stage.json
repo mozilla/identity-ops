@@ -90,16 +90,16 @@
             [
                 "proxy",
                 "administrable"
-            ]
+            ],
+            "instance_type" : "m1.small"
         },
         "load_balancers":
         [
             "proxy"
         ],
         "subnet": "private",
-        "eip": true
-
-
+        "eip": true,
+        "desired_capacity": 2
     },
     {
         "launch_configuration": 
@@ -115,6 +115,5 @@
         [
         ],
         "subnet": "public"
-
     }
 ]
