@@ -38,10 +38,10 @@ acl bigtent_microsoft1 url_regex ^https://oauth.live.com/token$
 acl bigtent_microsoft2 url_regex ^https://apis.live.net/v5.0/me?access_token=.*$
 
 # KPIggyBank connections
-acl kpipath url_regex ^https://kpiggybank.personatest.org/wsapi/interaction_data$
+acl kpipath url_regex ^https://<%= node[:persona][:proxy][:kpi_target_host] %>/wsapi/interaction_data$
 
 # to_dev_kpiggybank is the IP address of kpiggybank.personatest.org
-acl to_dev_kpiggybank dst 54.224.6.119/32
+acl to_dev_kpiggybank dst <%= node[:persona][:proxy][:kpi_target_cidr] %>
 
 # Allow verifier requests over SSL.
 http_access allow bidcert ssl get

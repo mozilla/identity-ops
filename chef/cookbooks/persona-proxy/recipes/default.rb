@@ -13,8 +13,8 @@ cookbook_file "/etc/squid/cacert.pem" do
   source "etc/squid/cacert.pem"
 end
 
-cookbook_file "/etc/squid/squid.conf" do
-  source "etc/squid/squid.conf"
+template "/etc/squid/squid.conf" do
+  source "etc/squid/squid.conf.erb"
   notifies :restart, "service[squid]", :delayed
 end
 
