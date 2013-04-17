@@ -4,6 +4,7 @@ logging.basicConfig(level=logging.DEBUG)
 import json
 import time
 import os
+import itertools
 
 def create_stack(region, environment, stack_type, availability_zones, path, replace=False, name=None, key_name=None):
     if name == None:
@@ -38,6 +39,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
     existing_load_balancers = conn_elb.get_all_load_balancers()
     existing_security_groups = conn_ec2.get_all_security_groups()
     existing_certs = conn_iam.get_all_server_certs(path_prefix=path)['list_server_certificates_response']['list_server_certificates_result']['server_certificate_metadata_list']
+    existing_subnets = conn_vpc.get_all_subnets(filters=[('vpcId', [vpc.id])])
 
     for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
         load_balancers_params['name'] = '%s-%s' % (load_balancers_params['name'], name)
@@ -57,7 +59,6 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         #    for subnet_name in load_balancers_params['subnets']:
         #        subnets.append(vpc['availability_zones'][availability_zone]['subnets'][subnet_name].id)
 
-        existing_subnets = conn_vpc.get_all_subnets(filters=[('vpcId', [vpc.id])])
         subnets = [x for x in existing_subnets if 'Name' in x.tags and environment + '-' + load_balancers_params['subnet'] in x.tags['Name']]
 
         security_groups = [x for x in existing_security_groups if x.name in [environment + '-' + y for y in load_balancers_params['security_groups']]]
@@ -148,68 +149,95 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         #key_name
         launch_configuration_params['key_name'] = key_name
 
+        #enable detailed monitoring
+        launch_configuration_params['instance_monitoring'] = True
+
         #IAM role
         #launch_configuration_params['instance_profile_name'] = '%s-%s' % (environment, launch_configuration_params['tier'])
 
-        del(launch_configuration_params['tier'])
-        stack['launch_configuration'].append(boto.ec2.autoscale.LaunchConfiguration(**launch_configuration_params))
-        launch_configuration = stack['launch_configuration'][-1]
-
-        # Don't know what this returns, maybe I should use the return object from create_launch_configuration
-        # instead of the instance from the LaunchConfiguration constructor
-        # http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_CreateLaunchConfiguration.html
-        # https://github.com/boto/boto/blob/7d1c814c4fecaa69b887e5f1b723ab1f8361cde0/boto/ec2/autoscale/__init__.py#L240
-        conn_autoscale.create_launch_configuration(launch_configuration)
-
-        #subnets = []
-        #for availability_zone in vpc['availability_zones'].keys():
-        #    subnets.append(vpc['availability_zones'][availability_zone]['subnets'][autoscale_params['subnet']].id)
         ag_subnets = [x.id for x in existing_subnets if 'Name' in x.tags and environment + '-' + autoscale_params['subnet'] in x.tags['Name']]
         vpc_zone_identifier = ','.join(ag_subnets)
 
-        autoscale_group = boto.ec2.autoscale.AutoScalingGroup(
-                group_name=launch_configuration_params['name'], 
-                load_balancers=['%s-%s' % (x, name) for x in autoscale_params['load_balancers']],
-                availability_zones=[region + x for x in availability_zones],
-                launch_config=launch_configuration, 
-                min_size=1, 
-                max_size=6,
-                vpc_zone_identifier=vpc_zone_identifier,
-                desired_capacity=0,
-                connection=conn_autoscale)
-        conn_autoscale.create_auto_scaling_group(autoscale_group)
+        if 'scale_method' in autoscale_params and autoscale_params['scale_method'] == 'manual':
+            launch_configuration_params['security_group_ids'] = launch_configuration_params['security_groups']
+            del(launch_configuration_params['security_groups'])
+            launch_configuration_params['monitoring_enabled'] = launch_configuration_params['instance_monitoring']
+            del(launch_configuration_params['instance_monitoring'])
+            instance_name = launch_configuration_params['name']
+            del(launch_configuration_params['name'])
+
+            if 'ebs_optimized' in autoscale_params and autoscale_params['ebs_optimized']:
+                launch_configuration_params['ebs_optimized'] = true
+            # kernel_id? do we need to set this or is None ok?
+            # monitoring_enabled
+            
+            current_capacity = 0
+            for subnet in itertools.cycle([x for x in existing_subnets if x.id in ag_subnets]):
+                launch_configuration_params['placement'] = subnet.availability_zone
+                launch_configuration_params['subnet_id'] = subnet.id
+                reservation = conn_ec2.run_instances(launch_configuration_params)
+                current_capacity += 1
+                reservation.instances[0].add_tag('Name', instance_name)
+                reservation.instances[0].add_tag('App', 'identity')
+                reservation.instances[0].add_tag('Env', stack_type)
+                if current_capacity >= autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1:
+                    break
+        else:
+            del(launch_configuration_params['tier'])
+            if 'ebs_optimized' in launch_configuration_params:
+                del(launch_configuration_params['ebs_optimized']) # boto doesn't yet support ebsoptimized for autoscaled gropup
+            stack['launch_configuration'].append(boto.ec2.autoscale.LaunchConfiguration(**launch_configuration_params))
+            launch_configuration = stack['launch_configuration'][-1]
+    
+            # Don't know what this returns, maybe I should use the return object from create_launch_configuration
+            # instead of the instance from the LaunchConfiguration constructor
+            # http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_CreateLaunchConfiguration.html
+            # https://github.com/boto/boto/blob/7d1c814c4fecaa69b887e5f1b723ab1f8361cde0/boto/ec2/autoscale/__init__.py#L240
+            conn_autoscale.create_launch_configuration(launch_configuration)
+
+            autoscale_group = boto.ec2.autoscale.AutoScalingGroup(
+                    group_name=launch_configuration_params['name'], 
+                    load_balancers=['%s-%s' % (x, name) for x in autoscale_params['load_balancers']],
+                    availability_zones=[region + x for x in availability_zones],
+                    launch_config=launch_configuration, 
+                    min_size=1, 
+                    max_size=12,
+                    vpc_zone_identifier=vpc_zone_identifier,
+                    desired_capacity=0,
+                    connection=conn_autoscale)
+            conn_autoscale.create_auto_scaling_group(autoscale_group)
+            
+            stack['autoscale_group'].append(conn_autoscale.get_all_groups(names=[launch_configuration_params['name']])[0])
+            autoscale_group = stack['autoscale_group'][-1]
+    
+            conn_autoscale.create_or_update_tags([boto.ec2.autoscale.Tag(key='Name',
+                                                                         value=launch_configuration_params['name'],
+                                                                         propagate_at_launch=True,
+                                                                         resource_id=launch_configuration_params['name']),
+                                                  boto.ec2.autoscale.Tag(key='App',
+                                                                         value='identity',
+                                                                         propagate_at_launch=True,
+                                                                         resource_id=launch_configuration_params['name']),
+                                                  boto.ec2.autoscale.Tag(key='Env',
+                                                                         value=stack_type,
+                                                                         propagate_at_launch=True,
+                                                                         resource_id=launch_configuration_params['name'])])
+    
+            # Now we set_desired_capacity up from 0 so instances start spinning up
+            conn_autoscale.set_desired_capacity(launch_configuration_params['name'],
+                                                autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1)
+
+            # Let's see how it's going
+            # conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
+            # conn_autoscale.get_all_groups(['identity-dev1-stage-admin-g1'])[0].get_activities()
+            # conn_autoscale.get_all_groups(['identity-dev-stage-admin-g1'])[0].get_activities()
         
-        stack['autoscale_group'].append(conn_autoscale.get_all_groups(names=[launch_configuration_params['name']])[0])
-        autoscale_group = stack['autoscale_group'][-1]
-
-        conn_autoscale.create_or_update_tags([boto.ec2.autoscale.Tag(key='Name',
-                                                                     value=launch_configuration_params['name'],
-                                                                     propagate_at_launch=True,
-                                                                     resource_id=launch_configuration_params['name']),
-                                              boto.ec2.autoscale.Tag(key='App',
-                                                                     value='identity',
-                                                                     propagate_at_launch=True,
-                                                                     resource_id=launch_configuration_params['name']),
-                                              boto.ec2.autoscale.Tag(key='Env',
-                                                                     value=stack_type,
-                                                                     propagate_at_launch=True,
-                                                                     resource_id=launch_configuration_params['name'])])
-
-        # Now we set_desired_capacity up from 0 so instances start spinning up
-        conn_autoscale.set_desired_capacity(launch_configuration_params['name'],
-                                            autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1)
-
-    # Let's see how it's going
-    # conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
-    # conn_autoscale.get_all_groups(['identity-dev1-stage-admin-g1'])[0].get_activities()
-    # conn_autoscale.get_all_groups(['identity-dev-stage-admin-g1'])[0].get_activities()
-
-    # Associate Elastic IP with admin box?
+            # Associate Elastic IP with admin box?
 
     #stack_filename = "/home/gene/Documents/identity-stack-%s.pkl" % name
     #pickle.dump(stack, open(stack_filename, 'wb'))
     #logging.info('pickled stack to %s' % stack_filename)
-    logging.debug('stack created')
+    logging.debug('stack %s created' % name)
     return stack
 
 def destroy_stack(region, environment, stack_type, name):
@@ -256,21 +284,25 @@ def destroy_stack(region, environment, stack_type, name):
     for autoscale_group in autoscale_groups:
         autoscale_group.shutdown_instances()
 
-    # Delete autoscale groups
+    # Wait for all instances to terminate and deleting autoscale groups
+    existing_autoscale_groups = conn_autoscale.get_all_groups()
     for autoscale_group in autoscale_groups:
         attempts=0
         while True:
-            try:
-                attempts += 1
+            attempts += 1
+            remaining_live_instances = len([x.instances for x in existing_autoscale_groups if x.name == autoscale_group.name][0])
+            if remaining_live_instances == 0:
                 autoscale_group.delete()
                 break
-            except boto.exception.BotoServerError:
-                logging.debug('waiting 10 seconds for instances to finish shutting down')
+            else:
+                logging.debug('waiting 10 seconds for remaining %s instances in the %s autoscale group to finish shutting down' % (remaining_live_instances, autoscale_group.name))
                 time.sleep(10)
+                existing_autoscale_groups = conn_autoscale.get_all_groups([x.name for x in autoscale_groups])
                 if attempts > 30:
                     logging.error('unable to delete autoscale group %s after 5 minutes' % autoscale_group.name)
                     autoscale_group.get_activities()
-                    raise
+                    autoscale_group.delete()
+                    break
 
     # Delete launch configurations
     for launch_configuration in launch_configurations:
@@ -279,7 +311,46 @@ def destroy_stack(region, environment, stack_type, name):
     # Delete load balancers
     for load_balancer in load_balancers:
         load_balancer.delete()
-    logging.debug('stack destroyed')
+    logging.debug('stack %s destroyed' % name)
+
+def show_stack(region, environment, stack_type, name):
+    import pprint
+    import boto.ec2
+    import boto.ec2.elb
+    import json
+    #import boto.ec2.autoscale
+    #conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
+    conn_elb = boto.ec2.elb.connect_to_region(region)
+    conn_ec2 = boto.ec2.connect_to_region(region)
+    #existing_autoscale_groups = conn_autoscale.get_all_groups()
+    #existing_launch_configurations = conn_autoscale.get_all_launch_configurations()
+    existing_load_balancers = conn_elb.get_all_load_balancers()
+    #existing_addresses = conn_ec2.get_all_addresses()
+
+    output = {}
+    output['instances'] = {}
+    output['load balancers'] = {}
+    reservations = conn_ec2.get_all_instances(None, {"tag:Name" : "*-%s" % name,
+                                                     "tag:Env"  : stack_type})
+    reservations.extend(conn_ec2.get_all_instances(None, {"tag:Name" : "*-univ",
+                                                          "tag:Env"  : stack_type}))
+    for reservation in reservations:
+        for instance in reservation.instances:
+            if instance.state == 'running':
+                output['instances'][instance.id] = {'Name'               : instance.tags['Name'],
+                                                    'private_ip_address' : instance.private_ip_address}
+                if instance.ip_address:
+                    output['bastion_ip'] = instance.ip_address
+    output['instance_ip_list'] = " ".join([output['instances'][x]['private_ip_address'] for x in output['instances'].keys()])
+    for load_balancer in [x for x in existing_load_balancers if x.name[-len(name) - 1:] == "-%s" % name]:
+        lb_instances = [{'id': x.id, 
+                         'Name' : output['instances'][x.id]['Name'], 
+                         'private_ip_address' : output['instances'][x.id]['private_ip_address']} for x in load_balancer.instances]
+        output['load balancers'][load_balancer.name] = {'dns_name' : load_balancer.dns_name,
+                                                        'instances': lb_instances}
+    for x in output.keys():
+        print x
+        print json.dumps(output[x], sort_keys=True, indent=4, separators=(',', ': '))
 
 if __name__ == '__main__':
     path = "/identity/"
@@ -294,16 +365,21 @@ if __name__ == '__main__':
     #availability_zones = ['a','b','d']
    
     environment = 'identity-dev'
-    stack = create_stack(region,
-                         environment, 
-                         'stage', 
-                         availability_zones, 
-                         path,
-                         False, 
-                         '0402',
-                         None
-                         )
-#    destroy_stack(region,
-#                  environment,
-#                  'stage',
-#                  '0402')
+
+#    stack = create_stack(region,
+#                         environment, 
+#                         'stage', 
+#                         availability_zones, 
+#                         path,
+#                         False, 
+#                         '0417',
+#                         None
+#                         )
+    destroy_stack(region,
+                  environment,
+                  'stage',
+                  '0416')
+#    show_stack(region,
+#               environment,
+#               'stage',
+#               '0417')
