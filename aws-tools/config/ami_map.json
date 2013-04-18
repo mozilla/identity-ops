@@ -11,18 +11,42 @@
       "us-west-2": "ami-cc6df9fc",
       "us-east-1": "ami-4093f629"
   },
+  "persona-webhead-0.2": {
+      "us-west-2": "ami-c0a235f0",
+      "us-east-1": "ami-8e4928e7"
+  },
   "persona-keysign-0.1": {
       "us-west-2": "ami-121d8922",
       "us-east-1": "ami-0e92f767"
+  },
+  "persona-keysign-0.2": {
+      "us-west-2": "ami-eea235de",
+      "us-east-1": "ami-864928ef"
   },
   "persona-dbwrite-0.1": {
       "us-west-2": "ami-fa0b9fca",
       "us-east-1": "ami-128de97b"
   },
+  "persona-dbwrite-0.2": {
+      "us-west-2": "ami-c8a235f8",
+      "us-east-1": "ami-984928f1"
+  },
+  "persona-admin-0.1": {
+      "us-west-2": "ami-3a2cb80a",
+      "us-east-1": "ami-248feb4d"
+  },
+  "persona-db-0.1": {
+      "us-west-2": "ami-762db946",
+      "us-east-1": ""
+  },
 	"manual-identity-proxy-2013030401-ebs": {
 		"us-west-2": "ami-42b92c72",
 		"us-east-1": "ami-b6b229df"
 	},
+  "identity-proxy-0.1": {
+    "us-west-2": "ami-4ca1367c",
+    "us-east-1": "ami-4a4c2d23"
+  },
 	"Scientific Linux 6.3 x86_64": {
 		"us-west-2": "ami-d033bce0",
 		"us-east-1": "ami-313b8e58"
