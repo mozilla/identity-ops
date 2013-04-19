@@ -84,5 +84,5 @@ access_log /var/log/squid/access.log squid
 
 sslproxy_cafile /etc/squid/cacert.pem
 
-# never deal with >2k responses
-reply_body_max_size 2048 bytes bidcert
+# never deal with >10k responses
+reply_body_max_size 10240 bytes bidcert
