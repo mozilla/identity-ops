@@ -6,7 +6,7 @@ import time
 import os
 import itertools
 
-def create_stack(region, environment, stack_type, availability_zones, path, replace=False, name=None, key_name=None):
+def create_stack(region, environment, stack_type, availability_zones, path, replace=False, name=None, key_name=None, mini_stack=False):
     if name == None:
         # Maybe we set the stack name to the username of the user creating with a number suffix?
         import random
@@ -139,6 +139,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         # security group. TODO : I'll bring our resources (yum, github chef, etc) internal later and close
         # this access
         launch_configuration_params['security_groups'].append('temp-internet')
+        launch_configuration_params['security_groups'].append('monitorable')
         
         #launch_configuration_params['security_groups'] = [vpc['security-groups'][environment + '-' + x].id for x in launch_configuration_params['security_groups']]
         launch_configuration_params['security_groups'] = [x.id for x in existing_security_groups if x.name in [environment + '-' + y for y in launch_configuration_params['security_groups']]]
@@ -224,6 +225,9 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
                                                                          resource_id=launch_configuration_params['name'])])
     
             # Now we set_desired_capacity up from 0 so instances start spinning up
+            if mini_stack:
+                autoscale_params['desired_capacity'] = 1
+
             conn_autoscale.set_desired_capacity(launch_configuration_params['name'],
                                                 autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1)
 
@@ -366,20 +370,21 @@ if __name__ == '__main__':
    
     environment = 'identity-dev'
 
-#    stack = create_stack(region,
-#                         environment, 
-#                         'stage', 
-#                         availability_zones, 
-#                         path,
-#                         False, 
-#                         '0417',
-#                         None
-#                         )
-    destroy_stack(region,
-                  environment,
-                  'stage',
-                  '0416')
-#    show_stack(region,
-#               environment,
-#               'stage',
-#               '0417')
+    stack = create_stack(region,
+                         environment, 
+                         'stage', 
+                         availability_zones, 
+                         path,
+                         False, 
+                         '0421',
+                         None,
+                         True
+                         )
+#     destroy_stack(region,
+#                   environment,
+#                   'stage',
+#                   '0409')
+#     show_stack(region,
+#                environment,
+#                'stage',
+#                '0417')
