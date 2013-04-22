@@ -44,6 +44,9 @@ template "/opt/bigtent/config/production.json" do
   owner "root"
   group "root"
   mode 0644
+  variables(
+    :proxy_host => node[:stack][:load_balancers][:proxy][:dns_name] if 'proxy' in node[:stack][:load_balancers] else node[:proxy][:host]
+  )
   notifies :restart, "daemontools_service[browserid-bigtent]", :delayed
 end
 

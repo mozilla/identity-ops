@@ -95,11 +95,15 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         stack['loadbalancer'].append(load_balancer)
 
     existing_load_balancers = conn_elb.get_all_load_balancers()
-    user_data_vars = {}
+
+    stack_info = {}
+    stack_info['load_balancers'] = {}
     for x in [y for y in existing_load_balancers if y.vpc_id == vpc.id and y.name.endswith('-%s' % name)]:
-        # This sucks cause i'm namespacing these templates with "_" I could try using a fancier templating engine
-        # with real namespace support
-        user_data_vars['loadbalancer_%s_dnsname' % x.name[:-len('-%s' % name)]] = x.dns_name
+        stack_info['load_balancers'][x.name[:-len('-%s' % name)]] = {}
+        stack_info['load_balancers'][x.name[:-len('-%s' % name)]]['dns_name'] = x.dns_name
+    
+    stack_info['name'] = name
+    
     
     # auto scale
     import boto.ec2.autoscale
@@ -116,13 +120,21 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         launch_configuration_params = autoscale_params['launch_configuration']
 
         if 'AWS_CONFIG_DIR' in os.environ:
-            user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'userdata.%s.%s' % (stack_type, launch_configuration_params['tier']))
+            user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'userdata.%s.%s.json' % (stack_type, launch_configuration_params['tier']))
         else:
-            user_data_filename = 'config/userdata.%s.%s' % (stack_type, launch_configuration_params['tier'])
+            user_data_filename = 'config/userdata.%s.%s.json' % (stack_type, launch_configuration_params['tier'])
 
         try:
             with open(user_data_filename, 'r') as f:
-                launch_configuration_params['user_data'] = Template(f.read()).safe_substitute(user_data_vars)
+                user_data = json.load(f)
+                user_data.update({'stack': stack_info})
+                user_data.update({'tier': launch_configuration_params['tier']})
+                launch_configuration_params['user_data'] = '''#!/bin/bash
+cat > /etc/chef/node.json <<End-of-message
+%s
+End-of-message
+cd /root/identity-ops && git pull
+chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data)
         except IOError:
             # There is no userdata file
             pass

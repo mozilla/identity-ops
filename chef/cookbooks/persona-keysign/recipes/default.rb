@@ -34,6 +34,10 @@ template "/opt/browserid/config/production.json" do
   owner "root"
   group "root"
   mode 0644
+  variables(
+    :dbwrite_host => node[:stack][:load_balancers][:dbwrite][:dns_name] if 'dbwrite' in node[:stack][:load_balancers] else node[:persona][:db_write_host],
+    :keysign_host => node[:stack][:load_balancers][:keysign][:dns_name] if 'keysign' in node[:stack][:load_balancers] else node[:persona][:db_keysign_host]
+  )
   notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 

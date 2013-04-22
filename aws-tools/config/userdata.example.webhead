@@ -1,8 +1,0 @@
-#!/bin/bash
-cat > /etc/chef/node.json <<End-of-message
-{
-  "run_list": [ "recipe[persona-webhead]" ]
-}
-End-of-message
-cd /root/identity-ops && git pull
-chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json
