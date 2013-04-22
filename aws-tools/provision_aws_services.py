@@ -4,6 +4,7 @@ logging.basicConfig(level=logging.DEBUG)
 import json
 import time
 import pickle
+import os
 
 def global_one_time_provision(path):
     region = 'universal'
@@ -131,36 +132,48 @@ def one_time_provision(secrets, path, region, availability_zones, key_name = Non
     conn_vpc = boto.vpc.connect_to_region(region)
     conn_ec2 = boto.ec2.connect_to_region(region)
 
-    desired_vpcs = [{'Name':'identity-dev',
-                     'App':'identity',
-                     'Env':'dev',
-                     'cidr':'10.148.24.0/21'},
-                    {'Name':'identity-prod',
-                     'App':'identity',
-                     'Env':'prod',
-                     'cidr':'10.148.32.0/21'}
-                    ]
+    desired_vpcs = {'us-west-2': 
+                       [{'Name':'identity-dev',
+                         'App':'identity',
+                         'Env':'dev',
+                         'cidr':'10.148.24.0/21'},
+                        {'Name':'identity-prod',
+                         'App':'identity',
+                         'Env':'prod',
+                         'cidr':'10.148.32.0/21',
+                         'vpn_target': '63.245.216.58'}
+                       ],
+                    'us-east-1':
+                       [{'Name':'identity-dev',
+                         'App':'identity',
+                         'Env':'dev',
+                         'cidr':'10.146.24.0/21'},
+                        {'Name':'identity-prod',
+                         'App':'identity',
+                         'Env':'prod',
+                         'cidr':'10.146.32.0/21',
+                         'vpn_target': '63.245.216.58'}
+                       ]
+                    }
 
-    desired_vpcs = [{'Name':'identity-dev',
-                     'App':'identity',
-                     'Env':'dev',
-                     'cidr':'10.148.24.0/21'}
-                    ]
-    
+    asn_map = {'us-west-2': 65148,
+               'us-east-1': 65146}
+
     ami_map = json.load(open('config/ami_map.json', 'r'))
 
     if not key_name:
         key_name = 'svcops-sl62-base-key-%s' % region
 
-    for desired_vpc in desired_vpcs:
+    for desired_vpc in desired_vpcs[region]:
         environment=desired_vpc['Name']
         existing_vpcs = conn_vpc.get_all_vpcs()
         if desired_vpc['Name'] in [x.tags['Name'] for x in existing_vpcs if 'Name' in x.tags]:
             logging.debug('skipping creation of vpc %s since it already exists' % desired_vpc['Name'])
-            continue
+            #continue
         vpcs[region][environment] = {}
 
         # Create VPCs
+        vpcs[region][environment]['vpc'] = [x.tags['Name'] for x in existing_vpcs if 'Name' in x.tags]
         vpcs[region][environment]['vpc'] = conn_vpc.create_vpc(desired_vpc['cidr'])
         vpc = vpcs[region][environment]['vpc']
         logging.debug('created vpc %s with id %s and ip range %s' % (environment, vpc.id, vpc.cidr_block))
@@ -249,6 +262,20 @@ def one_time_provision(secrets, path, region, availability_zones, key_name = Non
             logging.error('failed to attach internet gateway %s to vpc %s' % (internet_gateway.id, vpc.id))
         # TODO : tag the internet_gateway
 
+        # Create VPN to PHX1
+        if 'vpn_target' in desired_vpc:
+            customer_gateway = conn_vpc.create_customer_gateway('ipsec.1', desired_vpc['vpn_target'], asn_map[region])
+            vpn_gateway = conn_vpc.create_vpn_gateway('ipsec.1')
+            vpn_connection = conn_vpc.create_vpn_connection('ipsec.1', customer_gateway.id, vpn_gateway.id)
+            # routing : dynamic
+            customer_gateway_configuration = vpn_connection.customer_gateway_configuration
+            
+            # TODO set the route table to allow route propoation from the VGW
+
+            vpn_gateway_attachment = conn_vpc.attach_vpn_gateway(vpn_gateway.id, vpc.id)
+            #conn_vpc.create_vpn_connection_route(destination_cidr_block, vpn_connection_id)
+            #conn_vpc.create_route(route_table_id, destination_cidr_block, gateway_id=None, instance_id=None)
+
         # Create subnets
         vpcs[region][environment]['availability_zones'] = {}
         ip = IPNetwork(vpc.cidr_block)
@@ -287,7 +314,7 @@ def one_time_provision(secrets, path, region, availability_zones, key_name = Non
         while True:
             try:
                 nat_instance_state = conn_ec2.get_all_instances([reservation.instances[0].id])[0].instances[0].state
-            except boto.exception.EC2ResponseError:
+            except (boto.exception.EC2ResponseError, IndexError):
                 nat_instance_state = False
             attempts += 1
             if nat_instance_state != 'running':
@@ -349,6 +376,8 @@ def one_time_provision(secrets, path, region, availability_zones, key_name = Non
 
         # TODO : tag the route_table
 
+        # TODO add a route for the PHX1 DB 10.18.20.21/32
+
         # Associate private subnets with route table
         for availability_zone in [region + x for x in availability_zones]:
             subnet = vpcs[region][environment]['availability_zones'][availability_zone]['subnets']['private']
@@ -362,6 +391,8 @@ def one_time_provision(secrets, path, region, availability_zones, key_name = Non
                                      instance_id = nat_instance.id):
             logging.error('failed to add route sending 0.0.0.0/0 traffic to nat instance %s in route table %s' % (nat_instance.id, route_table.id))
 
+        if 'vpn_target' in desired_vpc:
+            logging.info('Customer Gateway Configuration = "\n%s\n"' % customer_gateway_configuration)
         logging.debug('vpc created')
         #pickle.dump(vpcs[region][environment], open(pkl_filename, 'wb'))
         #logging.debug('pickled vpc to %s' % pkl_filename)
@@ -384,13 +415,13 @@ if __name__ == '__main__':
     #region = 'us-west-1'
     #availability_zones = ['b','c']
 
-    region = 'us-west-2'
-    availability_zones = ['a','b','c']
+    #region = 'us-west-2'
+    #availability_zones = ['a','b','c']
 
-    #region = 'us-east-1'
-    #availability_zones = ['a','b','d']
+    region = 'us-east-1'
+    availability_zones = ['a','b','d']
 
     global_data = global_one_time_provision(path)
-    create_iam_roles(path)
-    vpcs = one_time_provision(secrets, path, region, availability_zones, 'gene')
+    # create_iam_roles(path)
+    vpcs = one_time_provision(secrets, path, region, availability_zones, None)
     
