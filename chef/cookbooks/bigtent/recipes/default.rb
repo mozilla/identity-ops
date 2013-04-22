@@ -60,7 +60,7 @@ file "/var/browserid/certifier/key.publickey" do
   group "browserid"
   mode 0600
   content node[:bigtent][:publickey]
-  notifies :restart, "daemontools_service[browserid-certifier]", :delayed
+  notifies :restart, "daemontools_service[browserid-bigtent]", :delayed
 end
 
 file "/var/browserid/certifier/key.secretkey" do
