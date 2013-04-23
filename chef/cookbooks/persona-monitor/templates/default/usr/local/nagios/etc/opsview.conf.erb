@@ -1,0 +1,10 @@
+
+# 
+# This file overrides variables from opsview.defaults
+# This file will not be overwritten on upgrades
+#
+$dbpasswd = "<%= node[:persona][:monitor][:dbpasswd] %>";
+$runtime_dbpasswd = "<%= node[:persona][:monitor][:runtime_dbpasswd] %>";
+
+$nrd_shared_password = "<%= node[:persona][:monitor][:nrd_shared_password] %>";
+1;
