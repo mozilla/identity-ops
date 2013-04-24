@@ -4,9 +4,17 @@
   "certifier_host": "127.0.0.1",
   "certifier_port": 8080,
   "client_sessions": {
-    "cookie_name": "session_state",
+    "cookie_name": "session",
     "secret": "<%= node[:bigtent][:client_session_secret] %>",
     "duration": 86400000
+  },
+  "account_link_sessions": {
+    "cookie_name": "accountdb",
+    "secret": "<%= node[:bigtent][:account_link_session_secret] %>",
+    "duration": 31536000000
+  },
+  "account_link_token": {
+    "secret": "<%= node[:bigtent][:account_link_token] %>"
   },
   "env": "production",
   "issuer": "<%= node[:bigtent][:issuer] %>",
@@ -27,5 +35,8 @@
   },
 <% end %>
   "translation_directory": "/opt/bigtent/static/i18n",
+  "smtp": {
+    "host": "127.0.0.1"
+  },
   "supported_languages": ["en-US"]
 }

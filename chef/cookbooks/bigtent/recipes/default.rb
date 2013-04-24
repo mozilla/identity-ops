@@ -8,6 +8,7 @@
 #
 
 include_recipe "persona-common::default"
+include_recipe "persona-common::postfix"
 
 rpms = [node[:bigtent][:rpms][:bigtent],
         node[:bigtent][:rpms][:certifier],
