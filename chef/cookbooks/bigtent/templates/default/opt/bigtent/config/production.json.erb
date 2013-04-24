@@ -20,9 +20,9 @@
   },
   "pub_key_ttl": 120,
   "pub_key_path": "/var/browserid/certifier/key.publickey",
-<% @proxy_host %>
+<% if node[:stack][:load_balancers].include?('proxy') or node[:proxy][:host] %>
   "http_proxy": {
-    "host": "<%= @proxy_host %>",
+    "host": "<%= node[:stack][:load_balancers].include?('proxy') ? node[:stack][:load_balancers][:proxy][:dns_name] : node[:proxy][:host] %>",
     "port": <%= node[:proxy][:port] %>
   },
 <% end %>

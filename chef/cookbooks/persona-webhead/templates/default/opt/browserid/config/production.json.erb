@@ -31,19 +31,18 @@
 
   "static_url": "http://127.0.0.1:63400",
   "verifier_url": "<%= node[:persona][:verifier_url] %>",
-  "keysigner_url": "http://<%= @keysign_host %>",
-  "dbwriter_url": "http://<%= @dbwrite_host %>",
+  "keysigner_url": "http://<%= node[:stack][:load_balancers].include?('keysign') ? node[:stack][:load_balancers][:keysign][:dns_name] : node[:persona][:db_keysign_host] %>",
+  "dbwriter_url": "http://<%= node[:stack][:load_balancers].include?('dbwrite') ? node[:stack][:load_balancers][:dbwrite][:dns_name] : node[:persona][:db_dbwrite_host] %>",
   "browserid_url": "http://127.0.0.1:62700",
   "proxy_idps": <%= JSON.generate(node[:persona][:proxy_idps]) %>,
   "kpi_backend_sample_rate": <%= node[:persona][:webhead][:kpi_backend_sample_rate] %>,
   "kpi_backend_db_url": "<%= node[:persona][:webhead][:kpi_backend_db_url] %>",
-  <% if @proxy_host %>
+<% if node[:stack][:load_balancers].include?('proxy') or node[:proxy][:host] %>
   "http_proxy": {
-    "host": "<%= @proxy_host %>",
+    "host": "<%= node[:stack][:load_balancers].include?('proxy') ? node[:stack][:load_balancers][:proxy][:dns_name] : node[:proxy][:host] %>",
     "port": <%= node[:proxy][:port] %>
-  }
-  <% end %>
-  "database": {
+  },
+<% end %>  "database": {
     "host": "<%= node[:persona][:webhead][:database][:host] %>",
     "user": "<%= node[:persona][:webhead][:database][:user] %>",
     "password": "<%= node[:persona][:webhead][:database][:password] %>",
@@ -52,5 +51,3 @@
     "create_schema": false
   }
 }
-
-
