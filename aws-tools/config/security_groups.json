@@ -25,6 +25,40 @@
         ]
     ],
     [
+        "monitor",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "src_security_group_name": "monitorable"
+            }
+        ]
+    ],
+    [
+        "monitorable",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "src_security_group_name": "monitor"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 3306,
+                "to_port": 3306,
+                "src_security_group_name": "monitor"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 8888,
+                "to_port": 8888,
+                "src_security_group_name": "monitor"
+            }
+        ]
+    ],
+    [
         "public-loadbalancer",
         [
             {
