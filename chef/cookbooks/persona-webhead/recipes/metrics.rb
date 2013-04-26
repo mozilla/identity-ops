@@ -22,8 +22,8 @@ for dir in ["/opt/bid_metrics/.ssh", "/opt/bid_metrics/queue"]
   end
 end
 
-cookbook_file "/opt/bid_metrics/.ssh/authorized_keys" do
-  source "opt/bid_metrics/.ssh/authorized_keys"
+file "/opt/bid_metrics/.ssh/id_rsa" do
+  content node[:persona][:webhead][:metrics][:id_rsa]
   owner "bid_metrics"
   group "bid_metrics"
   mode 0600
@@ -55,3 +55,4 @@ file "/etc/cron.d/logrotate" do
   group "root"
   mode 0644
 end
+  

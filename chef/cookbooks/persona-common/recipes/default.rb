@@ -17,3 +17,7 @@ end
 service "ntpd" do
   action :start
 end
+
+package "libxml2-devel"
+package "libxslt-devel"
+chef_gem "aws-sdk"
