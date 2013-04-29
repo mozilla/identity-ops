@@ -82,10 +82,10 @@ s3_file "/opt/bid_metrics/etl/GeoIPCity.dat.gz" do
   group "bid_metrics"
   mode 0600
   checksum "3e4abecbd18edb8acb0a4ee9d1ff74b4ac8f48c2cc616c3ad210ad626b3cf502"
-  notifies :run, "execute[gunzip GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
+  notifies :run, "execute[gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
 end
 
-execute "gunzip GeoIPCity.dat.gz > GeoIPCity.dat" do
+execute "gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat" do
   user "bid_metrics"
   cwd "/opt/bid_metrics/etl"
   creates "/opt/bid_metrics/etl/GeoIPCity.dat"
