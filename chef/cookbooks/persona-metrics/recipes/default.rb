@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "persona-common::default"
+
 user "bid_metrics" do
   comment "browserid metrics"
   uid 900
@@ -21,6 +23,8 @@ for dir in [".ssh",
             "etl",
             "etl/input",
             "etl/output",
+            "etl/config",
+            "etl/etl",
             "tmp"]
   directory "/opt/bid_metrics/" + dir do
     owner "bid_metrics"
@@ -45,10 +49,18 @@ file "/opt/bid_metrics/.ssh/id_rsa" do
   mode 0600
 end
 
+file "/opt/bid_metrics/.ssh/known_hosts" do
+  content "10.22.75.50 ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAm2r7bw+6bkpmNECqMiOgvR3rV3blfkWLiqZQ+oMe7WxSunvRQIzTqsfrQnozHeZlO8Zn5qpqzEwx5IGICmfpR5SiGSqcS9cXJhbYzbeV4gjD8Paxrv2Ej37IM590En1Hz4VInM/MhXm9prdSgjtiT3NDu1qGkg6YsflNXsydrXfpWiz/rKFdJpWkQ5nqapfq5vOuZHEediIB5gbzbXEWFh6k/apqJvUQBMxYy460Z+zK3FHKpB5d9dhEbIvr/8tObam1zOdit3vv/BcTIi/sZkt0SDuKcoL4xzkSEneIv4OadHQtSo3fVqo//3K5pIxmMbKYpkUHuZ51Bf48wD4MNw=="
+  owner "bid_metrics"
+  group "bid_metrics"
+  mode 0644
+end
+
 # Install kettle
 remote_file "#{Chef::Config[:file_cache_path]}/pdi-ce-4.4.0-stable.tar.gz" do
    source "http://downloads.sourceforge.net/project/pentaho/Data%20Integration/4.4.0-stable/pdi-ce-4.4.0-stable.tar.gz"
-   notifies :run, "bash[install_program]", :immediately
+   checksum "acb4040492b2fec82a67c6694bc500929cea3bdb5a54a898bf1892385fcc77ad"
+   notifies :run, "bash[install_kettle]", :immediately
 end
 
 bash "install_kettle" do
@@ -69,10 +81,11 @@ s3_file "/opt/bid_metrics/etl/GeoIPCity.dat.gz" do
   owner "bid_metrics"
   group "bid_metrics"
   mode 0600
-  notifies :run, "execute[gunzip GeoIPCity.dat.gz]", :immediately
+  checksum "3e4abecbd18edb8acb0a4ee9d1ff74b4ac8f48c2cc616c3ad210ad626b3cf502"
+  notifies :run, "execute[gunzip GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
 end
 
-execute "gunzip GeoIPCity.dat.gz" do
+execute "gunzip GeoIPCity.dat.gz > GeoIPCity.dat" do
   user "bid_metrics"
   cwd "/opt/bid_metrics/etl"
   creates "/opt/bid_metrics/etl/GeoIPCity.dat"
@@ -122,4 +135,11 @@ cookbook_file "/etc/cron.d/process_metrics" do
   owner "root"
   group "root"
   mode 0644
+end
+
+cookbook_file "/opt/bid_metrics/bin/process_metrics.sh" do
+  source "opt/bid_metrics/bin/process_metrics.sh"
+  owner "bid_metrics"
+  group "bid_metrics"
+  mode 0755
 end

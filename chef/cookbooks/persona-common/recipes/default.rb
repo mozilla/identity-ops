@@ -18,6 +18,10 @@ service "ntpd" do
   action :start
 end
 
-package "libxml2-devel"
-package "libxslt-devel"
+# Because "chef_gem" occurs during the compile phase (not the convergence phase)
+# so that the gem can be used inside the current chef run, and because the "aws-sdk"
+# gem depends on libxml2 and libxslt, I need to install those two packages during
+# the compile phase, instead of the convergence phase. This is done by creating the
+# resource and then calling run_action on it explicitly instead of waiting for convergence
+[package("libxml2-devel"), package("libxslt-devel")].each { |pkg| pkg.run_action(:install) }
 chef_gem "aws-sdk"
