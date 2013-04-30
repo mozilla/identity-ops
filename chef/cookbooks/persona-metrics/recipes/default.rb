@@ -92,6 +92,22 @@ execute "gunzip GeoIPCity.dat.gz > GeoIPCity.dat" do
   action :nothing
 end
 
+s3_file "/opt/bid_metrics/etl/kettle/plugins/maxmindgeoiplookup.jar" do
+  source "s3://mozilla-identity-us-standard/assets/maxmindgeoiplookup.jar"
+  owner "bid_metrics"
+  group "bid_metrics"
+  mode 0644
+  checksum "1279182b67f215208463f9a614175f278fe444193abd75f0a22bec00b5210e52"
+end
+
+s3_file "/opt/bid_metrics/etl/kettle/plugins/steps/MaxMindGeoIPLookup.zip" do
+  source "s3://mozilla-identity-us-standard/assets/MaxMindGeoIPLookup.zip"
+  owner "bid_metrics"
+  group "bid_metrics"
+  mode 0644
+  checksum "3ba16a8fff9e23ed4b5870965576072b7452386471d7ee0a57d2668e8882ae50"
+end
+
 directory "/usr/local/share/GeoIP" do
   owner "root"
   group "root"

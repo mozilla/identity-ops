@@ -1,10 +1,12 @@
 #!/bin/bash
 
+# webhead:/var/browserid/log/verifier-metrics.json and router-metrics.json
+# webhead:/etc/logrotate.d/bid_metrics
 # webhead:/opt/bid_metrics/queue/*
 # metrics_server:/opt/bid_metrics/incoming/*.webheadname
 # rm webhead:/opt/bid_metrics/queue/*
 
-for file in /opt/bid_metrics/queue/*.json; do 
+for file in /opt/bid_metrics/queue/*.json.gz; do 
     mv $file /opt/bid_metrics/tmp/`basename $file`.$HOSTNAME
 done
 
