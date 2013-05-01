@@ -47,6 +47,10 @@
     "us-west-2": "ami-4ca1367c",
     "us-east-1": "ami-4a4c2d23"
   },
+  "identity-proxy-0.2": {
+    "us-west-2": "ami-63f36553",
+    "us-east-1": "ami-d9dbb9b0"
+  },
 	"Scientific Linux 6.3 x86_64": {
 		"us-west-2": "ami-d033bce0",
 		"us-east-1": "ami-313b8e58"
