@@ -8,8 +8,8 @@
     "us-east-1": "ami-62af340b"
   },
   "identity-bigtent-0.3": {
-    "us-west-2": "ami-03f16733",
-    "us-east-1": "ami-f9ddbf90"
+    "us-west-2": "ami-dbf167eb",
+    "us-east-1": "ami-cf2e43a6"
   },
   "persona-webhead-0.1": {
       "us-west-2": "ami-cc6df9fc",
@@ -20,8 +20,8 @@
       "us-east-1": "ami-8e4928e7"
   },
   "persona-webhead-0.3": {
-      "us-west-2": "ami-eff066df",
-      "us-east-1": "ami-5fdcbe36"
+      "us-west-2": "ami-39fe6809",
+      "us-east-1": "ami-5729443e"
   },
   "persona-keysign-0.1": {
       "us-west-2": "ami-121d8922",
@@ -32,8 +32,8 @@
       "us-east-1": "ami-864928ef"
   },
   "persona-keysign-0.3": {
-      "us-west-2": "ami-67f06657",
-      "us-east-1": "ami-afdebcc6"
+      "us-west-2": "ami-29fe6819",
+      "us-east-1": "ami-c52944ac"
   },
   "persona-dbwrite-0.1": {
       "us-west-2": "ami-fa0b9fca",
@@ -44,8 +44,8 @@
       "us-east-1": "ami-984928f1"
   },
   "persona-dbwrite-0.3": {
-      "us-west-2": "ami-39f16709",
-      "us-east-1": "ami-d7dcbebe"
+      "us-west-2": "ami-25fe6815",
+      "us-east-1": "ami-f9294490"
   },
   "persona-admin-0.1": {
       "us-west-2": "ami-3a2cb80a",
@@ -64,8 +64,8 @@
     "us-east-1": "ami-4a4c2d23"
   },
   "identity-proxy-0.2": {
-    "us-west-2": "ami-63f36553",
-    "us-east-1": "ami-d9dbb9b0"
+    "us-west-2": "ami-1ffe682f",
+    "us-east-1": "ami-3f284556"
   },
   "Scientific Linux 6.3 x86_64": {
     "us-west-2": "ami-d033bce0",
