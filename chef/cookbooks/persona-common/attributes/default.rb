@@ -26,6 +26,7 @@ default["persona"]["rpms"]["librsbac"] = "librsbac-1.4.5-4.el6.x86_64.rpm"
 default["persona"]["rpms"]["rsbac"] = "rsbac-1.4.5-4.el6.x86_64.rpm"
 default["persona"]["rpms"]["kernel"] = "kernel-2.6.32-131.6.1.el6.rsbac.x86_64.rpm"
 
-default["persona"]["db_write_host"] = "dbwrite.example.com"
-default["persona"]["db_keysign_host"] = "keysign.example.com"
+default["persona"]["dbwrite_host"] = "dbwrite.example.com"
+default["persona"]["keysign_host"] = "keysign.example.com"
 
+default["stack"]["load_balancers"] = { }
