@@ -192,5 +192,22 @@
                 "cidr_ip": "0.0.0.0/0"
             }
         ]
+    ],
+    [
+        "graphite",
+        [
+            {
+                "ip_protocol": "udp",
+                "from_port": 8125,
+                "to_port": 8125,
+                "cidr_ip": "vpc"
+            },
+            {
+                "ip_protocol": "udp",
+                "from_port": 2003,
+                "to_port": 2003,
+                "cidr_ip": "vpc"
+            }
+        ]
     ]
 ]

@@ -58,7 +58,9 @@
 	"SvcOps SL62 v1.0": {
 		"us-west-2": "ami-16c25626",
 		"us-east-1": "ami-89c249e0"
-	}	
-
-
- }
+	},
+  "persona-graphite-0.1": {
+    "us-west-2": "ami-0bce583b",
+    "us-east-1": ""
+  }
+}

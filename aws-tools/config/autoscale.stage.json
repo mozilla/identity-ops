@@ -115,5 +115,21 @@
         [
         ],
         "subnet": "public"
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "graphite",
+            "image_id" : "persona-graphite-0.1",
+            "security_groups" : 
+            [
+                "graphite",
+                "administrable"
+            ]
+        },
+        "load_balancers":
+        [
+        ],
+        "subnet": "private"
     }
 ]
