@@ -84,7 +84,7 @@
         "launch_configuration": 
         {
             "tier" : "proxy",
-            "image_id" : "identity-proxy-0.1",
+            "image_id" : "identity-proxy-0.2",
             "security_groups" : 
             [
                 "proxy",
