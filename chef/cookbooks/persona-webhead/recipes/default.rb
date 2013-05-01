@@ -16,7 +16,7 @@ rpms = [node[:persona][:webhead][:rpms]["browserid-server"],
 for rpm in rpms do
   remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
      source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpm}"
- end
+  end
 end
 
 package "nodejs" do
