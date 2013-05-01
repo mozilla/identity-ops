@@ -15,7 +15,7 @@ link "/etc/localtime" do
 end
 
 service "ntpd" do
-  action :start
+  action [:enable, :start]
 end
 
 # Because "chef_gem" occurs during the compile phase (not the convergence phase)
