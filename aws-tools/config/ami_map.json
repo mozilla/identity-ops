@@ -1,12 +1,16 @@
 {
-	"identity-bigtent-0.1": {
-		"us-west-2": "ami-f461f4c4",
-		"us-east-1": "ami-e0e17a89"
-	},
-	"identity-bigtent-0.2": {
-		"us-west-2": "ami-7eb4204e",
-		"us-east-1": "ami-62af340b"
-	},
+  "identity-bigtent-0.1": {
+    "us-west-2": "ami-f461f4c4",
+    "us-east-1": "ami-e0e17a89"
+  },
+  "identity-bigtent-0.2": {
+    "us-west-2": "ami-7eb4204e",
+    "us-east-1": "ami-62af340b"
+  },
+  "identity-bigtent-0.3": {
+    "us-west-2": "ami-03f16733",
+    "us-east-1": "ami-f9ddbf90"
+  },
   "persona-webhead-0.1": {
       "us-west-2": "ami-cc6df9fc",
       "us-east-1": "ami-4093f629"
@@ -14,6 +18,10 @@
   "persona-webhead-0.2": {
       "us-west-2": "ami-c0a235f0",
       "us-east-1": "ami-8e4928e7"
+  },
+  "persona-webhead-0.3": {
+      "us-west-2": "ami-eff066df",
+      "us-east-1": "ami-5fdcbe36"
   },
   "persona-keysign-0.1": {
       "us-west-2": "ami-121d8922",
@@ -23,6 +31,10 @@
       "us-west-2": "ami-eea235de",
       "us-east-1": "ami-864928ef"
   },
+  "persona-keysign-0.3": {
+      "us-west-2": "ami-67f06657",
+      "us-east-1": "ami-afdebcc6"
+  },
   "persona-dbwrite-0.1": {
       "us-west-2": "ami-fa0b9fca",
       "us-east-1": "ami-128de97b"
@@ -30,6 +42,10 @@
   "persona-dbwrite-0.2": {
       "us-west-2": "ami-c8a235f8",
       "us-east-1": "ami-984928f1"
+  },
+  "persona-dbwrite-0.3": {
+      "us-west-2": "ami-39f16709",
+      "us-east-1": "ami-d7dcbebe"
   },
   "persona-admin-0.1": {
       "us-west-2": "ami-3a2cb80a",
@@ -39,26 +55,26 @@
       "us-west-2": "ami-762db946",
       "us-east-1": ""
   },
-	"manual-identity-proxy-2013030401-ebs": {
-		"us-west-2": "ami-42b92c72",
-		"us-east-1": "ami-b6b229df"
-	},
+  "manual-identity-proxy-2013030401-ebs": {
+    "us-west-2": "ami-42b92c72",
+    "us-east-1": "ami-b6b229df"
+  },
   "identity-proxy-0.1": {
     "us-west-2": "ami-4ca1367c",
     "us-east-1": "ami-4a4c2d23"
   },
-	"Scientific Linux 6.3 x86_64": {
-		"us-west-2": "ami-d033bce0",
-		"us-east-1": "ami-313b8e58"
-	},
-	"ami-vpc-nat-1.0.0-beta.i386-ebs": {
-		"us-west-2": "ami-6eff725e",
-		"us-east-1": "ami-2e1bc047"
-	},
-	"SvcOps SL62 v1.0": {
-		"us-west-2": "ami-16c25626",
-		"us-east-1": "ami-89c249e0"
-	},
+  "Scientific Linux 6.3 x86_64": {
+    "us-west-2": "ami-d033bce0",
+    "us-east-1": "ami-313b8e58"
+  },
+  "ami-vpc-nat-1.0.0-beta.i386-ebs": {
+    "us-west-2": "ami-6eff725e",
+    "us-east-1": "ami-2e1bc047"
+  },
+  "SvcOps SL62 v1.0": {
+    "us-west-2": "ami-16c25626",
+    "us-east-1": "ami-89c249e0"
+  },
   "persona-graphite-0.1": {
     "us-west-2": "ami-0bce583b",
     "us-east-1": ""

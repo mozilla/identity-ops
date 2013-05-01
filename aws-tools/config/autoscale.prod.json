@@ -3,7 +3,7 @@
         "launch_configuration": 
         {
             "tier" : "webhead",
-            "image_id" : "persona-webhead-0.2",
+            "image_id" : "persona-webhead-0.3",
             "security_groups" : 
             [
                 "frontend",
@@ -44,7 +44,7 @@
         "launch_configuration": 
         {
             "tier" : "keysign",
-            "image_id" : "persona-keysign-0.2",
+            "image_id" : "persona-keysign-0.3",
             "security_groups" : 
             [
                 "middleware-http",
@@ -63,7 +63,7 @@
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "persona-dbwrite-0.2",
+            "image_id" : "persona-dbwrite-0.3",
             "security_groups" : 
             [
                 "middleware-http",
