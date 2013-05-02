@@ -81,14 +81,31 @@ s3_file "/opt/bid_metrics/etl/GeoIPCity.dat.gz" do
   owner "bid_metrics"
   group "bid_metrics"
   mode 0600
-  checksum "3e4abecbd18edb8acb0a4ee9d1ff74b4ac8f48c2cc616c3ad210ad626b3cf502"
+  checksum "9e2d0734cccf6248f9a364678c3d5bc31bf681bfd69e73fcc5cb0d541cc70c56"
   notifies :run, "execute[gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
 end
 
 execute "gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat" do
   user "bid_metrics"
   cwd "/opt/bid_metrics/etl"
-  creates "/opt/bid_metrics/etl/GeoIPCity.dat"
+  #creates "/opt/bid_metrics/etl/GeoIPCity.dat"
+  action :nothing
+end
+
+s3_file "#{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip" do
+  source "s3://mozilla-identity-us-standard/assets/maxmindlookup20130502.zip"
+  owner "root"
+  group "root"
+  mode 0644
+  checksum "1d56308a67f3d28664a9b421fc19a3c602f7801f2424820b64173fe5f9100f5d"
+  notifies :run, "execute[extract_maxmind_plugin]", :immediately
+end
+
+execute "extract_maxmind_plugin" do
+  command "unzip -d /opt/bid_metrics/etl/kettle/plugins/steps/maxmind #{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip"
+  user "root"
+  cwd "/opt/bid_metrics/etl/kettle/plugins/steps"
+  #creates "/opt/bid_metrics/etl/kettlebak/plugins/steps/maxmind/maxmindgeoiplookup.jar"
   action :nothing
 end
 
