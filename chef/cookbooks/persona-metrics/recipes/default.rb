@@ -94,17 +94,17 @@ end
 
 s3_file "#{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip" do
   source "s3://mozilla-identity-us-standard/assets/maxmindlookup20130502.zip"
-  owner "bid_metrics"
-  group "bid_metrics"
+  owner "root"
+  group "root"
   mode 0644
   checksum "1d56308a67f3d28664a9b421fc19a3c602f7801f2424820b64173fe5f9100f5d"
   notifies :run, "execute[extract_maxmind_plugin]", :immediately
 end
 
 execute "extract_maxmind_plugin" do
-  command "unzip -d /opt/bid_metrics/etl/kettlebak/plugins/steps/maxmind #{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip"
-  user "bid_metrics"
-  cwd "/opt/bid_metrics/etl/kettlebak/plugins/steps"
+  command "unzip -d /opt/bid_metrics/etl/kettle/plugins/steps/maxmind #{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip"
+  user "root"
+  cwd "/opt/bid_metrics/etl/kettle/plugins/steps"
   #creates "/opt/bid_metrics/etl/kettlebak/plugins/steps/maxmind/maxmindgeoiplookup.jar"
   action :nothing
 end
