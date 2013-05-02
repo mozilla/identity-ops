@@ -81,31 +81,32 @@ s3_file "/opt/bid_metrics/etl/GeoIPCity.dat.gz" do
   owner "bid_metrics"
   group "bid_metrics"
   mode 0600
-  checksum "3e4abecbd18edb8acb0a4ee9d1ff74b4ac8f48c2cc616c3ad210ad626b3cf502"
-  notifies :run, "execute[gunzip GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
+  checksum "9e2d0734cccf6248f9a364678c3d5bc31bf681bfd69e73fcc5cb0d541cc70c56"
+  notifies :run, "execute[gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
 end
 
-execute "gunzip GeoIPCity.dat.gz > GeoIPCity.dat" do
+execute "gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat" do
   user "bid_metrics"
   cwd "/opt/bid_metrics/etl"
-  creates "/opt/bid_metrics/etl/GeoIPCity.dat"
+  #creates "/opt/bid_metrics/etl/GeoIPCity.dat"
   action :nothing
 end
 
-s3_file "/opt/bid_metrics/etl/kettle/plugins/maxmindgeoiplookup.jar" do
-  source "s3://mozilla-identity-us-standard/assets/maxmindgeoiplookup.jar"
+s3_file "#{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip" do
+  source "s3://mozilla-identity-us-standard/assets/maxmindlookup20130502.zip"
   owner "bid_metrics"
   group "bid_metrics"
   mode 0644
-  checksum "1279182b67f215208463f9a614175f278fe444193abd75f0a22bec00b5210e52"
+  checksum "1d56308a67f3d28664a9b421fc19a3c602f7801f2424820b64173fe5f9100f5d"
+  notifies :run, "execute[extract_maxmind_plugin]", :immediately
 end
 
-s3_file "/opt/bid_metrics/etl/kettle/plugins/steps/MaxMindGeoIPLookup.zip" do
-  source "s3://mozilla-identity-us-standard/assets/MaxMindGeoIPLookup.zip"
-  owner "bid_metrics"
-  group "bid_metrics"
-  mode 0644
-  checksum "3ba16a8fff9e23ed4b5870965576072b7452386471d7ee0a57d2668e8882ae50"
+execute "extract_maxmind_plugin" do
+  command "unzip -d /opt/bid_metrics/etl/kettlebak/plugins/steps/maxmind #{Chef::Config[:file_cache_path]}/maxmindlookup20130502.zip"
+  user "bid_metrics"
+  cwd "/opt/bid_metrics/etl/kettlebak/plugins/steps"
+  #creates "/opt/bid_metrics/etl/kettlebak/plugins/steps/maxmind/maxmindgeoiplookup.jar"
+  action :nothing
 end
 
 directory "/usr/local/share/GeoIP" do
