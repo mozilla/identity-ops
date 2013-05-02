@@ -39,7 +39,7 @@ RESULT=$( {
     # we need to keep a logfile or two worth of data for context
     find /opt/bid_metrics/queue -type f -mtime +30 -delete
 
-    if ! scp -q /opt/bid_metrics/etl/output/* $server:/home/bid_metrics/incoming/ && mv /opt/bid_metrics/etl/output/* /opt/bid_metrics/etl/pushed/; then
+    if ! scp -q /opt/bid_metrics/etl/output/* $server:/data/stats/logs/bid_metrics/ && mv /opt/bid_metrics/etl/output/* /opt/bid_metrics/etl/pushed/; then
         echo "failed to push scrubbed metrics to $server"
         exit 3
     fi
