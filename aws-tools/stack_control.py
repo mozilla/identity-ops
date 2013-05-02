@@ -101,9 +101,10 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
     for x in [y for y in existing_load_balancers if y.vpc_id == vpc.id and y.name.endswith('-%s' % name)]:
         stack_info['load_balancers'][x.name[:-len('-%s' % name)]] = {}
         stack_info['load_balancers'][x.name[:-len('-%s' % name)]]['dns_name'] = x.dns_name
-    
-    stack_info['name'] = name
-    
+    # TODO add in -univ devices
+    stack_info.update({'name': name,
+                       'type': stack_type,
+                       'environment': environment})
     
     # auto scale
     import boto.ec2.autoscale
@@ -134,7 +135,7 @@ cat > /etc/chef/node.json <<End-of-message
 %s
 End-of-message
 cd /root/identity-ops && git pull
-chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data)
+chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data, sort_keys=True, indent=4, separators=(',', ': '))
         except IOError:
             # There is no userdata file
             pass
@@ -151,7 +152,9 @@ chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data)
         # security group. TODO : I'll bring our resources (yum, github chef, etc) internal later and close
         # this access
         launch_configuration_params['security_groups'].append('temp-internet')
-        launch_configuration_params['security_groups'].append('monitorable')
+
+        # removing because we're blocked by aws on a max of 5 security groups for now
+        #launch_configuration_params['security_groups'].append('monitorable')
         
         #launch_configuration_params['security_groups'] = [vpc['security-groups'][environment + '-' + x].id for x in launch_configuration_params['security_groups']]
         launch_configuration_params['security_groups'] = [x.id for x in existing_security_groups if x.name in [environment + '-' + y for y in launch_configuration_params['security_groups']]]
@@ -167,6 +170,7 @@ chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data)
 
         #IAM role
         #launch_configuration_params['instance_profile_name'] = '%s-%s' % (environment, launch_configuration_params['tier'])
+        launch_configuration_params['instance_profile_name'] = 'identity'
 
         ag_subnets = [x.id for x in existing_subnets if 'Name' in x.tags and environment + '-' + autoscale_params['subnet'] in x.tags['Name']]
         vpc_zone_identifier = ','.join(ag_subnets)
@@ -329,7 +333,7 @@ def destroy_stack(region, environment, stack_type, name):
         load_balancer.delete()
     logging.debug('stack %s destroyed' % name)
 
-def show_stack(region, environment, stack_type, name):
+def get_stack(region, environment, stack_type, name):
     import pprint
     import boto.ec2
     import boto.ec2.elb
@@ -364,9 +368,39 @@ def show_stack(region, environment, stack_type, name):
                          'private_ip_address' : output['instances'][x.id]['private_ip_address']} for x in load_balancer.instances]
         output['load balancers'][load_balancer.name] = {'dns_name' : load_balancer.dns_name,
                                                         'instances': lb_instances}
+    return output
+
+def show_stack(region, environment, stack_type, name):
+    output=get_stack(region, environment, stack_type, name)
     for x in output.keys():
         print x
         print json.dumps(output[x], sort_keys=True, indent=4, separators=(',', ': '))
+
+def point_dns_to_stack(environment, stack_type, name):
+    import sys
+    from dynect.DynectDNS import DynectRest # sudo pip install https://github.com/dyninc/Dynect-API-Python-Library/zipball/master
+    
+    rest_iface = DynectRest()
+
+    if 'AWS_CONFIG_DIR' in os.environ:
+        user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'dynect.json')
+    else:
+        user_data_filename = 'config/dynect.json'
+
+    with open(user_data_filename, 'r') as f:
+        dynect_credentials = json.load(f)
+    
+    # Log in
+    response = rest_iface.execute('/Session/', 'POST', dynect_credentials)
+    
+    if response['status'] != 'success':
+      sys.exit("Incorrect credentials")
+    
+    # Perform action
+    response = rest_iface.execute('/CNAMERecord/anosrep.org/www.anosrep.org/', 'GET')
+    
+    # Log out, to be polite
+    rest_iface.execute('/Session/', 'DELETE')
 
 if __name__ == '__main__':
     path = "/identity/"
@@ -382,21 +416,21 @@ if __name__ == '__main__':
    
     environment = 'identity-dev'
 
-    stack = create_stack(region,
-                         environment, 
-                         'stage', 
-                         availability_zones, 
-                         path,
-                         False, 
-                         '0421',
-                         None,
-                         True
-                         )
-#     destroy_stack(region,
-#                   environment,
-#                   'stage',
-#                   '0409')
+#     stack = create_stack(region,
+#                          environment, 
+#                          'stage', 
+#                          availability_zones, 
+#                          path,
+#                          False, 
+#                          '0501',
+#                          None,
+#                          False
+#                          )
+    destroy_stack(region,
+                  environment,
+                  'stage',
+                  '0502')
 #     show_stack(region,
 #                environment,
 #                'stage',
-#                '0417')
+#                '0501')
