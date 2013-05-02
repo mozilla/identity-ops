@@ -18,6 +18,13 @@ service "ntpd" do
   action [:enable, :start]
 end
 
+cookbook_file "/etc/sysconfig/yum-autoupdate" do
+  source "etc/sysconfig/yum-autoupdate"
+  owner "root"
+  group "root"
+  mode 0644
+end
+
 # Because "chef_gem" occurs during the compile phase (not the convergence phase)
 # so that the gem can be used inside the current chef run, and because the "aws-sdk"
 # gem depends on libxml2 and libxslt, I need to install those two packages during
