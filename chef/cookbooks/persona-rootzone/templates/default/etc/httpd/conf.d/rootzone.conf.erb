@@ -1,0 +1,84 @@
+LoadModule ssl_module modules/mod_ssl.so
+Listen 443
+
+SSLPassPhraseDialog  builtin
+SSLSessionCache         shmcb:/var/cache/mod_ssl/scache(512000)
+SSLSessionCacheTimeout  300
+SSLMutex default
+
+SSLRandomSeed startup file:/dev/urandom  256
+SSLRandomSeed connect builtin
+SSLCryptoDevice builtin
+
+<VirtualHost _default_:443>
+    ErrorLog logs/ssl_error_log
+    TransferLog logs/ssl_access_log
+    LogLevel warn
+    SSLEngine on
+    SSLProxyEngine on
+    SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+
+    # default
+      SSLCertificateFile /etc/pki/tls/certs/localhost.crt
+      SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
+</VirtualHost>
+
+<% node[:persona][:rootzone].each do |x| %>
+<VirtualHost <%= x[:ip] %>:443>
+    # <%= x[:external_ip] %>
+    ErrorLog logs/ssl_error_log
+    TransferLog logs/ssl_access_log
+    LogLevel warn
+    SSLEngine on
+    SSLProxyEngine on
+    SSLProtocol all -SSLv2
+    SSLCipherSuite ALL:!ADH:!EXPORT:!SSLv2:RC4+RSA:+HIGH:+MEDIUM:+LOW
+
+    # <%= x[:cert][:cert_name] %>
+      ServerName <%= x[:cert][:cert_name] %>
+      SSLCertificateFile /etc/pki/tls/certs/<%= x[:cert][:cert_name] %>.crt
+      SSLCertificateKeyFile /etc/pki/tls/private/<%= x[:cert][:cert_name] %>.key
+      SSLCertificateChainFile /etc/pki/tls/certs/<%= x[:cert][:cert_name] %>.chain.crt
+    
+    SetEnvIf User-Agent ".*MSIE.*" \
+             nokeepalive ssl-unclean-shutdown \
+             downgrade-1.0 force-response-1.0
+    
+    CustomLog logs/ssl_request_log \
+              "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
+
+    ProxyRequests Off
+    ProxyPreserveHost On
+
+    <Proxy *>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+
+    ProxyPass / <%= x[:url] %>
+    ProxyPassReverse / <%= x[:url] %>
+    <Location />
+        Order allow,deny
+        Allow from all
+    </Location>
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} !^POST$
+    RewriteRule ^/(.*)         <%= x[:url] %>$1 [L,R=301]
+
+</VirtualHost>
+
+<VirtualHost <%= x[:ip] %>:80>  
+    # <%= x[:external_ip] %>
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} ^POST$
+    # This should be a 404 instead of 403 ( https://github.com/fmarier/checkurl/blob/no_security_improvements/check-persona-url.py#L217 )
+    RewriteRule ^/(.*)         / [L,F]
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} !^POST$
+    RewriteRule ^/(.*)         <%= x[:url] %>$1 [L,R=301]
+</VirtualHost>
+
+<% end %>
