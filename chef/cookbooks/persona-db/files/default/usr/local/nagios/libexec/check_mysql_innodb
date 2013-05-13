@@ -1,0 +1,40 @@
+#!/bin/sh
+
+usage()
+{
+  cat <<EOF
+  Usage: `basename $0`
+  
+  Attempts to insert a record into the MySQL write_monitor table. If
+  it finds a duplicate key, which it should always do, it updates the
+  last_updated field to NOW()
+  
+  error if the insert fails for any reason
+EOF
+  exit 0
+}
+
+if [ "$1" = "-h" ]; then
+  usage
+fi
+
+mysql_output=$(
+mysql -u root 2>&1 <<EOSQL
+CREATE DATABASE IF NOT EXISTS write_monitor;
+CREATE TABLE IF NOT EXISTS write_monitor.write_monitor (
+  id TINYINT PRIMARY KEY,
+  last_updated TIMESTAMP
+) ENGINE=InnoDB;
+
+INSERT INTO write_monitor.write_monitor (id) VALUES (1) ON DUPLICATE KEY UPDATE last_updated = NOW();
+EOSQL
+)
+rc=$?
+
+if [ $rc -ne 0 ]; then
+    echo "CRITICAL: insert to the MySQL table write_monitor failed (rc=$rc): $mysql_output"
+    exit 2
+else
+    echo "OK: innodb writes to the write_monitor.write_monitor table are working. last_updated field updated."
+    exit 0
+fi

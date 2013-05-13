@@ -8,6 +8,7 @@
 #
 
 include_recipe "persona-common::default"
+include_recipe "persona-db::monitor"
 
 directory "/data" do
   owner "root"
