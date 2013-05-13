@@ -125,7 +125,8 @@
             [
                 "graphite",
                 "administrable"
-            ]
+            ],
+            "instance_profile_name": "identity-graphite"
         },
         "load_balancers":
         [

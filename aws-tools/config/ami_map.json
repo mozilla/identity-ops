@@ -80,7 +80,7 @@
     "us-east-1": "ami-89c249e0"
   },
   "persona-graphite-0.1": {
-    "us-west-2": "ami-0bce583b",
+    "us-west-2": "ami-a76bfd97",
     "us-east-1": ""
   }
 }
