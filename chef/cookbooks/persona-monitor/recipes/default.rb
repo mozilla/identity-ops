@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "persona-common::default"
+
 cookbook_file "/etc/yum.repos.d/opsview.repo" do
   source "etc/yum.repos.d/opsview.repo"
   mode 0644
@@ -51,7 +53,9 @@ end
 
 execute "/usr/local/nagios/bin/rc.opsview gen_config" do
   action :run
-  user "nagios"
+  #user "nagios"
+  # We're supposed to run this as "nagios" however line 1786 of https://secure.opsview.com/svn/opsview/trunk/opsview-core/bin/nagconfgen.pl
+  # depends on the "nagios" user being able to chown change the group of files that it owns which it can't
   creates "/usr/local/nagios/configs/Master Monitoring Server/nagios.cfg"
 end
 
@@ -70,4 +74,4 @@ cookbook_file "/etc/httpd/conf.d/opsview.conf" do
   notifies :restart, "service[httpd]", :delayed
 end 
 
-  
+include_recipe "persona-monitor::nagios_plugins"

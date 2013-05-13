@@ -1,0 +1,43 @@
+#!/bin/bash
+
+export PATH=/usr/local/bin:/usr/bin:/bin
+progname=$(basename $0)
+
+usage() {
+    echo "usage: $progname <uri> <filename of hash list>"
+}
+
+if [ "$1" = "-h" ]; then
+  usage
+  exit 0
+fi
+
+uri=$1
+if [ -z "$uri" ]; then
+    echo "$progname: missing uri" >&2
+    usage
+    exit 1
+fi
+
+filename=$2
+if [ ! -e "$filename" ]; then
+    echo "$progname: can't find file $filename" >&2
+    usage
+    exit 1
+fi
+
+hash="`curl -ks --max-time 3 $uri | sha1sum - | cut -d" " -f1; exit \${PIPESTATUS[0]}`"
+rc=$?
+if [ $rc -ne 0 ]; then
+    echo "UNKNOWN: cannot fetch $uri (curl returned $rc)"
+    exit 3
+fi
+
+if ! grep "$hash" $filename; then
+    hashlist="`grep -v "^#.*" $filename`"
+    echo "CRITICAL: $uri content mis-match. got $hash which wasn't among these hashes $hashlist"
+    exit 2
+fi
+
+echo "OK: $uri has target sha1 $checksum"
+exit 0

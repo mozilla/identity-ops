@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+# Nagios plugin to monitor the status of IP addresses in a GSLB region.
+# 
+# https://github.com/fetep/dynect-utils/blob/master/bin/check_dynect_gslb_region
+
+require "rubygems"
+
+require "dynect_rest"
+require "timeout"
+require "trollop"
+
+progname = File.basename($0)
+
+opts = Trollop::options do
+  opt :customer, "Dynect customer name", :short => "-c", :type => :string
+  opt :user, "Dynect user name", :short => "-u", :type => :string
+  opt :pass, "Dynect password", :short => "-p", :type => :string
+  opt :zone, "Zone name", :short => "-z", :type => :string
+  opt :record, "GSLB record name", :short => "-r", :type => :string,
+      :required => true
+  opt :region, "GSLB region", :short => "-R", :type => :string,
+      :default => "global"
+  opt :timeout, "Dynect API timeout", :short => "-t", :type => :integer,
+      :default => 10
+  opt :config, "Config file with settings", :short => "-K", :type => :string
+end
+
+if opts[:config] then
+  cfg = JSON.parse(File.read(opts[:config]),
+                   :symbolize_names => true)
+  opts[:user] = cfg[:user] if cfg.include? :user
+  opts[:pass] = cfg[:pass] if cfg.include? :user
+  opts[:customer] = cfg[:customer] if cfg.include? :user
+end
+
+Trollop::die :user, "user is required either in the config or on the command line" if not opts[:user]
+Trollop::die :pass, "psas is required either in the config or on the command line" if not opts[:user]
+Trollop::die :customer, "customer is required either in the config or on the command line" if not opts[:user]
+
+opts[:zone] = opts[:record].split('.')[-2..-1].join('.') if not opts[:zone]
+
+gslb = nil
+begin
+  Timeout::timeout(opts[:timeout]) do
+    dyn = DynectRest.new(opts[:customer], opts[:user], opts[:pass], opts[:zone])
+    gslb = dyn.get("GSLB/#{opts[:zone]}/#{opts[:record]}")
+  end
+rescue Timeout::Error, Errno::ENETUNREACH => e
+  puts "UNKNOWN: dynect api timed out (#{$!})"
+  exit 3
+rescue DynectRest::Exceptions::RequestFailed => e
+  puts "UNKNOWN: dynect api error, #{$!}"
+  exit 3
+end
+
+region = gslb["region"].select { |r| r["region_code"] == opts[:region] }.first
+if region.nil?
+  puts "UNKNOWN: can't find region #{region}"
+  exit 3
+end
+
+down = {}
+region["pool"].each do |address|
+  if address["status"] != "up"
+    down[address["address"]] = address["status"]
+  end
+end
+
+if down.length > 0
+  msg = down.collect { |addr, status| "#{addr}=#{status}" }.join("; ")
+  puts "CRITICAL: GSLB addresses unhealthy: #{msg}"
+  exit 2
+end
+
+puts "OK: all GSLB addresses are healthy"
+exit 0
