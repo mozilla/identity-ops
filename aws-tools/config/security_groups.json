@@ -23,6 +23,12 @@
                 "from_port": 80,
                 "to_port": 80,
                 "src_security_group_name": "monitorable"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 80,
+                "to_port": 80,
+                "src_security_group_name": "administrable"
             }
         ]
     ],
@@ -49,6 +55,12 @@
                 "ip_protocol": "tcp",
                 "from_port": 8888,
                 "to_port": 8888,
+                "src_security_group_name": "monitor"
+            },
+            {
+                "ip_protocol": "tcp",
+                "from_port": 5666,
+                "to_port": 5666,
                 "src_security_group_name": "monitor"
             }
         ]
