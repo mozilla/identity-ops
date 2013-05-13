@@ -17,7 +17,9 @@
 include_recipe "persona-common::hostname"
 include_recipe "persona-common::daemontools"
 include_recipe "persona-common::iptables"
-include_recipe "persona-common::monitor"
+if node.include? :opsview_client then
+  include_recipe "persona-common::monitor"
+end
 
 link "/etc/localtime" do
   to "/usr/share/zoneinfo/America/Los_Angeles"
