@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "persona-common::default"
+
 package "squid"
 
 cookbook_file "/etc/squid/cacert.pem" do
