@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-if node.include? :stack then
+if node[:stack][:name] != nil then
   ruby_block "set_root_prompt" do
     nocolor='\[\e[m\]'
     if node[:stack][:type] == "prod" then
