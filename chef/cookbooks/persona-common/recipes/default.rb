@@ -15,6 +15,7 @@
 [package("libxml2-devel"), package("libxslt-devel")].each { |pkg| pkg.run_action(:install) }
 
 include_recipe "persona-common::hostname"
+include_recipe "persona-common::prompt"
 include_recipe "persona-common::daemontools"
 include_recipe "persona-common::iptables"
 if node.include? :opsview_client then
