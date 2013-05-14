@@ -3,13 +3,12 @@
 usage()
 {
   cat <<EOF
-  Usage: `basename $0` -d DATABASE [-i 10.1.2.3] [-m 1234] [-c 60] [-w 30]
+  Usage: `basename $0` -d DATABASE -i 10.1.2.3 [-c 60] [-w 30]
   
   Runs pt-heartbeat to determine the replication health of the slave
   
   -d : Database name
-  -i : IP address of the master DB (Required if "-m" isn't provided). This IP is converted to a Master ID
-  -m : Master ID (Required if "-i" isn't provided)
+  -i : either the IP address of the master DB (which is converted to a Master ID) or a Master ID
   -c : Seconds of replication beyond which a critical state will be returned [Default : 60]
   -w : Seconds of replication beyond which a warning state will be returned [Default : 30]
 EOF
@@ -22,13 +21,12 @@ ip2dec () {
     printf '%d\n' "$((a * 256 ** 3 + b * 256 ** 2 + c * 256 + d))"
 }
 
-while getopts ":d:c:w:i:m" options; do
+while getopts ":d:c:w:i:" options; do
   case $options in
     d ) DATABASE=$OPTARG;;
     c ) CRITICAL_THRESHOLD=$OPTARG;;
     w ) WARNING_THRESHOLD=$OPTARG;;
-    i ) MASTER_DB_IP=$OPTARG;;
-    m ) MASTER_DB_ID=$OPTARG;;
+    i ) MASTER_DB_ID=$OPTARG;;
     h ) usage;;
     \? ) usage
          exit 1;;
@@ -46,18 +44,18 @@ if [ -z "$WARNING_THRESHOLD" ]; then
   WARNING_THRESHOLD=30
 fi
 
-if [ "$MASTER_DB_IP" -a "$MASTER_DB_ID" ]; then
-  echo "UNKNOWN: Please only set either the Master IP ("-i") or the Master ID ("-m"), not both"
-  exit 3
+if [ -z "$MASTER_DB_ID" -o -z "$DATABASE" ]; then
+  usage
+  exit 1
 fi
 
-if [ -z "$DATABASE" ]; then
-    echo "UNKNOWN: Database not set, please set the database with "-d""
+if ! [[ "$MASTER_DB_ID" =~ ^[0-9]+$ ]] ; then
+  MASTER_DB_ID="`ip2dec $MASTER_DB_ID`"
+fi
+
+if ! [[ "$MASTER_DB_ID" =~ ^[0-9]+$ ]] ; then
+    echo "UNKNOWN: Bad Master IP or ID : $MASTER_DB_ID"
     exit 3
-fi
-
-if [ "$MASTER_DB_IP" ]; then
-  MASTER_DB_ID="`ip2dec $MASTER_DB_IP`"
 fi
 
 lag=$(pt-heartbeat -D $DATABASE -u root --master-server-id $MASTER_DB_ID --check)
