@@ -29,7 +29,8 @@ server {
     if ($request_method !~ GET|HEAD ) {
         return 400 "{\"error\": \"Please use HTTPS rather than HTTP\"}";
     }
-    rewrite        ^ https://<%= @site_name %>/ permanent;
+    rewrite        ^/$ https://<%= @site_name %>/ permanent;
+
 }
 
 server {
