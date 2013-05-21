@@ -56,8 +56,7 @@ SSLCryptoDevice builtin
         Allow from all
     </Proxy>
 
-    ProxyPass / <%= x[:url] %>
-    ProxyPassReverse / <%= x[:url] %>
+    ProxyPass / <%= x[:url] %> disablereuse=On
     <Location />
         Order allow,deny
         Allow from all
