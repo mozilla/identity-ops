@@ -40,6 +40,13 @@ template "/opt/browserid/config/production.json" do
   owner "root"
   group "root"
   mode 0644
+
+  # We can change this to some other form of localized discovery later (e.g. DNS, chef-server environments, etc)
+  if node[:persona][:webhead][:database][:host].is_a? Hash and node.include? :aws_region then
+    variables(:database_host => node[:persona][:webhead][:database][:host][node[:aws_region]])
+  else
+    variables(:database_host => node[:persona][:webhead][:database][:host])
+  end
   notifies :restart, "daemontools_service[browserid-webhead]", :delayed
   notifies :restart, "daemontools_service[browserid-router]", :delayed
   notifies :restart, "daemontools_service[browserid-verifier]", :delayed

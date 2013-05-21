@@ -43,7 +43,7 @@
     "port": <%= node[:proxy][:port] %>
   },
 <% end %>  "database": {
-    "host": "<%= node[:persona][:webhead][:database][:host] %>",
+    "host": "<%= @database_host %>",
     "user": "<%= node[:persona][:webhead][:database][:user] %>",
     "password": "<%= node[:persona][:webhead][:database][:password] %>",
     "driver": "mysql",
