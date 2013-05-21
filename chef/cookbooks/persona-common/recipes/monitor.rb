@@ -5,9 +5,12 @@ cookbook_file "/etc/yum.repos.d/opsview.repo" do
 end 
 
 package "libmcrypt"
-package "opsview-agent"
+package "opsview-agent" do
+  not_if "rpm -q opsview"
+end
 service "opsview-agent" do
   action :nothing
+  not_if "rpm -q opsview"
 end
 
 if node.include? :opsview_client then
