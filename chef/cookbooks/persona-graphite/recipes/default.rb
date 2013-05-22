@@ -7,12 +7,14 @@
 # All rights reserved - Do Not Redistribute
 #
 
-remote_file "#{Chef::Config[:file_cache_path]}/cloudwatch2graphite-1-1.x86_64.rpm" do
-   source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/cloudwatch2graphite-1-1.x86_64.rpm"
+rpm = node[:persona][:graphite][:rpms]["cloudwatch2graphite"]
+
+remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
+   source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpm}"
 end
 
-package "cloudwatch2graphite-1-1.x86_64.rpm" do
-  source "#{Chef::Config[:file_cache_path]}/cloudwatch2graphite-1-1.x86_64.rpm"
+package "cloudwatch2graphite" do
+  source "#{Chef::Config[:file_cache_path]}/#{rpm}"
 end
 
 template "/opt/cloudwatch2graphite/conf/metrics.json" do
