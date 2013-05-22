@@ -1,0 +1,73 @@
+{
+    "metrics": [
+<% names = node[:stack][:load_balancers].keys.map {|x| node[:stack][:load_balancers][x][:name]}.compact %>
+<% names.each_index do |x| %>
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "HealthyHostCount",
+        "Statistics.member.1": "Sum",
+        "Unit": "Count",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "HTTPCode_Backend_2XX",
+        "Statistics.member.1": "Sum",
+        "Unit": "Count",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "HTTPCode_Backend_3XX",
+        "Statistics.member.1": "Sum",
+        "Unit": "Count",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "HTTPCode_Backend_4XX",
+        "Statistics.member.1": "Sum",
+        "Unit": "Count",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "HTTPCode_Backend_5XX",
+        "Statistics.member.1": "Sum",
+        "Unit": "Count",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "RequestCount",
+        "Statistics.member.1": "Sum",
+        "Unit": "Count",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "Latency",
+        "Statistics.member.1": "Average",
+        "Unit": "Seconds",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        },
+        {
+        "Namespace": "AWS/ELB",
+        "MetricName": "Latency",
+        "Statistics.member.1": "Maximum",
+        "Unit": "Seconds",
+        "Dimensions.member.1.Name":"LoadBalancerName",
+        "Dimensions.member.1.Value":"<%= names[x] %>"
+        }<%= x >= names.length - 1 ? "" : "," %>
+<% end %>
+    ],
+    "region": "<%= node[:aws_region] %>",
+    "interval_minutes": 1
+}

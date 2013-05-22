@@ -1,0 +1,6 @@
+[
+<% names = node[:stack][:load_balancers].keys %>
+<% names.each_index do |x| %>
+  {"aws_name": "<%= node[:stack][:load_balancers][names[x]][:name] %>", "graphite_name": "<%= names[x] %>"}<%= x >= names.length - 1 ? "" : "," %>
+<% end %>
+]
