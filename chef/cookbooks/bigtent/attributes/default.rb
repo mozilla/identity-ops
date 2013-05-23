@@ -14,6 +14,6 @@ default["bigtent"]["account_link_token"] = 'kPNqce7xdsAM2AFD0J4Xs60ObbThVrWp'
 default["proxy"]["host"] = false
 default["proxy"]["port"] = false
 
-default["bigtent"]["rpms"]["bigtent"] = 'browserid-bigtent-0.2013.04.23-2.el6_114414.x86_64.rpm'
+default["bigtent"]["rpms"]["bigtent"] = 'browserid-bigtent-0.2013.01.17-17.el6_114414.x86_64.rpm'
 default["bigtent"]["rpms"]["certifier"] = 'browserid-certifier-0.2013.02.14-2.el6.x86_64.rpm'
 default["bigtent"]["rpms"]["nodejs"] = 'nodejs-0.8.17-1.el6.x86_64.rpm'

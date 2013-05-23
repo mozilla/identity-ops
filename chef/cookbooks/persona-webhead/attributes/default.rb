@@ -1,4 +1,4 @@
-default["persona"]["webhead"]["rpms"]["browserid-server"] = "browserid-server-0.2013.03.01-2.el6_113972.x86_64.rpm"
+default["persona"]["webhead"]["rpms"]["browserid-server"] = "browserid-server-0.2013.04.26-4.el6_115610.x86_64.rpm"
 default["persona"]["webhead"]["rpms"]["nodejs"] = "nodejs-0.8.17-1.el6.x86_64.rpm"
 default["persona"]["loadtest"] = false
 
