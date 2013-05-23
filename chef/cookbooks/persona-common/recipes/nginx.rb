@@ -32,7 +32,10 @@ for filename in ["/etc/nginx/conf.d/default.conf",
                  "/etc/nginx/conf.d/ssl.conf",
                  "/etc/nginx/conf.d/virtual.conf"] do
   file filename do
-    action :delete
+    content ""
+    owner "root"
+    group "root"
+    mode 0644
     notifies :restart, "daemontools_service[nginx]", :delayed
   end
 end
