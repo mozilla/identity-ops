@@ -8,6 +8,7 @@
 #
 
 include_recipe "persona-common::default"
+include_recipe "persona-common::postfix"
 
 cookbook_file "/etc/yum.repos.d/opsview.repo" do
   source "etc/yum.repos.d/opsview.repo"
