@@ -12,6 +12,23 @@ include_recipe "persona-common::default"
 package "httpd"
 package "mod_ssl"
 
+
+rpms = {"apr" => "apr-1.4.6-1.x86_64.rpm",
+        "apr-util" => "apr-util-1.5.2-1.x86_64.rpm",
+        "apr-util-ldap" => "apr-util-ldap-1.5.2-1.x86_64.rpm",
+        "httpd" => "httpd-2.4.4-1.x86_64.rpm",
+        "httpd-tools" => "httpd-tools-2.4.4-1.x86_64.rpm",
+        "mod_ssl" => "mod_ssl-2.4.4-1.x86_64.rpm"}
+
+for rpm in rpms.keys do
+  remote_file "#{Chef::Config[:file_cache_path]}/#{rpms[rpm]}" do
+    source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpms[rpm]}"
+  end
+  package rpm do
+    source "#{Chef::Config[:file_cache_path]}/#{rpms[rpm]}"
+  end
+end
+
 service "httpd" do
   action [:enable]
 end
@@ -72,6 +89,14 @@ end
 
 template "/etc/httpd/conf.d/rootzone.conf" do
   source "etc/httpd/conf.d/rootzone.conf.erb"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :restart, "service[httpd]", :delayed
+end
+
+cookbook_file "/etc/httpd/conf/httpd.conf" do
+  source "etc/httpd/conf/httpd.conf"
   owner "root"
   group "root"
   mode 0644
