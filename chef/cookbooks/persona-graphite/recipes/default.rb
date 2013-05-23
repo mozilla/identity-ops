@@ -39,8 +39,13 @@ template "/opt/cloudwatch2graphite/conf/graphite.json" do
 end
 
 file "/etc/cron.d/cloudwatch2graphite" do
-  content "* * * * * root node /opt/cloudwatch2graphite/cw2graphite.js > /dev/null 2>&1"
+  content "* * * * * root node /opt/cloudwatch2graphite/cw2graphite.js > /dev/null 2>&1\n"
   owner "root"
   group "root"
   mode 0644
+  notifies :run, "execute[touch /etc/cron.d]", :immediately
+end
+
+execute "touch /etc/cron.d" do
+  action :nothing
 end
