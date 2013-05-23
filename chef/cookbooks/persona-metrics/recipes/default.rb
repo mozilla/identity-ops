@@ -152,6 +152,11 @@ cookbook_file "/etc/cron.d/process_metrics" do
   owner "root"
   group "root"
   mode 0644
+  notifies :run, "execute[touch /etc/cron.d]", :immediately
+end
+
+execute "touch /etc/cron.d" do
+  action :nothing
 end
 
 cookbook_file "/opt/bid_metrics/bin/process_metrics.sh" do
