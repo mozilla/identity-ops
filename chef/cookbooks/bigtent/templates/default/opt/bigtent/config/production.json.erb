@@ -8,14 +8,6 @@
     "secret": "<%= node[:bigtent][:client_session_secret] %>",
     "duration": 86400000
   },
-  "account_link_sessions": {
-    "cookie_name": "accountdb",
-    "secret": "<%= node[:bigtent][:account_link_session_secret] %>",
-    "duration": 31536000000
-  },
-  "account_link_token": {
-    "secret": "<%= node[:bigtent][:account_link_token] %>"
-  },
   "env": "production",
   "issuer": "<%= node[:bigtent][:issuer] %>",
   "use_https": false,
