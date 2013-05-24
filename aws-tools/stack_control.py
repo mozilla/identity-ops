@@ -15,7 +15,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         raise ValueError("name must not exceed 4 characters in length. '%s' is too long" % name)
 
     if not key_name:
-        key_name = 'svcops-sl62-base-key-%s' % region
+        key_name = '20130416-svcops-base-key'
 
     from string import Template
     import boto.ec2
@@ -23,10 +23,13 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
     import boto.ec2.elb.healthcheck
     import boto.vpc
     import boto.iam
+    import boto.ec2.cloudwatch
+    import boto.ec2.cloudwatch.alarm
     conn_iam = boto.iam.connect_to_region('universal')
     conn_elb = boto.ec2.elb.connect_to_region(region)
     conn_vpc = boto.vpc.connect_to_region(region)
     conn_ec2 = boto.ec2.connect_to_region(region)
+    conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
     stack = {}
 
     ami_map = json.load(open('config/ami_map.json', 'r'))
@@ -82,7 +85,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         load_balancer = stack['loadbalancer'][-1]
         
         # TODO : tag the load_balancer
-        
+
         healthcheck_params = load_balancers_params['healthcheck'] if 'healthcheck' in load_balancers_params else {
             "interval" : 30,
             "target" : "HTTP:80/__heartbeat__",
@@ -92,6 +95,27 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         }
         # healthcheck_params['access_point'] = load_balancer[name]
         load_balancer.configure_health_check(boto.ec2.elb.healthcheck.HealthCheck(**healthcheck_params))
+
+        # monitor the ELB
+        metric = "HTTPCode_Backend_5XX"
+        threshold = 0.1
+        period = 120
+        metric_alarm = boto.ec2.cloudwatch.alarm.MetricAlarm(
+            name="%s %s" % (load_balancers_params['name'], metric),
+            metric=metric,
+            namespace="AWS/ELB",
+            statistic="Average",
+            comparison=">=",
+            threshold=threshold,
+            period=period,
+            evaluation_periods=1,
+            unit="Count",
+            alarm_actions=["arn:aws:sns:us-west-2:351644144250:identity-alert"],
+            dimensions={"LoadBalancerName": load_balancers_params['name']},
+            description="Alarm when the rate of %s exceeds the threshold %s for %s seconds on the %s ELB" % (
+                         metric, threshold, period, load_balancers_params['name']))
+        conn_cw.put_metric_alarm(metric_alarm)
+        
         stack['loadbalancer'].append(load_balancer)
 
     existing_load_balancers = conn_elb.get_all_load_balancers()
@@ -101,6 +125,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
     for x in [y for y in existing_load_balancers if y.vpc_id == vpc.id and y.name.endswith('-%s' % name)]:
         stack_info['load_balancers'][x.name[:-len('-%s' % name)]] = {}
         stack_info['load_balancers'][x.name[:-len('-%s' % name)]]['dns_name'] = x.dns_name
+        stack_info['load_balancers'][x.name[:-len('-%s' % name)]]['name'] = x.name
     # TODO add in -univ devices
     stack_info.update({'name': name,
                        'type': stack_type,
@@ -130,11 +155,12 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
                 user_data = json.load(f)
                 user_data.update({'stack': stack_info})
                 user_data.update({'tier': launch_configuration_params['tier']})
+                user_data.update({'aws_region': region})
                 launch_configuration_params['user_data'] = '''#!/bin/bash
 cat > /etc/chef/node.json <<End-of-message
 %s
 End-of-message
-cd /root/identity-ops && git pull
+# cd /root/identity-ops && git pull
 chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data, sort_keys=True, indent=4, separators=(',', ': '))
         except IOError:
             # There is no userdata file
@@ -170,7 +196,8 @@ chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data,
 
         #IAM role
         #launch_configuration_params['instance_profile_name'] = '%s-%s' % (environment, launch_configuration_params['tier'])
-        launch_configuration_params['instance_profile_name'] = 'identity'
+        if 'instance_profile_name' not in launch_configuration_params:
+            launch_configuration_params['instance_profile_name'] = 'identity'
 
         ag_subnets = [x.id for x in existing_subnets if 'Name' in x.tags and environment + '-' + autoscale_params['subnet'] in x.tags['Name']]
         vpc_zone_identifier = ','.join(ag_subnets)
@@ -268,12 +295,17 @@ def destroy_stack(region, environment, stack_type, name):
     # destroy AG and Launchconfig
     # destroy ELBs
 
+    # TODO : check DNS to see that nothing CNAMEs to an ELB with the stack name in it indicating it's in use
+
     import boto.ec2
     import boto.ec2.elb
     import boto.ec2.autoscale
+    import boto.ec2.cloudwatch
     conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
     conn_elb = boto.ec2.elb.connect_to_region(region)
     conn_ec2 = boto.ec2.connect_to_region(region)
+    conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
+
     existing_autoscale_groups = conn_autoscale.get_all_groups()
     existing_launch_configurations = conn_autoscale.get_all_launch_configurations()
     existing_load_balancers = conn_elb.get_all_load_balancers()
@@ -282,16 +314,23 @@ def destroy_stack(region, environment, stack_type, name):
     autoscale_groups = []
     launch_configurations = []
     load_balancers = []
+    alarms = []
     for autoscale_params in json.load(open('config/autoscale.%s.json' % stack_type, 'r')):
         ag_name = '%s-%s-%s-%s' % (environment, stack_type, autoscale_params['launch_configuration']['tier'], name)
         ag = [x for x in existing_autoscale_groups if x.name == ag_name]
         autoscale_groups.extend(ag)
         launch_configurations.extend([x for x in existing_launch_configurations if x.name == ag_name])
 
+    metric = "HTTPCode_Backend_5XX"
+
     for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
         load_balancers_params['name'] = '%s-%s' % (load_balancers_params['name'], name)
         load_balancers.extend([x for x in existing_load_balancers if x.name == load_balancers_params['name']])
+        alarms.extend(["%s %s" % (load_balancers_params['name'], metric)])
 
+    # Delete alarms
+    conn_cw.delete_alarms(alarms)
+    
     # Disassociate EIPs and release them
     for autoscale_group in autoscale_groups:
         for address in [x for x in existing_addresses if x.instance_id in [y.instance_id for y in autoscale_group.instances]]:
