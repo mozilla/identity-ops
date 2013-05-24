@@ -4,7 +4,7 @@
   "certifier_host": "127.0.0.1",
   "certifier_port": 8080,
   "client_sessions": {
-    "cookie_name": "session",
+    "cookie_name": "session_state",
     "secret": "<%= node[:bigtent][:client_session_secret] %>",
     "duration": 86400000
   },
@@ -27,8 +27,5 @@
   },
 <% end %>
   "translation_directory": "/opt/bigtent/static/i18n",
-  "smtp": {
-    "host": "127.0.0.1"
-  },
   "supported_languages": ["en-US"]
 }
