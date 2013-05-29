@@ -46,13 +46,19 @@ cookbook_file "/usr/local/bin/logrotate.cron" do
   source "usr/local/bin/logrotate.cron"
   owner "root"
   group "root"
-  mode 0644
+  mode 0755
 end
 
 file "/etc/cron.d/logrotate" do
-  content "0 3 * * * root /usr/local/bin/logrotate.cron"
+  content "0 3 * * * root /usr/local/bin/logrotate.cron > /tmp/logrotate.output 2>&1\n"
   owner "root"
   group "root"
   mode 0644
 end
-  
+
+file "/etc/cron.d/bid_metrics-scp" do
+  content "1 4 * * * bid_metrics scp -o StrictHostKeyChecking=no -v /opt/bid_metrics/queue/* #{node[:persona][:webhead][:metrics][:server][node[:aws_region]]}:/opt/bid_metrics/incoming/ > /tmp/bid_metrics-scp.out 2>&1\n"
+  owner "root"
+  group "root"
+  mode 0644
+end

@@ -3,12 +3,13 @@
     compress
     copytruncate
     dateext
-    dateformat=%Y-%m-%d
+    dateformat -%Y-%m-%d
     create 0600 bid_metrics nobody
     olddir /opt/bid_metrics/queue
     rotate 14
     sharedscripts
-    postrotate 
+    lastaction
+        for file in /opt/bid_metrics/queue/*.gz; do mv $file $file.`/bin/hostname`; done
         chmod -w /opt/bid_metrics/queue/* 
     endscript 
 }
