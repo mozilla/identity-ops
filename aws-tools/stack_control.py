@@ -34,6 +34,9 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
 
     ami_map = json.load(open('config/ami_map.json', 'r'))
 
+    sns_topics = {"us-west-2": "arn:aws:sns:us-west-2:351644144250:identity-alert",
+                  "us-east-1": "arn:aws:sns:us-east-1:351644144250:identity-alert"}
+
     existing_vpcs = conn_vpc.get_all_vpcs()
     # This will throw an IndexError exception if the VPC isn't found which isn't very intuitive
     vpc = [x for x in existing_vpcs if 'Name' in x.tags and x.tags['Name'] == environment][0]
@@ -98,7 +101,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
 
         # monitor the ELB
         metric = "HTTPCode_Backend_5XX"
-        threshold = 0.1
+        threshold = 6
         period = 120
         metric_alarm = boto.ec2.cloudwatch.alarm.MetricAlarm(
             name="%s %s" % (load_balancers_params['name'], metric),
@@ -110,7 +113,7 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
             period=period,
             evaluation_periods=1,
             unit="Count",
-            alarm_actions=["arn:aws:sns:us-west-2:351644144250:identity-alert"],
+            alarm_actions=[sns_topics[region]],
             dimensions={"LoadBalancerName": load_balancers_params['name']},
             description="Alarm when the rate of %s exceeds the threshold %s for %s seconds on the %s ELB" % (
                          metric, threshold, period, load_balancers_params['name']))
