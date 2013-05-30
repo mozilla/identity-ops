@@ -8,6 +8,14 @@
 
 server="10.22.75.50" # metrics-logger1.private.scl3.mozilla.com
 
+if [ -z "$1" ]; then
+  echo "Please indicate your AWS region :"
+  echo "e.g $0 us-west-2"
+  exit 1
+fi
+
+destination=/data/stats/logs/bid_metrics/$1
+
 RESULT=$( {
     set -x
     set -v
@@ -39,7 +47,7 @@ RESULT=$( {
     # we need to keep a logfile or two worth of data for context
     find /opt/bid_metrics/queue -type f -mtime +30 -delete
 
-    if ! scp -q /opt/bid_metrics/etl/output/* $server:/data/stats/logs/bid_metrics/ && mv /opt/bid_metrics/etl/output/* /opt/bid_metrics/etl/pushed/; then
+    if ! scp -q /opt/bid_metrics/etl/output/* $server:$destination/ && mv /opt/bid_metrics/etl/output/* /opt/bid_metrics/etl/pushed/; then
         echo "failed to push scrubbed metrics to $server"
         exit 3
     else

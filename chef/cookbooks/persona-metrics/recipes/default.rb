@@ -148,7 +148,7 @@ cookbook_file "/opt/bid_metrics/etl/run.sh" do
 end
 
 file "/etc/cron.d/process_metrics" do
-  content "30 4 * * * bid_metrics /opt/bid_metrics/bin/process_metrics.sh > /tmp/process_metrics.out 2>&1\n"
+  content "30 4 * * * bid_metrics /opt/bid_metrics/bin/process_metrics.sh #{node[:aws_region]} > /tmp/process_metrics.out 2>&1\n"
   owner "root"
   group "root"
   mode 0644
