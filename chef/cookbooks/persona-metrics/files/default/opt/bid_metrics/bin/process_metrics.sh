@@ -42,6 +42,8 @@ RESULT=$( {
     if ! scp -q /opt/bid_metrics/etl/output/* $server:/data/stats/logs/bid_metrics/ && mv /opt/bid_metrics/etl/output/* /opt/bid_metrics/etl/pushed/; then
         echo "failed to push scrubbed metrics to $server"
         exit 3
+    else
+        rm -v -f /opt/bid_metrics/etl/output/*
     fi
     exit 0
 } 2>&1 ); rc=$?;
