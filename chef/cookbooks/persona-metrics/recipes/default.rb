@@ -35,7 +35,7 @@ end
 
 file "/opt/bid_metrics/.ssh/authorized_keys" do
   # This is the keypair enabling webheads to ssh to persona-metrics
-  content "no-port-forwarding,no-X11-forwarding,no-agent-forwarding,no-pty #{node[:persona][:metrics][:authorized_keys]}"
+  content node[:persona][:metrics][:authorized_keys]
   owner "bid_metrics"
   group "bid_metrics"
   mode 0600
@@ -147,8 +147,8 @@ cookbook_file "/opt/bid_metrics/etl/run.sh" do
   mode 0755
 end
 
-cookbook_file "/etc/cron.d/process_metrics" do
-  source "etc/cron.d/process_metrics"
+file "/etc/cron.d/process_metrics" do
+  content "30 4 * * * bid_metrics /opt/bid_metrics/bin/process_metrics.sh > /tmp/process_metrics.out 2>&1\n"
   owner "root"
   group "root"
   mode 0644

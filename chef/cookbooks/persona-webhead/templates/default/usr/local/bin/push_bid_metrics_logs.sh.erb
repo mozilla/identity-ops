@@ -1,0 +1,6 @@
+#!/bin/bash
+
+if scp -o StrictHostKeyChecking=no -v /opt/bid_metrics/queue/* <%= node[:persona][:webhead][:metrics][:server][node[:aws_region]] %>:/opt/bid_metrics/incoming/; then
+  # scp push was successful
+  rm -f /opt/bid_metrics/queue/*
+fi

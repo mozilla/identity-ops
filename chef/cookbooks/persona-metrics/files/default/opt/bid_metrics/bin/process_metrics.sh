@@ -46,7 +46,7 @@ RESULT=$( {
     exit 0
 } 2>&1 ); rc=$?;
 
-if [[ "$VERBOSE" -gt 0 ]]; then
+if [ "$VERBOSE" != 0 ]; then
     echo "Verbose output:\n\n$RESULT"
 fi
 if [[ "$rc" -ne 0 ]]; then
