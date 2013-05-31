@@ -11,3 +11,4 @@ c30a0bd77fcd563f24bf13c51d41b650a9898799  https://login.persona.org/include.js
 7779d58ea26c2f0d22b69b0cd9bc623c27c25202  https://yahoo.login.anosrep.org/.well-known/browserid
 541ea8b176ed8cdf96d1f50529cb0d97dd42b8e6  https://login.anosrep.org/include.js
 bee13a4a019fa69483eb5c28ac5af927abe03d6f  https://login.persona.org/include.js
+a03a80caed6c2acca5c6ea5edaed5b021b032af9  https://login.anosrep.org/include.js

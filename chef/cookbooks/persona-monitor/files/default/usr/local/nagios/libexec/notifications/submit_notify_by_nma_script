@@ -1,0 +1,71 @@
+#!/usr/bin/perl
+#
+#
+# SYNTAX:
+
+my $usage = qq{
+submit_notify_by_nma_script
+
+Usage: submit_notify_by_nma_script [-h]
+
+Where:
+  -h - this help test
+
+Uses Nagios environment variables to construct the message to send and calls /usr/local/bin/notify_by_nma.pl
+
+Required environment variables :
+  NAGIOS__CONTACTNMA_API_KEY : This contact variable "NMA_API_KEY" must be set to send the alert
+};
+
+#
+# DESCRIPTION:
+# Wrapper for notify_by_nma script
+#
+
+sub usage {
+    if ( $_ = shift ) { print "Error: $_\n" }
+    print $usage;
+    exit 1;
+}
+
+use strict;
+use lib '/usr/local/nagios/perl/lib';
+use strict;
+use Getopt::Std;
+
+my $command;
+$command = '/usr/local/bin/notify_by_nma.pl';
+my $opts = {};
+
+getopts( 'h', $opts );
+
+if ( $opts->{h} ) {
+    usage();
+    exit(0);
+}
+
+#if ( $opts->{n} && $ENV{NAGIOS_NOTIFICATIONTYPE} eq 'ACKNOWLEDGEMENT' ) {
+#    print 'Not sending acknowledgement', $/;
+#    exit 0;
+#}
+
+my $application;
+my $event;
+my $notification;
+if ( $ENV{NAGIOS_SERVICEDESC} ) {
+    $notification = "State : $ENV{NAGIOS_SERVICESTATE}: $ENV{NAGIOS_SERVICEOUTPUT} ($ENV{NAGIOS_SHORTDATETIME})";
+    $event = "$ENV{NAGIOS_HOSTNAME} $ENV{NAGIOS_NOTIFICATIONTYPE}: $ENV{NAGIOS_SERVICEDESC}";
+}
+else {
+    $notification = "$ENV{NAGIOS_HOSTSTATE}: $ENV{NAGIOS_HOSTOUTPUT} ($ENV{NAGIOS_SHORTDATETIME})";
+    $event = "$ENV{NAGIOS_HOSTNAME} $ENV{NAGIOS_NOTIFICATIONTYPE}";
+}
+$application = "OpsView";
+
+
+my $nma_api_key = $ENV{NAGIOS__CONTACTNMA_API_KEY}
+  || die "Must have NMA_API_KEY for this notification script\n";
+
+my @command = ( $command, '-apikey', $nma_api_key, '-application', $application, '-event', $event, '-notification', $notification );
+print "Running: @command\n";
+system(@command) == 0 || die( 'Failed to run command: ', $!, $/ );

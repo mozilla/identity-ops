@@ -7,10 +7,10 @@
 # All rights reserved - Do Not Redistribute
 #
 
-for plugin in ["check_http_hash",
-               "check_dynect_gslb_region"] do
-  cookbook_file "/usr/local/nagios/libexec/#{plugin}" do
-    source "usr/local/nagios/libexec/#{plugin}"
+for nagios_plugin in ["check_http_hash",
+                      "check_dynect_gslb_region"] do
+  cookbook_file "/usr/local/nagios/libexec/#{nagios_plugin}" do
+    source "usr/local/nagios/libexec/#{nagios_plugin}"
     mode 0755
     owner "root"
     group "root"
@@ -38,3 +38,24 @@ cookbook_file "/etc/allowed-hashes.txt" do
   group "root"
   backup false
 end 
+
+for nagios_notification_plugin in ["pagerduty_nagios.pl",
+                                   "submit_notify_by_nma_script"] do
+  cookbook_file "/usr/local/nagios/libexec/notifications/#{nagios_notification_plugin}" do
+    source "usr/local/nagios/libexec/notifications/#{nagios_notification_plugin}"
+    mode 0755
+    owner "root"
+    group "root"
+    backup false
+  end 
+end
+
+for nagios_tools in ["notify_by_nma.pl"] do
+  cookbook_file "/usr/local/bin/#{nagios_tools}" do
+    source "usr/local/bin/#{nagios_tools}"
+    mode 0755
+    owner "root"
+    group "root"
+    backup false
+  end 
+end
