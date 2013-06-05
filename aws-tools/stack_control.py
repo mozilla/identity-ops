@@ -425,12 +425,36 @@ def show_stack(region, environment, stack_type, name):
         print x
         print json.dumps(output[x], sort_keys=True, indent=4, separators=(',', ': '))
 
-def point_dns_to_stack(environment, stack_type, name):
+def point_dns_to_stack(region, stack_type, name):
     import sys
-    from dynect.DynectDNS import DynectRest # sudo pip install https://github.com/dyninc/Dynect-API-Python-Library/zipball/master
-    
-    rest_iface = DynectRest()
+    import os
+    import json
+    import boto.ec2.elb
 
+    from dynect.DynectDNS import DynectRest # sudo pip install https://github.com/dyninc/Dynect-API-Python-Library/zipball/master
+
+    if stack_type == 'stage':
+        elbs = {'firefoxos.anosrep.org': 'w-anosrep-org',
+                'login.anosrep.org': 'w-anosrep-org',
+                'www.anosrep.org': 'w-anosrep-org',
+                'static.login.anosrep.org': 'w-login-anosrep-org',
+                'verifier.login.anosrep.org': 'w-login-anosrep-org',
+                'google.login.anosrep.org': 'bt-login-anosrep-org',
+                'yahoo.login.anosrep.org': 'bt-login-anosrep-org',
+                'microsoft.login.anosrep.org': 'bt-login-anosrep-org'}
+        zone = 'anosrep.org'
+    elif stack_type == 'prod':
+        elbs = {'login.persona.org': 'persona-org',
+                'www.persona.org': 'persona-org',
+                'yahoo.login.persona.org': 'bt-login-persona-org'}
+        zone = 'persona.org'
+    new_names = {}
+    conn_elb = boto.ec2.elb.connect_to_region(region)
+    load_balancers = conn_elb.get_all_load_balancers(load_balancer_names=['%s-%s' % (x, name) for x in set(elbs.values())])
+    for load_balancer in load_balancers:
+        new_names['-'.join(load_balancer.name.split('-')[:-1])] = load_balancer.dns_name
+
+    rest_iface = DynectRest()
     if 'AWS_CONFIG_DIR' in os.environ:
         user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'dynect.json')
     else:
@@ -445,9 +469,28 @@ def point_dns_to_stack(environment, stack_type, name):
     if response['status'] != 'success':
       sys.exit("Incorrect credentials")
     
-    # Perform action
-    response = rest_iface.execute('/CNAMERecord/anosrep.org/www.anosrep.org/', 'GET')
+    for record in elbs.keys():
+        # Get record_id
+        uri = '/CNAMERecord/%s/%s/' % (zone, record)
+        response = rest_iface.execute(uri, 'GET')
+        record_id = response['data'][0].split('/')[-1]
+        uri = uri +  record_id + '/'
     
+        # Get current record
+        response = rest_iface.execute(uri, 'GET')
+        old_name = response['data']['rdata']['cname']
+        
+        # Set new record
+        new_name = new_names[elbs[record]] + '.'
+        arguments = {'rdata': {'cname': new_name}}
+        logging.info('calling "%s" to change the record from "%s" to "%s"' % (uri, old_name, new_name))
+        response = rest_iface.execute(uri, 'PUT', arguments)
+        logging.info(json.dumps(response['msgs']))
+
+    # Publish the new zone
+    response = rest_iface.execute('/Zone/%s' % zone, 'PUT', {'publish': 1})
+    logging.info('new zone published with updates at serial number %s' % response['data']['serial'])
+
     # Log out, to be polite
     rest_iface.execute('/Session/', 'DELETE')
 
@@ -483,3 +526,5 @@ if __name__ == '__main__':
 #                environment,
 #                'stage',
 #                '0501')
+    point_dns_to_stack(region, 'stage', '0604')
+      
