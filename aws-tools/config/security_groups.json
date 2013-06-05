@@ -290,5 +290,16 @@
                 "cidr_ip": "0.0.0.0/0"
             }
         ]
+    ],
+    [
+        "metric",
+        [
+            {
+                "ip_protocol": "tcp",
+                "from_port": 22,
+                "to_port": 22,
+                "src_security_group_name": "frontend"
+           },
+        ]
     ]
 ]
