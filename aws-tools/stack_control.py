@@ -99,25 +99,26 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
         # healthcheck_params['access_point'] = load_balancer[name]
         load_balancer.configure_health_check(boto.ec2.elb.healthcheck.HealthCheck(**healthcheck_params))
 
-        # monitor the ELB
-        metric = "HTTPCode_Backend_5XX"
-        threshold = 6
-        period = 120
-        metric_alarm = boto.ec2.cloudwatch.alarm.MetricAlarm(
-            name="%s %s" % (load_balancers_params['name'], metric),
-            metric=metric,
-            namespace="AWS/ELB",
-            statistic="Average",
-            comparison=">=",
-            threshold=threshold,
-            period=period,
-            evaluation_periods=1,
-            unit="Count",
-            alarm_actions=[sns_topics[region]],
-            dimensions={"LoadBalancerName": load_balancers_params['name']},
-            description="Alarm when the rate of %s exceeds the threshold %s for %s seconds on the %s ELB" % (
-                         metric, threshold, period, load_balancers_params['name']))
-        conn_cw.put_metric_alarm(metric_alarm)
+        if environment == 'prod':
+            # monitor the ELB
+            metric = "HTTPCode_Backend_5XX"
+            threshold = 6
+            period = 120
+            metric_alarm = boto.ec2.cloudwatch.alarm.MetricAlarm(
+                name="%s %s" % (load_balancers_params['name'], metric),
+                metric=metric,
+                namespace="AWS/ELB",
+                statistic="Average",
+                comparison=">=",
+                threshold=threshold,
+                period=period,
+                evaluation_periods=1,
+                unit="Count",
+                alarm_actions=[sns_topics[region]],
+                dimensions={"LoadBalancerName": load_balancers_params['name']},
+                description="Alarm when the rate of %s exceeds the threshold %s for %s seconds on the %s ELB" % (
+                             metric, threshold, period, load_balancers_params['name']))
+            conn_cw.put_metric_alarm(metric_alarm)
         
         stack['loadbalancer'].append(load_balancer)
 
@@ -227,6 +228,7 @@ chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data,
                 reservation.instances[0].add_tag('Name', instance_name)
                 reservation.instances[0].add_tag('App', 'identity')
                 reservation.instances[0].add_tag('Env', stack_type)
+                reservation.instances[0].add_tag('Stack', name)
                 if current_capacity >= autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1:
                     break
         else:
@@ -267,6 +269,10 @@ chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data,
                                                                          resource_id=launch_configuration_params['name']),
                                                   boto.ec2.autoscale.Tag(key='Env',
                                                                          value=stack_type,
+                                                                         propagate_at_launch=True,
+                                                                         resource_id=launch_configuration_params['name']),
+                                                  boto.ec2.autoscale.Tag(key='Stack',
+                                                                         value=name,
                                                                          propagate_at_launch=True,
                                                                          resource_id=launch_configuration_params['name'])])
     
@@ -354,6 +360,7 @@ def destroy_stack(region, environment, stack_type, name):
             attempts += 1
             remaining_live_instances = len([x.instances for x in existing_autoscale_groups if x.name == autoscale_group.name][0])
             if remaining_live_instances == 0:
+                time.sleep(5)
                 autoscale_group.delete()
                 break
             else:
