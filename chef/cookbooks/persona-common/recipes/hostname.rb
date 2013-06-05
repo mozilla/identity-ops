@@ -15,6 +15,28 @@
 #
 # Inspiration from
 # https://github.com/opscode-cookbooks/ohai/blob/master/recipes/default.rb
+#
+# This also contains an ohai hint to tell ohai that we're in AWS which
+# we're loading here so that the resulting ohai ec2 data is available for the entire run
+# http://www.opscode.com/blog/2012/05/30/ohai-6-14-0-released/
+
+reload_ohai=false
+
+res = directory "/etc/chef/ohai/hints" do
+        user "root"
+        group "root"
+        mode 0755
+        recursive true
+      end
+res.run_action(:create)
+
+res = file "/etc/chef/ohai/hints/ec2.json" do
+        user "root"
+        group "root"
+        mode 0644
+      end
+res.run_action(:create)
+reload_ohai ||= res.updated?
 
 new_hostname="ip-#{node[:ipaddress].tr('.','-')}" + 
              (node[:tier] != nil ? ".#{node[:tier]}" : "") + 
@@ -22,7 +44,6 @@ new_hostname="ip-#{node[:ipaddress].tr('.','-')}" +
              (node[:stack][:type] != nil ? ".#{node[:stack][:type]}" : "") +
              (node[:aws_region] != nil ? ".#{node[:aws_region]}" : "") +
              ".allizomaws.com"
-reload_ohai=false
 
 res = template "/etc/hosts" do
         source "etc/hosts.erb"
