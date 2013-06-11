@@ -115,3 +115,24 @@ end
 service "mysql" do
   action [:enable, :start]
 end
+
+# TODO : insert mysql.user and mysql.db records for nagiosdaemon browserid-rw browserid-ro
+
+if node[:persona][:db][:mysql][:replication_type] == "backup" then
+  cookbook_file "/usr/local/bin/backup_mysql.sh" do
+    source "usr/local/bin/backup_mysql.sh"
+    user "root"
+    group "root"
+    mode 0755
+  end
+  file "/etc/cron.d/backup_mysql" do
+    content "0 3 * * * root /usr/local/bin/backup_mysql.sh > /tmp/backup_mysql.output 2>&1\n"
+    owner "root"
+    group "root"
+    mode 0644
+    notifies :run, "execute[touch /etc/cron.d]", :immediately
+  end
+  execute "touch /etc/cron.d" do
+    action :nothing
+  end
+end
