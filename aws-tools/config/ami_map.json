@@ -11,49 +11,141 @@
     "us-west-2": "ami-dbf167eb",
     "us-east-1": "ami-cf2e43a6"
   },
+  "identity-bigtent-0.4": {
+    "us-west-2": "ami-2169ff11",
+    "us-east-1": "ami-97345afe"
+  },
+  "identity-bigtent-0.5": {
+    "us-west-2": "ami-43ca5b73",
+    "us-east-1": "ami-23c5ac4a"
+  },
+  "identity-bigtent-0.6": {
+    "us-west-2": "ami-1f97062f",
+    "us-east-1": ""
+  },
+  "identity-bigtent-0.7": {
+    "us-west-2": "ami-ef9e0fdf",
+    "us-east-1": ""
+  },
+  "identity-bigtent-0.8": {
+    "us-west-2": "ami-05811035",
+    "us-east-1": "ami-09264d60"
+  },
   "persona-webhead-0.1": {
-      "us-west-2": "ami-cc6df9fc",
-      "us-east-1": "ami-4093f629"
+    "us-west-2": "ami-cc6df9fc",
+    "us-east-1": "ami-4093f629"
   },
   "persona-webhead-0.2": {
-      "us-west-2": "ami-c0a235f0",
-      "us-east-1": "ami-8e4928e7"
+    "us-west-2": "ami-c0a235f0",
+    "us-east-1": "ami-8e4928e7"
   },
   "persona-webhead-0.3": {
-      "us-west-2": "ami-39fe6809",
-      "us-east-1": "ami-5729443e"
+    "us-west-2": "ami-39fe6809",
+    "us-east-1": "ami-5729443e"
+  },
+  "persona-webhead-0.4": {
+    "us-west-2": "ami-2769ff17",
+    "us-east-1": "ami-75355b1c"
+  },
+  "persona-webhead-0.5": {
+    "us-west-2": "ami-bbca5b8b",
+    "us-east-1": "ami-2bc5ac42"
+  },
+  "persona-webhead-0.6": {
+    "us-west-2": "ami-73cd5c43",
+    "us-east-1": "ami-f3d8b19a"
+  },
+  "persona-webhead-0.7": {
+    "us-west-2": "ami-4bfb6a7b",
+    "us-east-1": "ami-4f157d26"
+  },
+  "persona-webhead-0.8": {
+    "us-west-2": "ami-01970631",
+    "us-east-1": "ami-0b264d62"
+  },
+  "persona-webhead-0.9": {
+    "us-west-2": "ami-995bcaa9",
+    "us-east-1": ""
   },
   "persona-keysign-0.1": {
-      "us-west-2": "ami-121d8922",
-      "us-east-1": "ami-0e92f767"
+    "us-west-2": "ami-121d8922",
+    "us-east-1": "ami-0e92f767"
   },
   "persona-keysign-0.2": {
-      "us-west-2": "ami-eea235de",
-      "us-east-1": "ami-864928ef"
+    "us-west-2": "ami-eea235de",
+    "us-east-1": "ami-864928ef"
   },
   "persona-keysign-0.3": {
-      "us-west-2": "ami-29fe6819",
-      "us-east-1": "ami-c52944ac"
+    "us-west-2": "ami-29fe6819",
+    "us-east-1": "ami-c52944ac"
+  },
+  "persona-keysign-0.4": {
+    "us-west-2": "ami-1169ff21",
+    "us-east-1": "ami-71355b18"
+  },
+  "persona-keysign-0.5": {
+    "us-west-2": "ami-b7ca5b87",
+    "us-east-1": "ami-2fc5ac46"
+  },
+  "persona-keysign-0.6": {
+    "us-west-2": "ami-71cd5c41",
+    "us-east-1": "ami-89d8b1e0"
+  },
+  "persona-keysign-0.7": {
+    "us-west-2": "ami-bffb6a8f",
+    "us-east-1": "ami-bb157dd2"
+  },
+  "persona-keysign-0.8": {
+    "us-west-2": "ami-75970645",
+    "us-east-1": "ami-05264d6c"
+  },
+  "persona-keysign-0.9": {
+    "us-west-2": "ami-9b5bcaab",
+    "us-east-1": ""
   },
   "persona-dbwrite-0.1": {
-      "us-west-2": "ami-fa0b9fca",
-      "us-east-1": "ami-128de97b"
+    "us-west-2": "ami-fa0b9fca",
+    "us-east-1": "ami-128de97b"
   },
   "persona-dbwrite-0.2": {
-      "us-west-2": "ami-c8a235f8",
-      "us-east-1": "ami-984928f1"
+    "us-west-2": "ami-c8a235f8",
+    "us-east-1": "ami-984928f1"
   },
   "persona-dbwrite-0.3": {
-      "us-west-2": "ami-25fe6815",
-      "us-east-1": "ami-f9294490"
+    "us-west-2": "ami-25fe6815",
+    "us-east-1": "ami-f9294490"
+  },
+  "persona-dbwrite-0.4": {
+    "us-west-2": "ami-1969ff29",
+    "us-east-1": "ami-67355b0e"
+  },
+  "persona-dbwrite-0.5": {
+    "us-west-2": "ami-4dca5b7d",
+    "us-east-1": "ami-5dc5ac34"
+  },
+  "persona-dbwrite-0.6": {
+    "us-west-2": "ami-0f97063f",
+    "us-east-1": "ami-19264d70"
+  },
+  "persona-dbwrite-0.7": {
+    "us-west-2": "ami-9d5bcaad",
+    "us-east-1": ""
   },
   "persona-admin-0.1": {
-      "us-west-2": "ami-3a2cb80a",
-      "us-east-1": "ami-248feb4d"
+    "us-west-2": "ami-3a2cb80a",
+    "us-east-1": "ami-248feb4d"
+  },
+  "persona-admin-0.2": {
+    "us-west-2": "ami-2b69ff1b",
+    "us-east-1": "ami-65355b0c"
+  },
+  "persona-admin-0.3": {
+    "us-west-2": "ami-41f86971",
+    "us-east-1": "ami-85c4adec"
   },
   "persona-db-0.1": {
-      "us-west-2": "ami-762db946",
-      "us-east-1": ""
+    "us-west-2": "ami-762db946",
+    "us-east-1": ""
   },
   "manual-identity-proxy-2013030401-ebs": {
     "us-west-2": "ami-42b92c72",
@@ -66,6 +158,18 @@
   "identity-proxy-0.2": {
     "us-west-2": "ami-1ffe682f",
     "us-east-1": "ami-3f284556"
+  },
+  "identity-proxy-0.3": {
+    "us-west-2": "ami-1b69ff2b",
+    "us-east-1": "ami-6d355b04"
+  },
+  "identity-proxy-0.4": {
+    "us-west-2": "ami-45ca5b75",
+    "us-east-1": "ami-35c5ac5c"
+  },
+  "identity-proxy-0.5": {
+    "us-west-2": "ami-07970637",
+    "us-east-1": "ami-1f264d76"
   },
   "Scientific Linux 6.3 x86_64": {
     "us-west-2": "ami-d033bce0",
@@ -82,5 +186,25 @@
   "persona-graphite-0.1": {
     "us-west-2": "ami-a76bfd97",
     "us-east-1": ""
+  },
+  "persona-graphite-0.3": {
+    "us-west-2": "ami-1569ff25",
+    "us-east-1": "ami-79355b10"
+  },
+  "persona-graphite-0.4": {
+    "us-west-2": "ami-b3ca5b83",
+    "us-east-1": "ami-9fc5acf6"
+  },
+  "graphite-2": {
+    "us-west-2": "ami-fff160cf",
+    "us-east-1": ""
+  },
+  "persona-graphite-0.5": {
+    "us-west-2": "ami-0dfd6c3d",
+    "us-east-1": "ami-516f0738"
+  },
+  "persona-graphite-0.6": {
+    "us-west-2": "ami-71970641",
+    "us-east-1": "ami-15264d7c"
   }
 }

@@ -3,7 +3,7 @@
         "launch_configuration": 
         {
             "tier" : "webhead",
-            "image_id" : "persona-webhead-0.3",
+            "image_id" : "persona-webhead-0.8",
             "security_groups" : 
             [
                 "frontend",
@@ -24,7 +24,7 @@
         "launch_configuration": 
         {
             "tier" : "bigtent",
-            "image_id" : "identity-bigtent-0.2",
+            "image_id" : "identity-bigtent-0.8",
             "security_groups" : 
             [
                 "frontend",
@@ -44,7 +44,7 @@
         "launch_configuration": 
         {
             "tier" : "keysign",
-            "image_id" : "persona-keysign-0.3",
+            "image_id" : "persona-keysign-0.8",
             "security_groups" : 
             [
                 "middleware-http",
@@ -63,7 +63,7 @@
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "persona-dbwrite-0.3",
+            "image_id" : "persona-dbwrite-0.6",
             "security_groups" : 
             [
                 "middleware-http",
@@ -84,7 +84,7 @@
         "launch_configuration": 
         {
             "tier" : "proxy",
-            "image_id" : "identity-proxy-0.2",
+            "image_id" : "identity-proxy-0.5",
             "security_groups" : 
             [
                 "proxy",
@@ -104,16 +104,34 @@
         "launch_configuration": 
         {
             "tier" : "admin",
-            "image_id" : "persona-admin-0.1",
+            "image_id" : "persona-admin-0.3",
             "security_groups" : 
             [
                 "admin"
-            ]
+            ],
+            "instance_type" : "m1.small"
         },
         "load_balancers":
         [
         ],
         "subnet": "public"
-
+    },
+    {
+        "launch_configuration": 
+        {
+            "tier" : "graphite",
+            "image_id" : "persona-graphite-0.6",
+            "security_groups" : 
+            [
+                "graphite",
+                "administrable"
+            ],
+            "instance_profile_name": "identity-graphite",
+            "instance_type" : "m1.small"
+        },
+        "load_balancers":
+        [
+        ],
+        "subnet": "private"
     }
 ]
