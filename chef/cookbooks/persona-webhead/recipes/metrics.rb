@@ -54,6 +54,11 @@ file "/etc/cron.d/logrotate" do
   owner "root"
   group "root"
   mode 0644
+  notifies :run, "execute[touch /etc/cron.d]", :immediately
+end
+
+execute "touch /etc/cron.d" do
+  action :nothing
 end
 
 template "/usr/local/bin/push_bid_metrics_logs.sh" do
