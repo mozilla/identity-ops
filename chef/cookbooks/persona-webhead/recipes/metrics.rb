@@ -69,7 +69,11 @@ template "/usr/local/bin/push_bid_metrics_logs.sh" do
 end
 
 file "/etc/cron.d/bid_metrics-scp" do
-  content "1 4 * * * bid_metrics /usr/local/bin/push_bid_metrics_logs.sh > /tmp/bid_metrics-scp.out 2>&1\n"
+  if node[:persona][:webhead][:metrics][:server].is_a? Hash then
+    content "1 4 * * * bid_metrics scp -o StrictHostKeyChecking=no -v /opt/bid_metrics/queue/* #{node[:persona][:webhead][:metrics][:server][node[:aws_region]]}:/opt/bid_metrics/incoming/ > /tmp/bid_metrics-scp.out 2>&1\n"
+  else
+    content "1 4 * * * bid_metrics scp -o StrictHostKeyChecking=no -v /opt/bid_metrics/queue/* #{node[:persona][:webhead][:metrics][:server]}:/opt/bid_metrics/incoming/ > /tmp/bid_metrics-scp.out 2>&1\n"
+  end
   owner "root"
   group "root"
   mode 0644

@@ -41,12 +41,15 @@ template "/opt/browserid/config/production.json" do
   group "root"
   mode 0644
 
+  vars = {}
   # We can change this to some other form of localized discovery later (e.g. DNS, chef-server environments, etc)
   if node[:persona][:webhead][:database][:host].is_a? Hash and node.include? :aws_region then
-    variables(:database_host => node[:persona][:webhead][:database][:host][node[:aws_region]])
+    vars[:database_host] = node[:persona][:webhead][:database][:host][node[:aws_region]]
   else
-    variables(:database_host => node[:persona][:webhead][:database][:host])
+    vars[:database_host] = node[:persona][:webhead][:database][:host]
   end
+  vars[:zone] = node[:persona][:site_name].split('.')[1..-1].join('.')
+  variables vars
   notifies :restart, "daemontools_service[browserid-webhead]", :delayed
   notifies :restart, "daemontools_service[browserid-router]", :delayed
   notifies :restart, "daemontools_service[browserid-verifier]", :delayed
