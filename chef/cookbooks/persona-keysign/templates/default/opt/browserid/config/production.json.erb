@@ -21,7 +21,8 @@
   "express_log_format": "default",
   "email_to_console": false,
   "var_path": "/var/browserid",
-  "forcible_issuers": [ "<%= node[:persona][:site_name] %>" ],
+  "forcible_issuers": [ "login.<%= @zone %>",
+                        "firefoxos.<%= @zone %>" ],
 
   "keysigner": { "bind_to": { "port": 62700 } },
   "browserid": { "bind_to": { "port": 62700 } },

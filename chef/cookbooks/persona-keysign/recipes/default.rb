@@ -31,6 +31,9 @@ end
 
 template "/opt/browserid/config/production.json" do
   source "opt/browserid/config/production.json.erb"
+  vars = {}
+  vars[:zone] = node[:persona][:site_name].split('.')[1..-1].join('.')
+  variables vars
   owner "root"
   group "root"
   mode 0644
