@@ -3,7 +3,7 @@
         "launch_configuration": 
         {
             "tier" : "webhead",
-            "image_id" : "persona-webhead-0.8",
+            "image_id" : "persona-webhead-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d",
             "security_groups" : 
             [
                 "frontend",
@@ -44,7 +44,7 @@
         "launch_configuration": 
         {
             "tier" : "keysign",
-            "image_id" : "persona-keysign-0.8",
+            "image_id" : "persona-keysign-903956340d4c8fb34481168e2ea22639f030c032",
             "security_groups" : 
             [
                 "middleware-http",
@@ -63,7 +63,7 @@
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "persona-dbwrite-0.6",
+            "image_id" : "persona-dbwrite-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d",
             "security_groups" : 
             [
                 "middleware-http",
@@ -104,7 +104,7 @@
         "launch_configuration": 
         {
             "tier" : "admin",
-            "image_id" : "persona-admin-0.3",
+            "image_id" : "persona-admin-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d",
             "security_groups" : 
             [
                 "admin"

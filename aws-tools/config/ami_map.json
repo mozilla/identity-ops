@@ -67,6 +67,10 @@
     "us-west-2": "ami-995bcaa9",
     "us-east-1": ""
   },
+  "persona-webhead-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d": {
+    "us-west-2": "ami-e7e070d7",
+    "us-east-1": "ami-4dd4a324"
+  },
   "persona-keysign-0.1": {
     "us-west-2": "ami-121d8922",
     "us-east-1": "ami-0e92f767"
@@ -103,6 +107,14 @@
     "us-west-2": "ami-9b5bcaab",
     "us-east-1": ""
   },
+  "persona-keysign-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d": {
+    "us-west-2": "ami-e3e070d3",
+    "us-east-1": "ami-49d4a320"
+  },
+  "persona-keysign-903956340d4c8fb34481168e2ea22639f030c032": {
+    "us-west-2": "ami-0fed7d3f",
+    "us-east-1": "ami-e517618c"
+  },
   "persona-dbwrite-0.1": {
     "us-west-2": "ami-fa0b9fca",
     "us-east-1": "ami-128de97b"
@@ -131,6 +143,10 @@
     "us-west-2": "ami-9d5bcaad",
     "us-east-1": ""
   },
+  "persona-dbwrite-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d": {
+    "us-west-2": "ami-d1e070e1",
+    "us-east-1": "ami-77d4a31e"
+  },
   "persona-admin-0.1": {
     "us-west-2": "ami-3a2cb80a",
     "us-east-1": "ami-248feb4d"
@@ -142,6 +158,10 @@
   "persona-admin-0.3": {
     "us-west-2": "ami-41f86971",
     "us-east-1": "ami-85c4adec"
+  },
+  "persona-admin-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d": {
+    "us-west-2": "ami-ebe070db",
+    "us-east-1": "ami-71d4a318"
   },
   "persona-db-0.1": {
     "us-west-2": "ami-762db946",
