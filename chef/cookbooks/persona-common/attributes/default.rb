@@ -31,4 +31,7 @@ default["persona"]["dbwrite_host"] = "dbwrite.example.com"
 default["persona"]["keysign_host"] = "keysign.example.com"
 
 default["stack"]["load_balancers"] = { }
-default["aws_region"] = "unknown"
+default["tier"] = false
+default["stack"]["name"] = false
+default["stack"]["type"] = false
+default["aws_region"] = false

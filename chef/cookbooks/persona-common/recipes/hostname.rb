@@ -39,10 +39,10 @@ res.run_action(:create)
 reload_ohai ||= res.updated?
 
 new_hostname="ip-#{node[:ipaddress].tr('.','-')}" + 
-             (node[:tier] != nil ? ".#{node[:tier]}" : "") + 
-             (node[:stack][:name] != nil ? ".#{node[:stack][:name]}" : "") +  
-             (node[:stack][:type] != nil ? ".#{node[:stack][:type]}" : "") +
-             (node[:aws_region] != nil ? ".#{node[:aws_region]}" : "") +
+             (node[:tier] ? ".#{node[:tier]}" : "") + 
+             (node[:stack][:name] ? ".#{node[:stack][:name]}" : "") +  
+             (node[:stack][:type] ? ".#{node[:stack][:type]}" : "") +
+             (node[:aws_region] ? ".#{node[:aws_region]}" : "") +
              ".allizomaws.com"
 
 res = template "/etc/hosts" do

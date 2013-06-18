@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 
-if node[:stack][:name] != nil then
+if node[:stack][:name] && node[:stack][:type] && node[:aws_region] then
   ruby_block "set_root_prompt" do
     nocolor='\[\e[m\]'
     if node[:stack][:type] == "prod" then
