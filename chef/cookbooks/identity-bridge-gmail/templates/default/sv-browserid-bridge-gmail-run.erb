@@ -1,0 +1,10 @@
+#!/bin/bash
+
+exec 2>&1 # fix stderr logging for daemontools
+
+export PATH=/usr/local/bin:$PATH
+export CONFIG_FILES="/opt/browserid-bridge-gmail/config/production.json"
+
+cd /opt/browserid-bridge-gmail
+ulimit -n 8192
+exec setuidgid browserid-bridge-gmail bin/sideshow.js
