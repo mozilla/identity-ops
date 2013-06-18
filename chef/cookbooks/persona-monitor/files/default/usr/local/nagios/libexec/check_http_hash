@@ -26,12 +26,29 @@ if [ ! -e "$filename" ]; then
     exit 1
 fi
 
-hash="`curl -ks --max-time 3 $uri | sha1sum - | cut -d" " -f1; exit \${PIPESTATUS[0]}`"
+tmpfile="`mktemp`"
+trap "rm -f $tmpfile" EXIT
+
+timeout=3
+http_code="`curl --insecure --silent --max-time $timeout --output $tmpfile --write-out "%{http_code}" $uri`"
 rc=$?
+
+if [ $rc -eq 28 ]; then
+    echo "CRITICAL: $uri timed out after $timeout seconds"
+    exit 2
+fi
+
 if [ $rc -ne 0 ]; then
     echo "UNKNOWN: cannot fetch $uri (curl returned $rc)"
     exit 3
 fi
+
+if [ "$http_code" != "200" ]; then
+    echo "CRITICAL: $uri returned HTTP $http_code"
+    exit 2
+fi
+
+hash="`sha1sum $tmpfile | cut -d" " -f1`"
 
 if ! grep "$hash" $filename; then
     hashlist="`grep -v "^#.*" $filename`"
