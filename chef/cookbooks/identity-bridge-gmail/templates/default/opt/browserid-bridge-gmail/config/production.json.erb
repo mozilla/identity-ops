@@ -1,5 +1,5 @@
 {
-  "publicUrl": "https://google.login.persona.org",
+  "publicUrl": "https://google.<%= @site_name %>",
   "personaUrl": "<%= node["browserid-bridge-gmail"][:browserid_server] %>",
   "secret": "<%= node["browserid-bridge-gmail"][:secret] %>",
   "pubKeyPath": "/var/browserid-bridge-gmail/key.publickey",

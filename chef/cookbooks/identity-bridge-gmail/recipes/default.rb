@@ -62,6 +62,7 @@ template "/opt/browserid-bridge-gmail/config/production.json" do
   owner "root"
   group "root"
   mode 0644
+  variables(:site_name => ["browserid-bridge-gmail"][:browserid_server][/https?:\/\/([^\/]*)/, 1])
   notifies :restart, "daemontools_service[browserid-bridge-gmail]", :delayed
 end
 
