@@ -89,5 +89,24 @@
                 "wildcard.login.anosrep.org"
             ]
         ]
+    },
+    {
+        "name": "google-login-anosrep-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ]
+        ]
     }
 ]

@@ -31,6 +31,14 @@
     "us-west-2": "ami-05811035",
     "us-east-1": "ami-09264d60"
   },
+  "identity-bigtent-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
+    "us-west-2": "ami-8db828bd",
+    "us-east-1": ""
+  },
+  "identity-bridge-gmail-789bdb6b5b151ab8e71f8bd0235898a30bc124fc": {
+    "us-west-2": "ami-aba4349b",
+    "us-east-1": ""
+  },
   "persona-webhead-0.1": {
     "us-west-2": "ami-cc6df9fc",
     "us-east-1": "ami-4093f629"
@@ -70,6 +78,10 @@
   "persona-webhead-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d": {
     "us-west-2": "ami-e7e070d7",
     "us-east-1": "ami-4dd4a324"
+  },
+  "persona-webhead-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
+    "us-west-2": "ami-43a13173",
+    "us-east-1": ""
   },
   "persona-keysign-0.1": {
     "us-west-2": "ami-121d8922",
@@ -115,6 +127,10 @@
     "us-west-2": "ami-0fed7d3f",
     "us-east-1": "ami-e517618c"
   },
+  "persona-keysign-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
+    "us-west-2": "ami-47a13177",
+    "us-east-1": ""
+  },
   "persona-dbwrite-0.1": {
     "us-west-2": "ami-fa0b9fca",
     "us-east-1": "ami-128de97b"
@@ -146,6 +162,10 @@
   "persona-dbwrite-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d": {
     "us-west-2": "ami-d1e070e1",
     "us-east-1": "ami-77d4a31e"
+  },
+  "persona-dbwrite-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
+    "us-west-2": "ami-4fa1317f",
+    "us-east-1": ""
   },
   "persona-admin-0.1": {
     "us-west-2": "ami-3a2cb80a",

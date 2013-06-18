@@ -3,7 +3,7 @@
         "launch_configuration": 
         {
             "tier" : "webhead",
-            "image_id" : "persona-webhead-0.9",
+            "image_id" : "persona-webhead-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7",
             "security_groups" : 
             [
                 "frontend",
@@ -25,7 +25,7 @@
         "launch_configuration": 
         {
             "tier" : "bigtent",
-            "image_id" : "identity-bigtent-0.8",
+            "image_id" : "identity-bigtent-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7",
             "security_groups" : 
             [
                 "frontend",
@@ -44,8 +44,28 @@
     {
         "launch_configuration": 
         {
+            "tier" : "bridge-gmail",
+            "image_id" : "identity-bridge-gmail-789bdb6b5b151ab8e71f8bd0235898a30bc124fc",
+            "security_groups" : 
+            [
+                "frontend",
+                "internet-outbound",
+                "administrable"
+            ],
+            "instance_type" : "m1.small"
+        },
+        "load_balancers":
+        [
+            "google-login-anosrep-org"
+        ],
+        "subnet": "private",
+        "desired_capacity": 1
+    },
+    {
+        "launch_configuration": 
+        {
             "tier" : "keysign",
-            "image_id" : "persona-keysign-0.9",
+            "image_id" : "persona-keysign-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7",
             "security_groups" : 
             [
                 "middleware-http",
@@ -64,7 +84,7 @@
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "persona-dbwrite-0.7",
+            "image_id" : "persona-dbwrite-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7",
             "security_groups" : 
             [
                 "middleware-http",
@@ -105,7 +125,7 @@
         "launch_configuration": 
         {
             "tier" : "admin",
-            "image_id" : "persona-admin-0.3",
+            "image_id" : "persona-admin-6ec505047edc08ac0c92e4a0c8fdaa9a24393c3d",
             "security_groups" : 
             [
                 "admin"
