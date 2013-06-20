@@ -1,0 +1,52 @@
+[% 
+hostgroup = nagios.hostgroupname;
+matpath = config.hostgroups.$hostgroup.matpath.replace(",", " > ");
+%]
+[% nagios.notificationtype %]: [% 
+
+IF nagios.servicedesc;
+  nagios.servicedesc %] is [% nagios.servicestate %] on host [% nagios.hostname %][%
+ELSE;
+  nagios.hostname %] is [% nagios.hoststate %][%
+END;
+
+%]
+
+[% IF nagios.servicedesc; %]Service: [% nagios.servicedesc %][% END %]
+Host: [% nagios.hostname %]
+Alias: [% nagios.hostalias %]
+Address: [% nagios.hostaddress %]
+Host Group Hierarchy: [% matpath %]
+State: [% IF nagios.servicedesc; nagios.servicestate; ELSE; nagios.hoststate; END; %]
+[%- 
+
+IF nagios.servicedesc && nagios.serviceackcomment; %]
+Comment: [% nagios.serviceackcomment %] ([% nagios.serviceackauthor %])[%
+ELSIF nagios.hostackcomment; %]
+Comment: [% nagios.hostackcomment %] ([% nagios.hostackauthor %])[%
+END;
+
+%]
+Date & Time: [% nagios.longdatetime %]
+
+Escalation Path : https://mana.mozilla.org/wiki/display/NAGIOS/Escalation+path+for+Persona
+
+Additional Information: 
+
+[% 
+IF nagios.servicedesc;
+  nagios.serviceoutput; "\n";
+  nagios.longserviceoutput; 
+ELSE;
+  nagios.hostoutput; "\n";
+  nagios.longhostoutput;
+END;
+%]
+
+[% IF commented_out %]
+[% IF nagios.servicedesc %]
+    WIKI Comments: http://opsview/info?hostname=[% nagios.hostname %]&servicename=[% nagios.servicedesc | uri %]
+[% ELSE %]
+    WIKI Comments: http://opsview/info?hostname=[% nagios.hostname %]
+[% END %]
+[% END %]

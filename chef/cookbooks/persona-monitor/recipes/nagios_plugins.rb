@@ -50,6 +50,14 @@ for nagios_notification_plugin in ["pagerduty_nagios.pl",
   end 
 end
 
+cookbook_file "/usr/local/nagios/libexec/notifications/org.persona.notificationmethods.email.tt" do
+  source "usr/local/nagios/libexec/notifications/org.persona.notificationmethods.email.tt"
+  mode 0644
+  owner "root"
+  group "root"
+  backup false
+end 
+
 for nagios_tools in ["notify_by_nma.pl"] do
   cookbook_file "/usr/local/bin/#{nagios_tools}" do
     source "usr/local/bin/#{nagios_tools}"
