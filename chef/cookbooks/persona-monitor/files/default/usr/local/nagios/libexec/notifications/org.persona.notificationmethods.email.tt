@@ -2,7 +2,7 @@
 hostgroup = nagios.hostgroupname;
 matpath = config.hostgroups.$hostgroup.matpath.replace(",", " > ");
 %]
-[% nagios.notificationtype %]: [% 
+** [% nagios.notificationtype %] alert - [% 
 
 IF nagios.servicedesc;
   nagios.servicedesc %] is [% nagios.servicestate %] on host [% nagios.hostname %][%
@@ -10,7 +10,7 @@ ELSE;
   nagios.hostname %] is [% nagios.hoststate %][%
 END;
 
-%]
+%] **
 
 [% IF nagios.servicedesc; %]Service: [% nagios.servicedesc %][% END %]
 Host: [% nagios.hostname %]
