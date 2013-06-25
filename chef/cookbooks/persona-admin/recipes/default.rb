@@ -7,6 +7,9 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "persona-common::default"
+#include_recipe "persona-db::monitor"
+
 cookbook_file "/usr/local/bin/get_hosts" do
   source "usr/local/bin/get_hosts"
   owner "root"
@@ -20,3 +23,5 @@ cookbook_file "/usr/local/bin/get_region" do
   group "root"
   mode 0755
 end
+
+package "httpd"
