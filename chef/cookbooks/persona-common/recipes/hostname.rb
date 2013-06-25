@@ -38,7 +38,9 @@ res = file "/etc/chef/ohai/hints/ec2.json" do
 res.run_action(:create)
 reload_ohai ||= res.updated?
 
-new_hostname="ip-#{node[:ipaddress].tr('.','-')}" + 
+# Note max hostname length : 64
+short_hostname=node[:ec2][:instance_id] ? node[:ec2][:instance_id] : "ip-#{node[:ipaddress].tr('.','-')}"
+new_hostname=short_hostname + 
              (node[:tier] ? ".#{node[:tier]}" : "") + 
              (node[:stack][:name] ? ".#{node[:stack][:name]}" : "") +  
              (node[:stack][:type] ? ".#{node[:stack][:type]}" : "") +
