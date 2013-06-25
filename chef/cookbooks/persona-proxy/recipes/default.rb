@@ -9,7 +9,13 @@
 
 include_recipe "persona-common::default"
 
-package "squid"
+remote_file "#{Chef::Config[:file_cache_path]}/#{node[:persona][:proxy][:rpms][:squid]}" do
+   source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{node[:persona][:proxy][:rpms][:squid]}"
+end
+
+package "squid" do
+  source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:proxy][:rpms][:squid]}"
+end
 
 cookbook_file "/etc/squid/cacert.pem" do
   source "etc/squid/cacert.pem"
