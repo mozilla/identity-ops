@@ -1,15 +1,25 @@
 {
-  "publicUrl": "https://google.<%= @site_name %>",
-  "personaUrl": "<%= node["browserid-bridge-gmail"][:browserid_server] %>",
-  "secret": "<%= node["browserid-bridge-gmail"][:secret] %>",
-  "pubKeyPath": "/var/browserid-bridge-gmail/key.publickey",
-  "privKeyPath": "/var/browserid-bridge-gmail/key.secretkey",
+  "server": {
+    "publicUrl": "https://google.<%= @site_name %>",
+    "personaUrl": "<%= node["browserid-bridge-gmail"][:browserid_server] %>"
+  },
+  "session": {
+    "secret": "<%= node["browserid-bridge-gmail"][:secret] %>"
+  },
+  "cert": {
+    "pubKeyPath": "/var/browserid-bridge-gmail/key.publickey",
+    "privKeyPath": "/var/browserid-bridge-gmail/key.secretkey"
+  },
   "logPath": "/var/browserid-bridge-gmail/log/browserid-bridge-gmail.log",
-<% if node[:stack][:load_balancers].include?('proxy') or node[:proxy][:host] %>
-  "proxyPort": <%= node[:proxy][:port] %>,
-  "proxyHost": "<%= node[:stack][:load_balancers].include?('proxy') ? node[:stack][:load_balancers][:proxy][:dns_name] : node[:proxy][:host] %>",
-<% end %>
-  "statsdEnabled": false,
-  "statsdHost": "localhost",
-  "statsdPort": 8125
+  <% if node[:stack][:load_balancers].include?('proxy') or node[:proxy][:host] %>
+  "proxy": {
+    "port": <%= node[:proxy][:port] %>,
+    "host": "<%= node[:stack][:load_balancers].include?('proxy') ? node[:stack][:load_balancers][:proxy][:dns_name] : node[:proxy][:host] %>"
+  },
+  <% end %>
+  "statsd": {
+    "enabled": false,
+    "host": "localhost",
+    "port": 8125
+  }
 }
