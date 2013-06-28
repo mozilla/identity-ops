@@ -17,20 +17,6 @@ package "cloudwatch2graphite" do
   source "#{Chef::Config[:file_cache_path]}/#{rpm}"
 end
 
-template "/opt/cloudwatch2graphite/conf/metrics.json" do
-  source "opt/cloudwatch2graphite/conf/metrics.json.erb"
-  owner "root"
-  group "root"
-  mode 0644
-end
-
-template "/opt/cloudwatch2graphite/conf/names.json" do
-  source "opt/cloudwatch2graphite/conf/names.json.erb"
-  owner "root"
-  group "root"
-  mode 0644
-end
-
 template "/opt/cloudwatch2graphite/conf/graphite.json" do
   source "opt/cloudwatch2graphite/conf/graphite.json.erb"
   owner "root"
@@ -43,9 +29,28 @@ file "/etc/cron.d/cloudwatch2graphite" do
   owner "root"
   group "root"
   mode 0644
-  notifies :run, "execute[touch /etc/cron.d]", :immediately
+  notifies :run, "execute[touch /etc/cron.d]", :delayed
+end
+
+file "/etc/cron.d/generate_cloudwatch_metrics_list" do
+  content "0 * * * * root /usr/local/bin/generate_cloudwatch_metrics_list.py > /tmp/generate_cloudwatch_metrics_list.lastrun 2>&1\n"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :run, "execute[touch /etc/cron.d]", :delayed
 end
 
 execute "touch /etc/cron.d" do
   action :nothing
+end
+
+cookbook_file "/usr/local/bin/generate_cloudwatch_metrics_list.py" do
+  source "usr/local/bin/generate_cloudwatch_metrics_list.py"
+  owner "root"
+  group "root"
+  mode 0755
+end
+
+execute "/usr/local/bin/generate_cloudwatch_metrics_list.py" do
+  creates "/opt/cloudwatch2graphite/conf/metrics.json"
 end
