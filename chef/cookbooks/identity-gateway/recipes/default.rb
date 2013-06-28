@@ -32,7 +32,8 @@ end
 for file in ["var/www/html/browserid_login.php",
              "var/www/html/persona_sign_in_blue.png",
              "var/www/mod_browserid_users",
-             "etc/httpd/conf.d/graphite-web.conf"] do
+             "etc/httpd/conf.d/graphite-web.conf",
+             "etc/httpd/conf.d/mod_browserid.include"] do
   cookbook_file "/#{file}" do
     source file
     owner "root"

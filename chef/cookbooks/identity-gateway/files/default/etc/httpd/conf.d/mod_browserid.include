@@ -1,0 +1,46 @@
+    ProxyRequests Off
+    ProxyPreserveHost On
+
+    DocumentRoot /var/www/html
+
+    <Directory /var/www/html >
+        Satisfy Any
+        Allow from all
+        AuthType None
+        Require all granted
+    </Directory>
+
+    Alias /login /var/www/html/browserid_login.php
+    Alias /persona_sign_in_blue.png /var/www/html/persona_sign_in_blue.png
+
+    <Location />
+        AuthType BrowserID
+        AuthBrowserIDAuthoritative on
+        AuthBrowserIDCookieName myauthcookie
+        AuthBrowserIDVerificationServerURL "https://verifier.login.persona.org/verify"
+
+        # must be set (apache mandatory) but not used by the module
+        AuthName "My Login"
+
+        Require userfile /var/www/mod_browserid_users
+
+        # to redirect unauthorized users to the login page
+        ErrorDocument 401 "/login"
+    </Location>
+
+    <LocationMatch "/mod_browserid_(submit|logout)">
+        Satisfy Any
+        Allow from all
+        AuthType None
+        Require all granted
+      
+        AuthBrowserIDCookieName myauthcookie
+        AuthBrowserIDSubmitPath "/mod_browserid_submit"
+        AuthBrowserIDLogoutPath "/mod_browserid_logout"
+        AuthBrowserIDVerificationServerURL "https://verifier.login.persona.org/verify"
+    </LocationMatch>
+
+    ProxyPass /login !
+    ProxyPass /persona_sign_in_blue.png !
+    ProxyPass /mod_browserid_submit !
+    ProxyPass /mod_browserid_logout !
