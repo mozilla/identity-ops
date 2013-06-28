@@ -63,6 +63,11 @@ end
 
 template "/usr/local/bin/push_bid_metrics_logs.sh" do
   source "usr/local/bin/push_bid_metrics_logs.sh.erb"
+  if node[:persona][:webhead][:metrics][:server].is_a? Hash then
+    variables(:server => node[:persona][:webhead][:metrics][:server][node[:aws_region]])
+  else
+    variables(:server => node[:persona][:webhead][:metrics][:server])
+  end
   owner "root"
   group "root"
   mode 0755
