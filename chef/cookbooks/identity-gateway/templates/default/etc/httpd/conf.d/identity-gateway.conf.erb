@@ -50,14 +50,14 @@ ProxyPass /mod_browserid_logout !
 
 NameVirtualHost *:80
 <VirtualHost *:80>
-    ServerName monitor.admin.<%= node[:aws_region] %>.persona.org
-    ProxyPass / <%= node[:persona][:admin][:reverse_proxy][:monitor][:url][node[:aws_region]] %>
-    ProxyPassReverse / <%= node[:persona][:admin][:reverse_proxy][:monitor][:url][node[:aws_region]] %>
+    ServerName monitor.<%= node[:aws_region] %>.persona.org
+    ProxyPass / <%= node[:persona][:identity_gateway][:monitor][:url][node[:aws_region]] %>
+    ProxyPassReverse / <%= node[:persona][:identity_gateway][:monitor][:url][node[:aws_region]] %>
 
 </VirtualHost>
 
 <VirtualHost *:80>
-    ServerName perf.admin.<%= node[:aws_region] %>.persona.org
-    ProxyPass / <%= node[:persona][:admin][:reverse_proxy][:perf][:url][node[:aws_region]] %>
-    ProxyPassReverse / <%= node[:persona][:admin][:reverse_proxy][:perf][:url][node[:aws_region]] %>
+    ServerName perf.<%= node[:aws_region] %>.persona.org
+    ProxyPass / <%= node[:persona][:identity_gateway][:perf][:url][node[:aws_region]] %>
+    ProxyPassReverse / <%= node[:persona][:identity_gateway][:perf][:url][node[:aws_region]] %>
 </VirtualHost>
