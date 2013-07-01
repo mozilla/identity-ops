@@ -3,7 +3,7 @@
 NameVirtualHost *:80
 <VirtualHost *:80>
     Include conf.d/mod_browserid.include
-    ServerName monitor.identity.<%= node[:aws_region] %>.<%= node[:env] %>.mozaws.net
+    ServerName monitor.identity.<%= node[:aws_region] %>.<%= node[:stack][:type] %>.mozaws.net
     ProxyPass / <%= node[:persona][:identity_gateway][:monitor][:url][node[:aws_region]] %>
     ProxyPassReverse / <%= node[:persona][:identity_gateway][:monitor][:url][node[:aws_region]] %>
 
@@ -11,7 +11,7 @@ NameVirtualHost *:80
 
 <VirtualHost *:80>
     Include conf.d/mod_browserid.include
-    ServerName perf.identity.<%= node[:aws_region] %>.<%= node[:env] %>.mozaws.net
+    ServerName perf.identity.<%= node[:aws_region] %>.<%= node[:stack][:type] %>.mozaws.net
     ProxyPass / <%= node[:persona][:identity_gateway][:perf][:url][node[:aws_region]] %>
     ProxyPassReverse / <%= node[:persona][:identity_gateway][:perf][:url][node[:aws_region]] %>
 </VirtualHost>

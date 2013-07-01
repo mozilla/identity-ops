@@ -10,7 +10,7 @@
         Require all granted
     </Directory>
 
-    Alias /login /var/www/html/browserid_login.php
+    Alias /mod_browserid_login /var/www/html/browserid_login.php
     Alias /persona_sign_in_blue.png /var/www/html/persona_sign_in_blue.png
 
     <Location />
@@ -25,7 +25,7 @@
         Require userfile /var/www/mod_browserid_users
 
         # to redirect unauthorized users to the login page
-        ErrorDocument 401 "/login"
+        ErrorDocument 401 "/mod_browserid_login"
     </Location>
 
     <LocationMatch "/mod_browserid_(submit|logout)">
@@ -40,7 +40,7 @@
         AuthBrowserIDVerificationServerURL "https://verifier.login.persona.org/verify"
     </LocationMatch>
 
-    ProxyPass /login !
+    ProxyPass /mod_browserid_login !
     ProxyPass /persona_sign_in_blue.png !
     ProxyPass /mod_browserid_submit !
     ProxyPass /mod_browserid_logout !
