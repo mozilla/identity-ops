@@ -7,6 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "persona-common::default"
+
 rpm = node[:persona][:graphite][:rpms]["cloudwatch2graphite"]
 
 remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
