@@ -49,3 +49,31 @@ template "/etc/httpd/conf.d/identity-gateway.conf" do
   mode 0644
   notifies :restart, "service[httpd]", :delayed
 end
+
+package "mod_ssl" do
+  notifies :restart, "service[httpd]", :delayed
+end
+
+file "/etc/httpd/conf.d/ssl.conf" do
+  content ""
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :restart, "service[httpd]", :delayed
+end
+
+file "/etc/pki/tls/certs/identity-gateway.crt" do
+  content node[:persona][:identity_gateway][:cert][:cert_body]
+  owner "root"
+  group "root"
+  mode 0600
+  notifies :restart, "service[httpd]", :delayed
+end
+
+file "/etc/pki/tls/private/identity-gateway.key" do
+  content node[:persona][:identity_gateway][:cert][:private_key]
+  owner "root"
+  group "root"
+  mode 0600
+  notifies :restart, "service[httpd]", :delayed
+end
