@@ -1,0 +1,11 @@
+--- /usr/local/opsview-web/root/navmenu/megamenu.orig 2013-05-04 17:23:26.000000000 -0400
++++ /usr/local/opsview-web/root/navmenu/megamenu  2013-05-04 17:23:46.000000000 -0400
+@@ -83,8 +83,6 @@
+         </div>
+ 
+         <div id="demo_opsview_cta_buttons">
+-            <a href="http://www.opsview.com/solutions/pro/trial?[% c.track_back_querystring %]" border="0"><span>30-Day Pro Trial</span></a>
+-            <a href="http://www.opsview.com/solutions/pro?[% c.track_back_querystring %]" border="0"><span>Buy Pro NOW!</span></a>
+         </div>
+ 
+         [% IF logged_in; # Should only allow the site search button for non-public users %]

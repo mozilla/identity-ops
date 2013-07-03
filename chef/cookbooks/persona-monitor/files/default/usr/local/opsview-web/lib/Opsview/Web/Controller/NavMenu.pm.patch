@@ -1,0 +1,10 @@
+--- /usr/local/opsview-web/lib/Opsview/Web/Controller/NavMenu.pm.orig 2013-05-04 17:22:47.000000000 -0400
++++ /usr/local/opsview-web/lib/Opsview/Web/Controller/NavMenu.pm  2013-05-04 17:23:02.000000000 -0400
+@@ -726,7 +726,6 @@
+ 
+ 
+     $c->stash->{navmenu} = [
+-        $dashboard,
+         $monitoring,
+         $modules,
+         $settings || (),

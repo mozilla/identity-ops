@@ -75,4 +75,36 @@ cookbook_file "/etc/httpd/conf.d/opsview.conf" do
   notifies :restart, "service[httpd]", :delayed
 end 
 
+cookbook_file "/usr/local/nagios/share/images/favicon.png" do
+  owner "root"
+  group "root"
+  mode 0644
+  case node[:aws_region] + '-' + node[:stack][:type]
+  when "us-west-2-stage"
+    source "usr/local/nagios/share/images/opsview_favicon_stage.png"
+  when "us-west-2-prod"
+    source "usr/local/nagios/share/images/opsview_favicon_west.png"
+  when "us-east-1-prod"
+    source "usr/local/nagios/share/images/opsview_favicon_east.png"
+  else
+    source "usr/local/nagios/share/images/opsview_favicon_unknown.png"
+  end
+end
+
+for patch_file in ["usr/local/opsview-web/root/wrappers/default",
+                   "usr/local/opsview-web/root/navmenu/megamenu",
+                   "usr/local/opsview-web/lib/Opsview/Web/Controller/NavMenu.pm",
+                   "usr/local/opsview-web/root/wrapper_footer"] do
+  cookbook_file "/#{patch_file}.patch" do
+     source "#{patch_file}.patch"
+     owner "root"
+     group "root"
+     mode 0644
+  end
+  execute "patch --input /#{patch_file}.patch --forward --silent /#{patch_file}" do
+    only_if "patch --input /#{patch_file}.patch --forward --silent --dry-run /#{patch_file}"
+    notifies :restart, "service[opsview-web]", :delayed
+  end
+end
+
 include_recipe "persona-monitor::nagios_plugins"

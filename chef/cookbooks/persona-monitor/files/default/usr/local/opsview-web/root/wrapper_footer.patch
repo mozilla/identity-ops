@@ -1,0 +1,11 @@
+--- /usr/local/opsview-web/root/wrapper_footer.orig 2013-05-04 17:28:54.000000000 -0400
++++ /usr/local/opsview-web/root/wrapper_footer  2013-05-04 17:29:46.000000000 -0400
+@@ -1,7 +1,7 @@
+ [%
+ IF c.is_community_edition;
+   opsview_edition = c.loc("ui.edition.opsviewCore");
+-  support_text = BLOCK; c.loc("ui.footer.html.coreNoSupport"); ".</p><p>"; c.loc("ui.footer.html.upgradeToCommercial", "http://www.opsview.com/solutions/pro/?" _ c.track_back_querystring, "http://www.opsview.com/solutions/enterprise/?" _ c.track_back_querystring ); END;
++  support_text = BLOCK; c.loc("ui.footer.html.coreNoSupport"); ".</p><p>"; END;
+   footerbox_extra_class = 'community';
+   show_version = 0;
+ ELSE;

@@ -1,0 +1,10 @@
+--- default.orig  2013-07-01 15:48:04.000000000 -0700
++++ default 2013-07-01 15:50:21.000000000 -0700
+@@ -26,6 +26,7 @@
+ <html>
+ <head>
+   <title>[% page_title | html %]</title>
++  <link rel="icon" href="/images/favicon.png" type="image/x-icon" />
+   <link rel="alternate" type="application/atom+xml" title="[% c.loc("ui.rss.atomfeed") | html %]" href="[% c.uri_for("/atom").path_query | html %]">
+   <link rel="stylesheet" type="text/css" href="[% c.uri_for("/stylesheets/opsview2.css", ov_params ).path_query | html %]">
+   <!--[if IE 6]>
