@@ -6,7 +6,26 @@ import time
 import os
 import itertools
 
-def create_stack(region, environment, stack_type, availability_zones, path, replace=False, name=None, key_name=None, mini_stack=False):
+def test_for_stack_existence(region,
+                             environment,
+                             stack_type,
+                             name):
+    import boto.ec2
+    conn_ec2 = boto.ec2.connect_to_region(region)
+    reservations = conn_ec2.get_all_instances(None, {"tag:Name" : "*-%s" % name, "tag:Env"  : stack_type})
+    if len(reservations) > 0:
+        logging.error('stack exists. instances found : %s' % [x for x in reservations])
+
+def create_stack(region, 
+                 environment, 
+                 stack_type, 
+                 availability_zones, 
+                 path, 
+                 replace=False, 
+                 name=None, 
+                 key_name=None, 
+                 mini_stack=False,
+                 hydrate=True):
     if name == None:
         # Maybe we set the stack name to the username of the user creating with a number suffix?
         import random
@@ -31,6 +50,8 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
     conn_ec2 = boto.ec2.connect_to_region(region)
     conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
     stack = {}
+
+    
 
     ami_map = json.load(open('config/ami_map.json', 'r'))
 
@@ -164,8 +185,9 @@ def create_stack(region, environment, stack_type, availability_zones, path, repl
 cat > /etc/chef/node.json <<End-of-message
 %s
 End-of-message
-# cd /root/identity-ops && git pull
-chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json''' % json.dumps(user_data, sort_keys=True, indent=4, separators=(',', ': '))
+''' % json.dumps(user_data, sort_keys=True, indent=4, separators=(',', ': '))
+                if hydrate:
+                    launch_configuration_params['user_data'] += "chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json\n"
         except IOError:
             # There is no userdata file
             pass
@@ -507,24 +529,27 @@ if __name__ == '__main__':
     #availability_zones = ['a','b','d']
    
     environment = 'identity-dev'
+    #environment = 'identity-prod'
 
-#     stack = create_stack(region,
-#                          environment, 
-#                          'stage', 
-#                          availability_zones, 
-#                          path,
-#                          False, 
-#                          '0501',
-#                          None,
-#                          False
-#                          )
-    destroy_stack(region,
-                  environment,
-                  'stage',
-                  '0502')
-#     show_stack(region,
-#                environment,
-#                'stage',
-#                '0501')
-    point_dns_to_stack(region, 'stage', '0604')
+#     stack = create_stack(region=region,
+#                          environment=environment, 
+#                          stack_type='stage', 
+#                          availability_zones=availability_zones, 
+#                          path=path,
+#                          replace=False, 
+#                          name='0629',
+#                          key_name=None,
+#                          mini_stack=False,
+#                          hydrate=True)
+  
+#     destroy_stack(region=region,
+#                   environment=environment,
+#                   stack_type='stage',
+#                   name='1338')
+
+    show_stack(region,
+               environment,
+               'stage',
+               '0629')
+#     point_dns_to_stack(region, 'stage', '0604')
       
