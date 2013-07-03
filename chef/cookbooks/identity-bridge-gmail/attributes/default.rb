@@ -11,5 +11,5 @@ default["browserid-bridge-gmail"]["publickey"] = "{\"algorithm\":\"RS\",\"n\":\"
 default["proxy"]["host"] = false
 default["proxy"]["port"] = false
 
-default["browserid-bridge-gmail"]["rpms"]["browserid-bridge-gmail"] = 'browserid-bridge-gmail-0.9.0.876e886-1.el6.x86_64.rpm'
+default["browserid-bridge-gmail"]["rpms"]["browserid-bridge-gmail"] = 'browserid-bridge-gmail-0.9.1.406dd53-1.el6.x86_64.rpm'
 default["browserid-bridge-gmail"]["rpms"]["nodejs"] = 'nodejs-0.8.24-1.el6.x86_64.rpm'
