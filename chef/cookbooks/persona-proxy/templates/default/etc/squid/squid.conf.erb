@@ -10,9 +10,10 @@
 # We also support calls to BigTent auth providers' APIs for
 # authentication.
 
-acl to_localhost dst 127.0.0.1/32
+
+#acl to_localhost dst 127.0.0.1/32  # the ACL "to_localhost" is now builtin as of squid 3.2 : http://www.squid-cache.org/Doc/config/acl/
 acl to_localnet dst 10.0.0.0/8
-acl localhost src 127.0.0.1/32
+# acl localhost src 127.0.0.1/32  # the ACL "localhost" is now buildin as of squid 3.2 : http://www.squid-cache.org/Doc/config/acl/
 acl localnet src 10.0.0.0/8
 acl ssl proto HTTPS
 acl get method GET
