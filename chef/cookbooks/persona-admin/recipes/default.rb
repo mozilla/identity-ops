@@ -14,7 +14,7 @@ include_recipe "persona-common::default"
 remote_file "#{Chef::Config[:file_cache_path]}/ius-release-1.0-11.ius.centos6.noarch.rpm" do
   source "http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-11.ius.centos6.noarch.rpm"
 end
-package pkg do
+package "ius-release" do
   source "#{Chef::Config[:file_cache_path]}/ius-release-1.0-11.ius.centos6.noarch.rpm"
 end
 
