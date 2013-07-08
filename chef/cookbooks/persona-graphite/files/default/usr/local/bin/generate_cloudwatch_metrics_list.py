@@ -3,11 +3,25 @@ import boto.ec2.elb
 import boto.utils
 import json
 import copy
+import logging
 
-region=boto.utils.get_instance_metadata()['placement']['availability-zone'][:-1]
+# logging.basicConfig(level=logging.DEBUG)
+
+metadata=boto.utils.get_instance_metadata()
+region=metadata['placement']['availability-zone'][:-1] if metadata != None else 'us-west-2'
 conn_elb = boto.ec2.elb.connect_to_region(region)
 load_balancers = conn_elb.get_all_load_balancers()
-persona_load_balancer_names = ['browserid-org', 'bt-login-persona-org', 'dbwrite', 'keysign', 'persona-org', 'proxy']
+persona_load_balancer_names = ['browserid-org', 
+                               'diresworb-org', 
+                               'bt-login-persona-org', 
+                               'bt-login-anosrep-org', 
+                               'persona-org', 
+                               'w-anosrep-org', 
+                               'google-login-anosrep-org',
+                               'google-login-persona-org',
+                               'dbwrite', 
+                               'keysign', 
+                               'proxy']
 base_metrics=[
   {
   "Namespace": "AWS/ELB",
@@ -80,6 +94,7 @@ metrics = {"metrics": [],
 names = []
 
 for load_balancer in load_balancers:
+  logging.debug("Processing %s as %s" % (load_balancer.name, '-'.join(load_balancer.name.split('-')[:-1])))
   if '-'.join(load_balancer.name.split('-')[:-1]) in persona_load_balancer_names:
     lb_metrics = copy.deepcopy(base_metrics)
     for x in lb_metrics:
