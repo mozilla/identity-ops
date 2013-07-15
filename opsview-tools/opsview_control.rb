@@ -12,29 +12,38 @@ require 'trollop'
 
 class OpsviewManager
   def initialize(opts)
-    @url, @username, @password, @dryrun = opts[:url], opts[:username], opts[:password], opts[:dryrun]
-    @token_header = get_token
+    @url, @username, @password, @dryrun, @session_cookie_name, @session_cookie_value = opts[:url], opts[:username], opts[:password], opts[:dryrun], opts[:session_cookie_name], opts[:session_cookie_value]
     @logger = Logger.new(STDOUT)
     begin
       @logger.level = Logger.const_get(opts[:loglevel])
     rescue NameError
       raise "Log level #{opts[:loglevel]} is not allowed"
     end
+    @token_header = get_token
   end
 
   def get_token
+    request_headers = {:content_type => :json,
+      :accept => :json}
+    if @session_cookie_name and @session_cookie_value then
+      request_headers[:cookies] = {@session_cookie_name => @session_cookie_value}
+    end
+    @logger.debug("Getting ready to pass #{request_headers.to_json} to /login")
     begin
       response = RestClient.post [@url, 'login'].join('/'),
         {'username' => @username, 'password' => @password}.to_json,
-        :content_type => :json,
-        :accept => :json
+        request_headers
     rescue => e
       raise "Could not reach opsview at #{@url}. #{e}."
     end
-    {:x_opsview_username => @username,
+    token_header = {:x_opsview_username => @username,
      :x_opsview_token => JSON.parse(response.body)['token'],
      :content_type => :json,
      :accept => :json}
+    if @session_cookie_name and @session_cookie_value then
+      token_header[:cookies] = {@session_cookie_name => @session_cookie_value}
+    end
+    token_header
   end
 
   def reload
@@ -236,6 +245,7 @@ Usage:
        ./opsview_control.rb import --sections attribute --sections role [options]
        ./opsview_control.rb export --url http://localhost:10000/rest [options]
        ./opsview_control.rb destroystack --hostgroup "identity-dev Stack 0514" [options]
+       ./opsview_control.rb destroystack --hostgroup "identity-dev Stack 0514" --session-cookie-name myauthcookie --session-cookie-value user@example.com|ZgtjMZuFnsaopw6IDt3twGr9aDU= [options]
        ./opsview_control.rb export --help
 EOS
   stop_on SUB_COMMANDS
@@ -255,6 +265,8 @@ opts = case cmd
       opt :password, "OpsView API User Password", :type => :string, :default => 'initial'
       opt :url, "OpsView API URL", :type => :string, :default => 'http://localhost/rest'
       opt :loglevel, "Logging verbosity", :default => "INFO"
+      opt :session_cookie_name, "Name of a cookie to pass to Opsview or an authentication gateway in front of it", :type => :string
+      opt :session_cookie_value, "Session cookie value", :type => :string
       opt :dryrun, "Don't actually do anything"
     end
   when "export"
@@ -265,6 +277,8 @@ opts = case cmd
       opt :password, "OpsView API User Password", :type => :string, :default => 'initial'
       opt :url, "OpsView API URL", :type => :string, :default => 'http://localhost/rest'
       opt :loglevel, "Logging verbosity", :default => "INFO"
+      opt :session_cookie_name, "Name of a cookie to pass to Opsview or an authentication gateway in front of it", :type => :string
+      opt :session_cookie_value, "Session cookie value", :type => :string
       opt :dryrun, "Don't actually do anything"
     end
   when "destroystack"
@@ -274,6 +288,8 @@ opts = case cmd
       opt :password, "OpsView API User Password", :type => :string, :default => 'initial'
       opt :url, "OpsView API URL", :type => :string, :default => 'http://localhost/rest'
       opt :loglevel, "Logging verbosity", :default => "INFO"
+      opt :session_cookie_name, "Name of a cookie to pass to Opsview or an authentication gateway in front of it", :type => :string
+      opt :session_cookie_value, "Session cookie value", :type => :string
       opt :dryrun, "Don't actually do anything"
     end
   when nil
