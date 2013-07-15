@@ -62,7 +62,26 @@
                 443,
                 80,
                 "HTTPS",
-                "multisan-bigtent.login.persona.org"
+                "multisan-identity-bridge.login.persona.org"
+            ]
+        ]
+    },
+    {
+        "name": "gmail-login-persona-org",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "multisan-identity-bridge.login.persona.org"
             ]
         ]
     }
