@@ -27,12 +27,15 @@ server {
     # here the heartbeat is being forwarded explicitly to enable
     # monitoring of the browserid process directly (not through
     # the router)
+    # 
+    # browserid webhead
     location = /browserid/__heartbeat__ {
         rewrite /browserid/__heartbeat__ /__heartbeat__ break;
         proxy_set_header X-Real-IP $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:62700;
     }
 
+    # router
     location = / {
         proxy_set_header X-Real-IP $proxy_add_x_forwarded_for;
         proxy_pass http://127.0.0.1:63300;
