@@ -7,6 +7,22 @@
 # All rights reserved - Do Not Redistribute
 #
 
+# Install the Rackspace IUS repo to get python 2.7
+remote_file "#{Chef::Config[:file_cache_path]}/ius-release-1.0-11.ius.centos6.noarch.rpm" do
+  source "http://dl.iuscommunity.org/pub/ius/stable/CentOS/6/x86_64/ius-release-1.0-11.ius.centos6.noarch.rpm"
+end
+package "ius-release" do
+  source "#{Chef::Config[:file_cache_path]}/ius-release-1.0-11.ius.centos6.noarch.rpm"
+end
+
+package "python27"
+package "python27-distribute"
+
+easy_install_package "boto" do
+  easy_install_binary "/usr/bin/easy_install-2.7"
+  python_binary "/usr/bin/python2.7"
+end
+
 for nagios_plugin in ["check_http_hash",
                       "check_dynect_gslb_region",
                       "check_instance_elb_membership"] do

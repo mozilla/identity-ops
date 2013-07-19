@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 
 # Determine what load balancers a given instance is a member of based on it's IP
 # and report OK if it's InService in all of its load balancers or report WARNING
