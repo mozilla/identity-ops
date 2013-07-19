@@ -1,0 +1,118 @@
+#!/usr/bin/env python
+
+# Determine what load balancers a given instance is a member of based on it's IP
+# and report OK if it's InService in all of its load balancers or report WARNING
+# or CRITICAL if it's OutOfService in any of its load balancers
+
+import boto.ec2
+import boto.ec2.elb
+import boto.utils
+import logging
+import hashlib
+import os.path
+import pickle
+import time
+import argparse
+import socket
+
+#logging.basicConfig(level=logging.DEBUG)
+
+# http://chase-seibert.github.io/blog/2011/11/23/pythondjango-disk-based-caching-decorator.html
+def cache_disk(seconds = 900, cache_folder="/tmp"):
+    def doCache(f):
+        def inner_function(*args, **kwargs):
+
+            # calculate a cache key based on the decorated method signature
+            key = hashlib.sha1(str(f.__module__) + str(f.__name__) + str(args) + str(kwargs)).hexdigest()
+            filepath = os.path.join(cache_folder, "check_instance_elb_membership.%s.pickle" % key)
+
+            # verify that the cached object exists and is less than $seconds old
+            if os.path.exists(filepath):
+                modified = os.path.getmtime(filepath)
+                age_seconds = time.time() - modified
+                if age_seconds < seconds:
+                    return pickle.load(open(filepath, "rb"))
+
+            # call the decorated function...
+            result = f(*args, **kwargs)
+
+            # ... and save the cached object for next time
+            pickle.dump(result, open(filepath, "wb"))
+
+            return result
+        return inner_function
+    return doCache
+
+@cache_disk(seconds = 120, cache_folder="/tmp")
+def get_lbs():
+    conn_elb = boto.ec2.elb.connect_to_region(region)
+    load_balancers = conn_elb.get_all_load_balancers()
+    return [{'instances': [y.id for y in x.instances], 
+             'name': x.name} for x in load_balancers]
+
+@cache_disk(seconds = 120, cache_folder="/tmp")
+def get_instances():
+    conn_ec2 = boto.ec2.connect_to_region(region)
+    reservations = conn_ec2.get_all_instances()
+    ret = []
+    for reservation in reservations:
+        for instance in reservation.instances:
+            ret.append({'ip': instance.private_ip_address,
+                        'id': instance.id})
+    return ret
+
+def type_ip(ip):
+    try:
+        socket.inet_aton(ip)
+    except socket.error:
+        raise argparse.ArgumentTypeError("%s is not a valid IP address" % ip)
+    return ip
+
+parser = argparse.ArgumentParser(description='''Determine what load balancers a given instance is a member of based on it's IP
+and report OK if it's InService in all of its load balancers or report WARNING
+or CRITICAL if it's OutOfService in any of its load balancers''')
+parser.add_argument('ip', nargs=1, type=type_ip,
+                   help='The IP address of the instance')
+args = parser.parse_args()
+
+metadata = boto.utils.get_instance_metadata()
+region = metadata['placement']['availability-zone'][:-1] if metadata is not None else 'us-west-2'
+
+instance_id = False
+for instance in get_instances():
+    if instance['ip'] == args.ip[0]:
+        # may want to test for multiple instances with the same IP
+        instance_id = instance['id']
+
+if not instance_id:
+    print "UNKNOWN - couldn't find instance_id for %s" % args.ip[0]
+    exit(3)
+
+conn_elb = boto.ec2.elb.connect_to_region(region)
+states=[]
+for load_balancer in get_lbs():
+    if instance_id in load_balancer['instances']:
+        logging.debug('%s found in load balancer %s' % (instance_id, load_balancer['name']))
+        instance_health = conn_elb.describe_instance_health(load_balancer['name'], [instance_id])
+        if len(instance_health) != 1:
+            print "UNKNOWN - something wrong with instance health"
+            exit(3)
+        states.append((load_balancer['name'], instance_health[0].state))
+
+logging.debug('state of %s is %s' % (instance_id, states))
+
+in_service=[x[0] for x in states if x[1] == 'InService']
+out_of_service=[x[0] for x in states if x[1] == 'OutOfService']
+if len(in_service) > 0 and len(out_of_service) > 0:
+    print "WARNING - instance %s:%s is InService in some ELBs (%s) and OutOfService in others (%s)" % \
+        (args.ip[0], instance_id, in_service, out_of_service)
+    exit(1)
+elif len(in_service) > 0:
+    print "OK - instance %s:%s is InService in all ELBs (%s)" % (args.ip[0], instance_id, in_service)
+    exit(0)
+elif len(out_of_service) > 0:
+    print "CRITICAL - instance %s:%s is OutOfService in all ELBs (%s)" % (args.ip[0], instance_id, out_of_service)
+    exit(2)
+else:
+    print "UNKNOWN - instance %s:%s doesn't appear in any ELBs" % (args.ip[0], instance_id)
+    exit(3)

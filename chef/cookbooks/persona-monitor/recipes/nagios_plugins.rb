@@ -8,7 +8,8 @@
 #
 
 for nagios_plugin in ["check_http_hash",
-                      "check_dynect_gslb_region"] do
+                      "check_dynect_gslb_region",
+                      "check_instance_elb_membership"] do
   cookbook_file "/usr/local/nagios/libexec/#{nagios_plugin}" do
     source "usr/local/nagios/libexec/#{nagios_plugin}"
     mode 0755
