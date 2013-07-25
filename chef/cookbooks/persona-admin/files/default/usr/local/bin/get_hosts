@@ -5,8 +5,20 @@ import sys
 import logging
 import json
 import argparse
+import textwrap
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                                 epilog=textwrap.dedent('''\
+Examples:
+  Show all stacks
+    get_hosts
+  Show all hosts in a stack
+    get_hosts univ -o table
+  Show all webheads and keysigns in a stack in json
+    get_hosts 0727 webhead keysign -o json
+  Iterate over a tier of hosts
+    for host in `get_hosts 0727 dbwrite`; do ssh $host 'hostname'; done'''))
+                                 
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
 parser.add_argument("-o", "--output", help="set the output format",
@@ -18,44 +30,44 @@ args = parser.parse_args()
 if args.verbose:
   logging.basicConfig(level=logging.DEBUG)
 
-response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/placement/availability-zone')
-region = response.read()[0:-1]
+my_metadata = boto.utils.get_instance_metadata()
+region = my_metadata['placement']['availability-zone'][0:-1]
 conn_ec2 = boto.ec2.connect_to_region(region)
 
-response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
-my_instance_id = response.read()
+my_instance_id = my_metadata['instance-id']
 
 reservations = conn_ec2.get_all_instances(instance_ids=[my_instance_id])
 my_name = reservations[0].instances[0].tags['Name']
 # my_stack = reservations[0].instances[0].tags['Stack']
-# my_stack = my_name.split('-')[-1]
-my_vpc = '-'.join(my_name.split('-')[0:2])
+my_vpc = [my_metadata['network']['interfaces']['macs'][x]['vpc-id'] for x in my_metadata['network']['interfaces']['macs'].keys()]
+my_vpc = my_vpc[0] if len(my_vpc) == 1 else False
+if not my_vpc:
+  raise Exception("The instance you're running this from appears to be in %s VPC(s). Aborting" % len(my_vpc))
 my_env = reservations[0].instances[0].tags['Env']
 logging.debug([my_name, my_vpc, my_env, args.stack])
 
-
 if args.stack:
   output = []
-  # reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity', 'tag:Stack' : my_stack})
-  reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity'})
+  reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity', 
+                                                     'tag:Stack' : args.stack})
   for reservation in reservations:
-    for instance in reservation.instances:
+    for instance in [x for x in reservation.instances if x.state != 'terminated']:
       my_tiers = args.tier if len(args.tier) > 0 else False
   
       logging.debug(instance.tags['Name'])
-      if len(instance.tags['Name'].split('-')) == 5:
-        stack = instance.tags['Name'].split('-')[-1]
-        # stack = instance.tags['Stack']
-        tier = instance.tags['Name'].split('-')[3]
-        # tier = instance.tags['Tier']
-        vpc = '-'.join(instance.tags['Name'].split('-')[0:2])
-        if vpc == my_vpc and \
-          instance.tags['Env'] == my_env and \
-          stack == args.stack and \
-          (not my_tiers or tier in my_tiers):
-            output.append({"ip": instance.private_ip_address,
-                           "name": instance.tags['Name'],
-                           "tier": tier})
+
+      if my_vpc != instance.vpc_id:
+          continue
+      if not 'Env' in instance.tags or instance.tags['Env'] != my_env:
+          continue
+      #if not 'Stack' in instance.tags or instance.tags['Stack'] != args.stack:
+      #    continue
+      if not 'Tier' in instance.tags or (my_tiers and not instance.tags['Tier'] in my_tiers):
+          continue
+      output.append({"ip": instance.private_ip_address,
+                     "name": instance.tags['Name'],
+                     "tier": instance.tags['Tier'],
+                     "id": instance.id})
   if args.output == "list":
     for i in output:
         print(i['ip'])
@@ -63,19 +75,17 @@ if args.stack:
     print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
   elif args.output == "table":
     for i in output:
-      print("%s\t%s\t%s" % (i['ip'], i['name'], i['tier']))
+      print("{: >13} {: >10} {: >13} {}".format(i['ip'], i['id'], i['tier'], i['name']))
 else:
   output = []
   reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity'})
   for reservation in reservations:
     for instance in reservation.instances:
-      if len(instance.tags['Name'].split('-')) == 5:
-        stack = instance.tags['Name'].split('-')[-1]
-        vpc = '-'.join(instance.tags['Name'].split('-')[0:2])
-        if stack not in [x['stack'] for x in output]:
-          output.append({"stack": stack,
-                         "vpc": vpc})
-          # output.append(instance.tags['Stack'])
+      if 'Stack' in instance.tags:
+        if not instance.tags['Stack'] in [x['stack'] for x in output]:
+          output.append({"stack": instance.tags['Stack'],
+                        "vpc": instance.vpc_id})
+      
   if args.output == "list":
     for i in output:
         print(i['stack'])
@@ -83,4 +93,4 @@ else:
     print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
   elif args.output == "table":
     for i in output:
-      print("%s\t%s" % (i['stack'], i['vpc']))
+      print("{: >20} {: >20}".format(i['stack'],i['vpc']))
