@@ -87,3 +87,6 @@ sslproxy_cafile /etc/squid/cacert.pem
 
 # never deal with >10k responses
 reply_body_max_size 10240 bytes bidcert
+
+# reduce the default shutdown time from 30 seconds
+shutdown_lifetime 10 seconds
