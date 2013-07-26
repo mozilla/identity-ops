@@ -33,11 +33,31 @@
   },
   "identity-bigtent-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
     "us-west-2": "ami-8db828bd",
-    "us-east-1": ""
+    "us-east-1": "ami-c22758ab"
   },
   "identity-bridge-gmail-789bdb6b5b151ab8e71f8bd0235898a30bc124fc": {
     "us-west-2": "ami-aba4349b",
     "us-east-1": ""
+  },
+  "identity-bridge-gmail-22320de5b06b0c079573438154be3ccf0c4df3e7": {
+    "us-west-2": "ami-eb27b7db",
+    "us-east-1": ""
+  },
+  "identity-bridge-gmail-67324980b0269c58dceefa18db2803ab02089675": {
+    "us-west-2": "ami-c19300f1",
+    "us-east-1": "ami-c62758af"
+  },
+  "identity-bridge-gmail-01d2d2b1086d00984e86f0ede92e4cc0bfe43d8c": {
+    "us-west-2": "ami-d90794e9",
+    "us-east-1": "ami-a04f31c9"
+  },
+  "identity-bridge-gmail-2872990b915002bc701de5755de53473f303a4c9": {
+    "us-west-2": "ami-73d04243",
+    "us-east-1": "ami-c66f16af"
+  },
+  "identity-bridge-gmail-83a9b24504489bf6f09add22a8e83b1ec7002ae8": {
+    "us-west-2": "ami-9de674ad",
+    "us-east-1": "ami-5b433b32"
   },
   "persona-webhead-0.1": {
     "us-west-2": "ami-cc6df9fc",
@@ -81,6 +101,30 @@
   },
   "persona-webhead-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
     "us-west-2": "ami-43a13173",
+    "us-east-1": "ami-750e7d1c"
+  },
+  "persona-webhead-f24b8c1a7305535c199ebbc38c2f337f11d464e8": {
+    "us-west-2": "ami-3527b705",
+    "us-east-1": ""
+  },
+  "persona-webhead-67324980b0269c58dceefa18db2803ab02089675": {
+    "us-west-2": "ami-d79300e7",
+    "us-east-1": ""
+  },
+  "persona-webhead-e73d4251dcf61c52d7b3f68459906be12f5b64ac": {
+    "us-west-2": "ami-1340d323",
+    "us-east-1": "ami-f8275891"
+  },
+  "persona-webhead-e11543421ae8391de6c8087be41a46464a820629": {
+    "us-west-2": "ami-3560f305",
+    "us-east-1": ""
+  },
+  "persona-webhead-5bd089991c0bea555e7f3ea884dd358493ef2a02": {
+    "us-west-2": "ami-ed2ebddd",
+    "us-east-1": "ami-387a0351"
+  },
+  "persona-webhead-6ae345451f1d1596bac6dfc4f9a383448cd27bb0": {
+    "us-west-2": "ami-d38715e3",
     "us-east-1": ""
   },
   "persona-keysign-0.1": {
@@ -129,6 +173,26 @@
   },
   "persona-keysign-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
     "us-west-2": "ami-47a13177",
+    "us-east-1": "ami-4b0e7d22"
+  },
+  "persona-keysign-f24b8c1a7305535c199ebbc38c2f337f11d464e8": {
+    "us-west-2": "ami-3b27b70b",
+    "us-east-1": ""
+  },
+  "persona-keysign-67324980b0269c58dceefa18db2803ab02089675": {
+    "us-west-2": "ami-dd9300ed",
+    "us-east-1": "ami-ae2758c7"
+  },
+  "persona-keysign-e11543421ae8391de6c8087be41a46464a820629": {
+    "us-west-2": "ami-3760f307",
+    "us-east-1": ""
+  },
+  "persona-keysign-5bd089991c0bea555e7f3ea884dd358493ef2a02": {
+    "us-west-2": "ami-eb2ebddb",
+    "us-east-1": "ami-267a034f"
+  },
+  "persona-keysign-6ae345451f1d1596bac6dfc4f9a383448cd27bb0": {
+    "us-west-2": "ami-d18715e1",
     "us-east-1": ""
   },
   "persona-dbwrite-0.1": {
@@ -165,6 +229,26 @@
   },
   "persona-dbwrite-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7": {
     "us-west-2": "ami-4fa1317f",
+    "us-east-1": "ami-4f0e7d26"
+  },
+  "persona-dbwrite-f24b8c1a7305535c199ebbc38c2f337f11d464e8": {
+    "us-west-2": "ami-3f27b70f",
+    "us-east-1": ""
+  },
+  "persona-dbwrite-67324980b0269c58dceefa18db2803ab02089675": {
+    "us-west-2": "ami-c39300f3",
+    "us-east-1": "ami-ba2758d3"
+  },
+  "persona-dbwrite-e11543421ae8391de6c8087be41a46464a820629": {
+    "us-west-2": "ami-3960f309",
+    "us-east-1": ""
+  },
+  "persona-dbwrite-5bd089991c0bea555e7f3ea884dd358493ef2a02": {
+    "us-west-2": "ami-ef2ebddf",
+    "us-east-1": "ami-f07f0699"
+  },
+  "persona-dbwrite-6ae345451f1d1596bac6dfc4f9a383448cd27bb0": {
+    "us-west-2": "ami-ef8715df",
     "us-east-1": ""
   },
   "persona-admin-0.1": {
@@ -211,6 +295,19 @@
     "us-west-2": "ami-07970637",
     "us-east-1": "ami-1f264d76"
   },
+  "identity-proxy-e11543421ae8391de6c8087be41a46464a820629": {
+    "us-west-2": "ami-45019275",
+    "us-east-1": "ami-ae5b25c7"
+  },
+  "identity-proxy-83a9b24504489bf6f09add22a8e83b1ec7002ae8": {
+    "us-west-2": "ami-63900253",
+    "us-east-1": "ami-d3eb93ba"
+  },
+  "identity-proxy-c563352846f4426723a21d4e4eb011b88d781ed0": {
+    "us-west-2": "ami-71b12341",
+    "us-east-1": "ami-37bfc45e"
+  },
+
   "Scientific Linux 6.3 x86_64": {
     "us-west-2": "ami-d033bce0",
     "us-east-1": "ami-313b8e58"

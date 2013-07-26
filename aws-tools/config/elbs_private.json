@@ -1,6 +1,7 @@
 [
     {
         "name": "keysign",
+        "application": "persona",
         "subnet" : "private",
         "security_groups" :
         [
@@ -18,6 +19,7 @@
     },
     {
         "name": "dbwrite",
+        "application": "persona",
         "subnet" : "private",
         "security_groups" :
         [
@@ -32,30 +34,5 @@
                 "HTTP"
             ]
         ]
-    },
-    {
-        "name": "proxy",
-        "subnet" : "private",
-        "security_groups" :
-        [
-            "proxy-loadbalancer"
-        ],
-        "is_internal" : true,
-        "listeners" : 
-        [
-            [
-                8888,
-                8888,
-                "TCP"
-            ]
-        ],
-        "healthcheck" :
-        {
-            "interval" : 30,
-            "target" : "TCP:8888",
-            "healthy_threshold" : 3,
-            "timeout" : 5,
-            "unhealthy_threshold" : 5
-        }
     }
 ]

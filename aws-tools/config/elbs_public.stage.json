@@ -21,7 +21,14 @@
                 8000,
                 "HTTP"
             ]
-        ]
+        ],
+        "healthcheck": {
+            "interval" : 30,
+            "target" : "HTTP:80/__heartbeat__?deep=1",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
     },
     {
         "name": "w-login-anosrep-org",
@@ -45,34 +52,17 @@
                 8000,
                 "HTTP"
             ]
-        ]
-    },
-    {
-        "name": "diresworb-org",
-        "subnet" : "public",
-        "security_groups" :
-        [
-            "public-loadbalancer",
-            "administrable"
         ],
-        "is_internal" : false,
-        "listeners" : 
-        [
-            [
-                443,
-                80,
-                "HTTPS",
-                "wildcard.diresworb.org"
-            ],
-            [
-                80,
-                8000,
-                "HTTP"
-            ]
-        ]
+        "healthcheck": {
+            "interval" : 30,
+            "target" : "HTTP:80/__heartbeat__?deep=1",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
     },
     {
-        "name": "bt-login-anosrep-org",
+        "name": "yahoo-login-anosrep-org",
         "subnet" : "public",
         "security_groups" :
         [
@@ -91,7 +81,7 @@
         ]
     },
     {
-        "name": "google-login-anosrep-org",
+        "name": "gmail-login-anosrep-org",
         "subnet" : "public",
         "security_groups" :
         [
