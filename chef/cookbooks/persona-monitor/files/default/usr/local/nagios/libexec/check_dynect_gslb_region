@@ -34,7 +34,7 @@ if opts[:config] then
 end
 
 Trollop::die :user, "user is required either in the config or on the command line" if not opts[:user]
-Trollop::die :pass, "psas is required either in the config or on the command line" if not opts[:user]
+Trollop::die :pass, "pass is required either in the config or on the command line" if not opts[:user]
 Trollop::die :customer, "customer is required either in the config or on the command line" if not opts[:user]
 
 opts[:zone] = opts[:record].split('.')[-2..-1].join('.') if not opts[:zone]
@@ -46,23 +46,29 @@ begin
     gslb = dyn.get("GSLB/#{opts[:zone]}/#{opts[:record]}")
   end
 rescue Timeout::Error, Errno::ENETUNREACH => e
-  puts "UNKNOWN: dynect api timed out (#{$!})"
+  puts "UNKNOWN: DynECT API timed out (#{$!})"
   exit 3
 rescue DynectRest::Exceptions::RequestFailed => e
-  puts "UNKNOWN: dynect api error, #{$!}"
+  puts "UNKNOWN: DynECT API error, #{$!}"
+  exit 3
+rescue TypeError => e
+  puts "UNKNOWN: Couldn't parse DynECT API response (#{$!})"
   exit 3
 end
 
 region = gslb["region"].select { |r| r["region_code"] == opts[:region] }.first
 if region.nil?
-  puts "UNKNOWN: can't find region #{region}"
+  puts "UNKNOWN: Can't find region #{region}"
   exit 3
 end
 
 down = {}
+up = {}
 region["pool"].each do |address|
   if address["status"] != "up"
     down[address["address"]] = address["status"]
+  else
+    up[address["address"]] = address["status"]
   end
 end
 
@@ -70,7 +76,8 @@ if down.length > 0
   msg = down.collect { |addr, status| "#{addr}=#{status}" }.join("; ")
   puts "CRITICAL: GSLB addresses unhealthy: #{msg}"
   exit 2
+else
+  msg = up.collect { |addr, status| "#{addr}=#{status}" }.join("; ")
+  puts "OK: All GSLB addresses are healthy : #{msg}"
+  exit 0
 end
-
-puts "OK: all GSLB addresses are healthy"
-exit 0
