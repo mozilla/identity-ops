@@ -40,17 +40,18 @@ reload_ohai ||= res.updated?
 
 # Note max hostname length : 64
 short_hostname=node[:ec2][:instance_id] ? node[:ec2][:instance_id] : "ip-#{node[:ipaddress].tr('.','-')}"
-#new_hostname=short_hostname + 
-#             (node[:tier] ? ".#{node[:tier]}" : "") + 
-#             (node[:stack][:name] ? ".#{node[:stack][:name]}" : "") +  
-#             (node[:stack][:type] ? ".#{node[:stack][:type]}" : "") +
-#             (node[:aws_region] ? ".#{node[:aws_region]}" : "") +
-#             ".allizomaws.com"
+fqdn=short_hostname + 
+             (node[:tier] ? ".#{node[:tier]}" : "") + 
+             (node[:stack][:name] ? ".#{node[:stack][:name]}" : "") +  
+             (node[:stack][:type] ? ".#{node[:stack][:type]}" : "") +
+             (node[:aws_region] ? ".#{node[:aws_region]}" : "") +
+             ".allizomaws.com"
 
 res = template "/etc/hosts" do
         source "etc/hosts.erb"
         variables(
-          :hostname => short_hostname
+          :hostname => short_hostname,
+          :fqdn => fqdn
         )
         user "root"
         group "root"
