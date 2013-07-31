@@ -61,7 +61,7 @@ res.run_action(:create)
 reload_ohai ||= res.updated?
 
 res = execute "hostname #{short_hostname}" do
-        not_if {node[:fqdn] == short_hostname}
+        not_if {node[:hostname] == short_hostname}
       end
 res.run_action(:run)
 reload_ohai ||= res.updated?
