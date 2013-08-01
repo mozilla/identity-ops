@@ -16,6 +16,10 @@ cookbook_file "/etc/yum.repos.d/opsview.repo" do
   backup false
 end 
 
+package "opsview-agent" do
+  # opsview-agent conflicts with opsview and must not be present
+  action :purge
+end
 package "opsview"
 
 service "mysqld" do
