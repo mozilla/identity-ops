@@ -35,6 +35,10 @@
     "us-west-2": "ami-8db828bd",
     "us-east-1": "ami-c22758ab"
   },
+  "identity-bridge-yahoo-e16067550222f3cc1c11e22b32cfe70be6d791eb": {
+    "us-west-2": "ami-ab77e59b",
+    "us-east-1": ""
+  },
   "identity-bridge-gmail-789bdb6b5b151ab8e71f8bd0235898a30bc124fc": {
     "us-west-2": "ami-aba4349b",
     "us-east-1": ""
@@ -127,6 +131,18 @@
     "us-west-2": "ami-d38715e3",
     "us-east-1": ""
   },
+  "persona-webhead-3cd8108f9616d77dec53b8229b4621386b36a218": {
+    "us-west-2": "ami-c776e4f7",
+    "us-east-1": ""
+  },
+  "persona-webhead-41ebbee13581a342d503f19b9ea2568528cc9a1c": {
+    "us-west-2": "ami-f11082c1",
+    "us-east-1": ""
+  },
+  "persona-webhead-76e80cba4039c657387d5a573c65108a4bb8b849": {
+    "us-west-2": "ami-2b15871b",
+    "us-east-1": ""
+  },
   "persona-keysign-0.1": {
     "us-west-2": "ami-121d8922",
     "us-east-1": "ami-0e92f767"
@@ -195,6 +211,18 @@
     "us-west-2": "ami-d18715e1",
     "us-east-1": ""
   },
+  "persona-keysign-3cd8108f9616d77dec53b8229b4621386b36a218": {
+    "us-west-2": "ami-cb76e4fb",
+    "us-east-1": ""
+  },
+  "persona-keysign-41ebbee13581a342d503f19b9ea2568528cc9a1c": {
+    "us-west-2": "ami-8d1082bd",
+    "us-east-1": ""
+  },
+  "persona-keysign-76e80cba4039c657387d5a573c65108a4bb8b849": {
+    "us-west-2": "ami-2f15871f",
+    "us-east-1": ""
+  },
   "persona-dbwrite-0.1": {
     "us-west-2": "ami-fa0b9fca",
     "us-east-1": "ami-128de97b"
@@ -249,6 +277,18 @@
   },
   "persona-dbwrite-6ae345451f1d1596bac6dfc4f9a383448cd27bb0": {
     "us-west-2": "ami-ef8715df",
+    "us-east-1": ""
+  },
+  "persona-dbwrite-3cd8108f9616d77dec53b8229b4621386b36a218": {
+    "us-west-2": "ami-cd76e4fd",
+    "us-east-1": ""
+  },
+  "persona-dbwrite-41ebbee13581a342d503f19b9ea2568528cc9a1c": {
+    "us-west-2": "ami-f51082c5",
+    "us-east-1": ""
+  },
+  "persona-dbwrite-76e80cba4039c657387d5a573c65108a4bb8b849": {
+    "us-west-2": "ami-13158723",
     "us-east-1": ""
   },
   "persona-admin-0.1": {
