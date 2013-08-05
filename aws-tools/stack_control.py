@@ -147,11 +147,15 @@ def create_stack(region,
 
     stack_info = {}
     stack_info['load_balancers'] = {}
-    for x in [y for y in existing_load_balancers if y.vpc_id == vpc.id and y.name.endswith('-%s' % name)]:
-        stack_info['load_balancers'][x.name[:-len('-%s' % name)]] = {}
-        stack_info['load_balancers'][x.name[:-len('-%s' % name)]]['dns_name'] = x.dns_name
-        stack_info['load_balancers'][x.name[:-len('-%s' % name)]]['name'] = x.name
-    # TODO add in -univ devices
+    for x in [y for y in existing_load_balancers if y.vpc_id == vpc.id and y.name.endswith('-%s' % name) or y.name.endswith('-univ-%s' % stack_type)]:
+        if x.name.endswith('-univ-%s' % environment):
+            si_tier_name = x.name[:-len('-univ-%s' % environment)]
+        elif x.name.endswith('-%s' % name):
+            si_tier_name = x.name[:-len('-%s' % name)]
+        stack_info['load_balancers'][si_tier_name] = {}
+        stack_info['load_balancers'][si_tier_name]['dns_name'] = x.dns_name
+        stack_info['load_balancers'][si_tier_name]['name'] = x.name
+
     stack_info.update({'name': name,
                        'type': stack_type,
                        'environment': environment})
