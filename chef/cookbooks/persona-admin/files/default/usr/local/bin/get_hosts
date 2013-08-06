@@ -20,7 +20,9 @@ Examples:
   Iterate over a tier of hosts
     for host in `get_hosts 0727 dbwrite`; do ssh $host 'hostname'; done
   Show all ELBs for a stack
-    get_hosts -e -o table 0727'''))
+    get_hosts -e -o table 0727
+  Show the persona-org and gmail-login-persona-org ELBs for a stack
+    get_hosts -e 0727 persona-org gmail-login-persona-org'''))
 
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
