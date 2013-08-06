@@ -1,5 +1,6 @@
 #!/usr/bin/env /usr/bin/python2.7
 import boto.ec2
+import boto.ec2.elb
 import urllib2
 import sys
 import logging
@@ -17,9 +18,13 @@ Examples:
   Show all webheads and keysigns in a stack in json
     get_hosts 0727 webhead keysign -o json
   Iterate over a tier of hosts
-    for host in `get_hosts 0727 dbwrite`; do ssh $host 'hostname'; done'''))
-                                 
+    for host in `get_hosts 0727 dbwrite`; do ssh $host 'hostname'; done
+  Show all ELBs for a stack
+    get_hosts -e -o table 0727'''))
+
 parser.add_argument("-v", "--verbose", help="increase output verbosity",
+                    action="store_true")
+parser.add_argument("-e", "--elb", help="query for Elastic Load Balancers instead of instances",
                     action="store_true")
 parser.add_argument("-o", "--output", help="set the output format",
                     choices=["list","json","table"], default="list")
@@ -48,34 +53,59 @@ logging.debug([my_name, my_vpc, my_env, args.stack])
 
 if args.stack:
   output = []
-  reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity', 
-                                                     'tag:Stack' : args.stack})
-  for reservation in reservations:
-    for instance in [x for x in reservation.instances if x.state != 'terminated']:
-      my_tiers = args.tier if len(args.tier) > 0 else False
-  
-      logging.debug(instance.tags['Name'])
+  my_tiers = args.tier if len(args.tier) > 0 else False
 
-      if my_vpc != instance.vpc_id:
-          continue
-      if not 'Env' in instance.tags or instance.tags['Env'] != my_env:
-          continue
-      #if not 'Stack' in instance.tags or instance.tags['Stack'] != args.stack:
-      #    continue
-      if not 'Tier' in instance.tags or (my_tiers and not instance.tags['Tier'] in my_tiers):
-          continue
-      output.append({"ip": instance.private_ip_address,
-                     "name": instance.tags['Name'],
-                     "tier": instance.tags['Tier'],
-                     "id": instance.id})
-  if args.output == "list":
-    for i in output:
-        print(i['ip'])
-  elif args.output == "json":
+  if args.elb:
+    conn_elb = boto.ec2.elb.connect_to_region(region)
+    load_balancers = conn_elb.get_all_load_balancers()
+    for load_balancer in load_balancers:
+      env = load_balancer.name.split('-')[-1] if load_balancer.name.split('-')[-1] in ['prod','stage','dev'] else False
+      pos = -2 if env else -1
+      stack = load_balancer.name.split('-')[pos]
+      name = '-'.join(load_balancer.name.split('-')[0:pos])
+      if stack != args.stack:
+        continue
+      if my_tiers and not name in my_tiers:
+        continue
+      output.append({"name": name,
+                     "dns": load_balancer.dns_name})
+    if args.output == "list":
+      for i in output:
+          print(i['dns'])
+    elif args.output == "table":
+      for i in output:
+        print("{: >23} {}".format(i['name'], i['dns']))
+  else:
+    reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity', 
+                                                       'tag:Stack' : args.stack})
+    for reservation in reservations:
+      for instance in [x for x in reservation.instances if x.state != 'terminated']:
+    
+        logging.debug(instance.tags['Name'])
+  
+        if my_vpc != instance.vpc_id:
+            continue
+        if not 'Env' in instance.tags or instance.tags['Env'] != my_env:
+            continue
+        #if not 'Stack' in instance.tags or instance.tags['Stack'] != args.stack:
+        #    continue
+        if not 'Tier' in instance.tags or (my_tiers and not instance.tags['Tier'] in my_tiers):
+            continue
+        output.append({"ip": instance.private_ip_address,
+                       "name": instance.tags['Name'],
+                       "tier": instance.tags['Tier'],
+                       "id": instance.id})
+    if args.output == "list":
+      for i in output:
+          print(i['ip'])
+    elif args.output == "table":
+      for i in output:
+        print("{: >13} {: >10} {: >13} {}".format(i['ip'], i['id'], i['tier'], i['name']))
+
+  if args.output == "json":
     print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
-  elif args.output == "table":
-    for i in output:
-      print("{: >13} {: >10} {: >13} {}".format(i['ip'], i['id'], i['tier'], i['name']))
+
+
 else:
   output = []
   reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity'})
