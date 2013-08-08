@@ -19,3 +19,8 @@ f42a9e3d61d73473f4b8dfe72e23616850b62fe3  https://login.anosrep.org/include.js
 72dba4af90e60bdf9987c1b2433e110803eb6e33  https://login.persona.org/include.js
 ea685c4740d9170ba5d0e3303534055990351a7e  https://login.anosrep.org/include.js
 d5130400a95e20c751d8056728c9a776103424eb  https://login.persona.org/include.js
+d45a17460b57b0639252b8d173d92f173b51809f  https://login.anosrep.org/include.js
+311cbec10b04874a756cb80aed88f44b6f00b518  https://gmail.login.persona.org/include.js
+8fba45a641028a09201f3a52224ac433e89f5d7b  https://login.persona.org/include.js
+c5b1100acfa2ae066b04570015bee8b8bb53b518  https://login.anosrep.org/.well-known/browserid
+5bc24db26d67c55b90934d53878eee91d3b52b06  https://yahoo.login.anosrep.org/.well-known/browserid
