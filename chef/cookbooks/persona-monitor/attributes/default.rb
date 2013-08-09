@@ -7,3 +7,4 @@ default["persona"]["monitor"]["dynect"]["customer"] = "dynect-customer-name"
 default["persona"]["monitor"]["dynect"]["user"] = "dynect-user"
 default["persona"]["monitor"]["dynect"]["pass"] = "dynect-password"
 
+normal["aws"]["metadata_readers"] = ["nagios"]

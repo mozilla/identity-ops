@@ -30,6 +30,8 @@ default["persona"]["rpms"]["kernel"] = "kernel-2.6.32-131.6.1.el6.rsbac.x86_64.r
 default["persona"]["dbwrite_host"] = "dbwrite.example.com"
 default["persona"]["keysign_host"] = "keysign.example.com"
 
+default["aws"]["metadata_readers"] = []
+
 default["stack"]["load_balancers"] = { }
 default["tier"] = false
 default["stack"]["name"] = false

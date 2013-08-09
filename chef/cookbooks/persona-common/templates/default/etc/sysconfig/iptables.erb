@@ -1,0 +1,11 @@
+*filter
+:INPUT ACCEPT [330:27172]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [235:28280]
+
+-A OUTPUT -d 169.254.169.254/32 -m owner --uid-owner root -m comment --comment "Allow access to AWS Metadata for the root user" -j ACCEPT
+<% for @user in node[:aws][:metadata_readers] %>
+-A OUTPUT -d 169.254.169.254/32 -m owner --uid-owner <%= @user %> -m comment --comment "Allow access to AWS Metadata for the <%= @user %> user" -j ACCEPT
+<% end %>
+-A OUTPUT -d 169.254.169.254/32 -m comment --comment "Block access to AWS Metadata for all other users" -j DROP 
+COMMIT

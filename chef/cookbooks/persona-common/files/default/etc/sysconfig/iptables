@@ -1,6 +1,0 @@
-*filter
-:INPUT ACCEPT [330:27172]
-:FORWARD ACCEPT [0:0]
-:OUTPUT ACCEPT [235:28280]
--A OUTPUT -d 169.254.169.254/32 -m owner ! --uid-owner root -m comment --comment "Block access to AWS Metadata for all users other than root" -j DROP 
-COMMIT

@@ -7,8 +7,8 @@
 # All rights reserved - Do Not Redistribute
 #
 
-cookbook_file "/etc/sysconfig/iptables" do
-  source "etc/sysconfig/iptables"
+template "/etc/sysconfig/iptables" do
+  source "etc/sysconfig/iptables.erb"
   owner "root"
   group "root"
   mode 0600
