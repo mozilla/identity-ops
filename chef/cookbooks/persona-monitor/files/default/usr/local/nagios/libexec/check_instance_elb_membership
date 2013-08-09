@@ -104,7 +104,6 @@ parser.add_argument('ip', nargs=1, type=type_ip,
 args = parser.parse_args()
 logging.basicConfig(level=args.loglevel)
 
-
 metadata = boto.utils.get_instance_metadata()
 region = metadata['placement']['availability-zone'][:-1] if metadata is not None else 'us-west-2'
 
@@ -139,11 +138,20 @@ logging.debug('state of %s is %s' % (instance_id, states))
 inservice_elbs=[x for x in states if x['instance_state'] == 'InService']
 outofservice_elbs=[x for x in states if x['instance_state'] == 'OutOfService']
 
-stats = ";".join(["%s_OutOfService=%s;%s_percent_healthy=%.2f" % \
-                   (x['name'], 
-                    x['outofservice_instances'], 
-                    x['name'], 
-                    float(x['total_instances'] - x['outofservice_instances']) / x['total_instances']) for x in states])
+# First 19 characters of the metric name should be unique
+# http://nagiosplug.sourceforge.net/developer-guidelines.html#AEN201
+stats = " ".join(["OutOfService_%(name)s=%(oval)s;%(owarn)s;%(ocrit)s;%(omin)s;%(omax)s UnHealthy_%(name)s=%(hval).0f%%;%(hwarn)s;%(hcrit)s;%(hmin)s;%(hmax)s" % \
+                   {'name': x['name'],
+                    'oval': x['outofservice_instances'],
+                    'owarn': '',
+                    'ocrit': x['total_instances'] - args.min_instances + 1,
+                    'omin': 0,
+                    'omax': x['total_instances'],
+                    'hval': float(x['outofservice_instances']) * 100 / x['total_instances'],
+                    'hwarn': '',
+                    'hcrit': 100 - args.min_percent + 1,
+                    'hmin': 0,
+                    'hmax': 100} for x in states])
 
 logging.debug('stats : %r' % stats)
 
