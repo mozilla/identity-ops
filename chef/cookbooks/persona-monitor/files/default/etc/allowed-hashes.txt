@@ -3,24 +3,14 @@
 # /usr/local/nagios/libexec/check_http_hash
 # da39a3 is the beginning of the hash for an empty page
 # 993e66 is the beginning of the hash for a 301 page
-5957d49c63f0bd4be7a4ec52cd785f186b045b42  https://login.persona.org/.well-known/browserid
-f230ccf60b7ebdb6ecd52c150877817829cb708c  https://login.anosrep.org/.well-known/browserid
-c30a0bd77fcd563f24bf13c51d41b650a9898799  https://login.persona.org/include.js
-527f1dabb61930836a16c6144c29a27caa5c33ff  https://login.anosrep.org/include.js
-9eefbc13a82e27e5212325c5d7d82cae3ccdee1e  https://yahoo.login.persona.org/.well-known/browserid
-7779d58ea26c2f0d22b69b0cd9bc623c27c25202  https://yahoo.login.anosrep.org/.well-known/browserid
-541ea8b176ed8cdf96d1f50529cb0d97dd42b8e6  https://login.anosrep.org/include.js
-bee13a4a019fa69483eb5c28ac5af927abe03d6f  https://login.persona.org/include.js
-a03a80caed6c2acca5c6ea5edaed5b021b032af9  https://login.anosrep.org/include.js
-7ee35b0651ea4e9365f78fa10dd70f65201ee6a1  https://login.anosrep.org/include.js
-ea5023e55d0e6d1ffd0dd4a3a95d6cb124625562  https://login.persona.org/include.js
-f42a9e3d61d73473f4b8dfe72e23616850b62fe3  https://login.anosrep.org/include.js
-439c0c97469ba469b51d3a0582bfea72fee15459  https://google.login.anosrep.org/.well-known/browserid
-72dba4af90e60bdf9987c1b2433e110803eb6e33  https://login.persona.org/include.js
-ea685c4740d9170ba5d0e3303534055990351a7e  https://login.anosrep.org/include.js
-d5130400a95e20c751d8056728c9a776103424eb  https://login.persona.org/include.js
-d45a17460b57b0639252b8d173d92f173b51809f  https://login.anosrep.org/include.js
-311cbec10b04874a756cb80aed88f44b6f00b518  https://gmail.login.persona.org/include.js
-8fba45a641028a09201f3a52224ac433e89f5d7b  https://login.persona.org/include.js
-c5b1100acfa2ae066b04570015bee8b8bb53b518  https://login.anosrep.org/.well-known/browserid
-5bc24db26d67c55b90934d53878eee91d3b52b06  https://yahoo.login.anosrep.org/.well-known/browserid
+# Method to gather hashes
+# for site in persona anosrep; do for app in login yahoo.login gmail.login; do echo "`curl -s https://$app.$site.org/.well-known/browserid | sha1sum` https://$app.$site.org/.well-known/browserid"; if [ "$app" = "login" ]; then echo "`curl -s https://$app.$site.org/include.js | sha1sum` https://$app.$site.org/include.js"; fi; done; done
+4e624b6a10415818198d5069f31978eca5035f45  - https://login.persona.org/.well-known/browserid
+8fba45a641028a09201f3a52224ac433e89f5d7b  - https://login.persona.org/include.js
+a6ec16e995b67cc93c83d522a0d99ca354166f9a  - https://yahoo.login.persona.org/.well-known/browserid
+311cbec10b04874a756cb80aed88f44b6f00b518  - https://gmail.login.persona.org/.well-known/browserid
+c5b1100acfa2ae066b04570015bee8b8bb53b518  - https://login.anosrep.org/.well-known/browserid
+bbeafa9df263bebd18c0b9d99e64ca05e77224dc  - https://login.anosrep.org/include.js
+5bc24db26d67c55b90934d53878eee91d3b52b06  - https://yahoo.login.anosrep.org/.well-known/browserid
+439c0c97469ba469b51d3a0582bfea72fee15459  - https://gmail.login.anosrep.org/.well-known/browserid
+
