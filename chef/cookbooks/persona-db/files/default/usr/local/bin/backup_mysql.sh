@@ -12,16 +12,20 @@ chmod 0700 $BACKUP_DIR
 if ! slave_status=$(mysql -u root -Be "show slave status \G" 2>&1); then
   echo "$progname: can't determine slave status : $slave_status" >&2
   echo "$progname: aborting backup" >&2
+  echo "fail" > $STATE
+  echo "couldn't fetch slave status" > ${STATE}.message
   exit 1
 fi
 
 last_error=$(echo "$slave_status" | sed -n -e "s,.*Last_Error: ,,p")
 
 for x in IO SQL; do
-  if [ "$(echo "$slave_status" | sed -n -e "s,.*Slave_$x_Running: ,,p")" != "Yes" ]; then
+  if [ "$(echo "$slave_status" | sed -n -e "s,.*Slave_${x}_Running: ,,p")" != "Yes" ]; then
     last_error="$last_error / $(echo "$slave_status" | sed -n -e "s,.*Last_${x}_Error: ,,p")"
     echo "$progname: slave $x thread is not running ($last_error)" >&2
     echo "$progname: aborting backup" >&2
+    echo "fail" > $STATE
+    echo "slave $x thread is not running ($last_error)" > ${STATE}.message
     exit 2
   fi
 done
@@ -43,11 +47,13 @@ mysql_rc=${PIPESTATUS[0]}
 
 if [ $mysql_rc -ne 0 ]; then
   echo "$progname: mysqldump: failure, rc=$mysql_rc" >&2
-  echo "failure, mysqldump rc $mysql_rc" > $STATE
+  echo "fail" > $STATE
+  echo "mysqldump returned non zero exit code $mysql_rc" > ${STATE}.message
   exit 2
 fi
 
 find $BACKUP_DIR -type f -name '*.sql.gz' -mtime +14 -delete
 
 echo "success" > $STATE
+> ${STATE}.message
 exit 0

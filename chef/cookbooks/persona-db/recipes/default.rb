@@ -91,6 +91,7 @@ template "/etc/my.cnf" do
   notifies :restart, "service[mysql]", :delayed
 end
 
+
 file "/var/log/mysql-slow.log" do
   owner "mysql"
   group "mysql"
@@ -117,6 +118,20 @@ service "mysql" do
 end
 
 # TODO : insert mysql.user and mysql.db records for nagiosdaemon browserid-rw browserid-ro
+# GRANT ALL PRIVILEGES ON *.* TO 'nagiosdaemon'@'10.%' IDENTIFIED BY PASSWORD '*hashedpasswordgoeshere'
+# INSERT INTO `user` VALUES ('10.%','replication','*hashedpasswordgoeshere','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','N','Y','N','N','N','N','N','N','N','N','','','','',0,0,0,0);
+# flush privileges;
+
+#<% if node[:persona][:db][:mysql][:replication_type] != "master" and node[:persona][:db][:mysql]["master-host"] %>
+#master-host            = <%= node[:persona][:db][:mysql]["master-host"] %>
+#master-user            = <%= node[:persona][:db][:mysql]["master-user"] %>
+#master-password        = <%= node[:persona][:db][:mysql]["master-password"] %>
+# CHANGE MASTER TO MASTER_HOST = '', MASTER_USER = '', MASTER_PASSWORD = '';
+
+# SQLresponse=`mysql -u root --password=xxxxxx test -e "show slave status \G" |grep -i "Slave_SQL_Running"|gawk '{print $2}'`
+# IOresponse=`mysql -u root --password=xxxxx test -e "show slave status \G" |grep -i "Slave_IO_Running"|gawk '{print $2}'`
+
+# https://gist.github.com/grantr/1105416
 
 if node[:persona][:db][:mysql][:replication_type] == "backup" then
   cookbook_file "/usr/local/bin/backup_mysql.sh" do
