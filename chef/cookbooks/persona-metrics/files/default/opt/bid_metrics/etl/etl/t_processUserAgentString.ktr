@@ -1953,6 +1953,34 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </step>
 
   <step>
+    <name>is FirefoxOS?</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to>os=FirefoxOS</send_true_to>
+<send_false_to>eval platform</send_false_to>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <leftvalue>user_agent</leftvalue>
+ <function>CONTAINS</function>
+ <rightvalue/>
+ <value><name>constant</name><type>String</type><text>Mozilla&#47;5.0 (Mobile; rv:</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>495</xloc>
+      <yloc>1117</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
     <name>lk 2nd browser category</name>
     <type>StreamLookup</type>
     <description/>
@@ -2687,6 +2715,45 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </step>
 
   <step>
+    <name>os=FirefoxOS</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>os</field_name>
+<formula_string>&quot;FirefoxOS&quot;</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>os</replace_field>
+</formula>
+       <formula><field_name>os_category</field_name>
+<formula_string>&quot;mobile&quot;</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>os_category</replace_field>
+</formula>
+       <formula><field_name>browser_name</field_name>
+<formula_string>&quot;Firefox Mobile (FFOS)&quot;</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>browser_name</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>630</xloc>
+      <yloc>1116</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
     <name>os_category &#47; platform</name>
     <type>Janino</type>
     <description/>
@@ -3222,6 +3289,39 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </step>
 
   <step>
+    <name>sample user_agent</name>
+    <type>DataGrid</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>
+      <field>
+        <name>user_agent</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>1024</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <data>
+      <line> <item>Mozilla&#47;5.0 (Mobile; rv:18.0) Gecko&#47;18.0 Firefox&#47;18.0</item> </line>
+    </data>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>58</xloc>
+      <yloc>263</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
     <name>ua_os_name to lower</name>
     <type>Janino</type>
     <description/>
@@ -3453,99 +3553,6 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>781</xloc>
       <yloc>661</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>sample user_agent</name>
-    <type>DataGrid</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-    <fields>
-      <field>
-        <name>user_agent</name>
-        <type>String</type>
-        <format/>
-        <currency/>
-        <decimal/>
-        <group/>
-        <length>1024</length>
-        <precision>-1</precision>
-      </field>
-    </fields>
-    <data>
-      <line> <item>Mozilla&#47;5.0 (Mobile; rv:18.0) Gecko&#47;18.0 Firefox&#47;18.0</item> </line>
-    </data>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>58</xloc>
-      <yloc>263</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>is FirefoxOS?</name>
-    <type>FilterRows</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-<send_true_to>os=FirefoxOS</send_true_to>
-<send_false_to>eval platform</send_false_to>
-    <compare>
-<condition>
- <negated>N</negated>
- <leftvalue>user_agent</leftvalue>
- <function>CONTAINS</function>
- <rightvalue/>
- <value><name>constant</name><type>String</type><text>Mozilla&#47;5.0 (Mobile; rv:</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
-    </compare>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>495</xloc>
-      <yloc>1117</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>os=FirefoxOS</name>
-    <type>Janino</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-       <formula><field_name>os</field_name>
-<formula_string>&quot;FirefoxOS&quot;</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>os</replace_field>
-</formula>
-       <formula><field_name>os_category</field_name>
-<formula_string>&quot;mobile&quot;</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>os_category</replace_field>
-</formula>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>630</xloc>
-      <yloc>1116</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
