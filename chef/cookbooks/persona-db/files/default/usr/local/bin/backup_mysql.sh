@@ -2,12 +2,14 @@
 
 PATH=/bin:/usr/bin:/usr/local/bin
 BACKUP_DIR=/data/backups
-STATE="${BACKUP_DIR}/.state"
+STATE="${BACKUP_DIR}.state/.state"
 KEEP_DAYS=2
 progname=$(basename $0)
 
 mkdir -p $BACKUP_DIR
+mkdir -p ${BACKUP_DIR}.state
 chmod 0700 $BACKUP_DIR
+chmod 755 ${BACKUP_DIR}.state
 
 if ! slave_status=$(mysql -u root -Be "show slave status \G" 2>&1); then
   echo "$progname: can't determine slave status : $slave_status" >&2
