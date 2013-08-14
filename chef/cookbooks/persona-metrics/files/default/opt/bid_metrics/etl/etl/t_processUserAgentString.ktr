@@ -248,11 +248,22 @@ Y
 S
 T
 E
-M</note>
+M
+
+
+
+
+
+
+
+
+
+
+</note>
       <xloc>441</xloc>
       <yloc>851</yloc>
-      <width>24</width>
-      <heigth>209</heigth>
+      <width>25</width>
+      <heigth>334</heigth>
       <fontname>Microsoft Sans Serif</fontname>
       <fontsize>8</fontsize>
       <fontbold>N</fontbold>
@@ -280,8 +291,8 @@ L
 
 
 </note>
-      <xloc>441</xloc>
-      <yloc>1381</yloc>
+      <xloc>440</xloc>
+      <yloc>1428</yloc>
       <width>24</width>
       <heigth>135</heigth>
       <fontname>Microsoft Sans Serif</fontname>
@@ -309,7 +320,7 @@ O
 R
 M</note>
       <xloc>440</xloc>
-      <yloc>1198</yloc>
+      <yloc>1267</yloc>
       <width>24</width>
       <heigth>110</heigth>
       <fontname>Microsoft Sans Serif</fontname>
@@ -430,8 +441,8 @@ Eventually, a reevaluation will have to be made.
 
 
 </note>
-      <xloc>767</xloc>
-      <yloc>1700</yloc>
+      <xloc>768</xloc>
+      <yloc>1697</yloc>
       <width>150</width>
       <heigth>147</heigth>
       <fontname>Microsoft Sans Serif</fontname>
@@ -449,9 +460,37 @@ Eventually, a reevaluation will have to be made.
       <bordercolorblue>100</bordercolorblue>
       <drawshadow>Y</drawshadow>
     </notepad>
+    <notepad>
+      <note>https:&#47;&#47;bugzilla.mozilla.org&#47;show_bug.cgi?id=885467
+---------------------------------------------------------------------------------------------------------------------
+https:&#47;&#47;github.com&#47;mozilla&#47;browserid&#47;blob&#47;dev&#47;lib&#47;coarse_user_agent_parser.js
+
+ os_matchers = {...
+        &#47;&#47; http:&#47;&#47;lawrencemandel.com&#47;2012&#47;07&#47;27&#47;decision-made-firefox-os-user-agent-string&#47;
+        &apos;FirefoxOS&apos;: &apos;Mozilla&#47;5.0 (Mobile; rv:&apos;,
+...}</note>
+      <xloc>692</xloc>
+      <yloc>1109</yloc>
+      <width>492</width>
+      <heigth>119</heigth>
+      <fontname>Microsoft Sans Serif</fontname>
+      <fontsize>9</fontsize>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>192</backgroundcolorred>
+      <backgroundcolorgreen>192</backgroundcolorgreen>
+      <backgroundcolorblue>192</backgroundcolorblue>
+      <bordercolorred>100</bordercolorred>
+      <bordercolorgreen>100</bordercolorgreen>
+      <bordercolorblue>100</bordercolorblue>
+      <drawshadow>Y</drawshadow>
+    </notepad>
   </notepads>
   <order>
-  <hop> <from>sample user agents</from><to>Filter empty rows</to><enabled>N</enabled> </hop>  <hop> <from>eval engine</from><to>eval engine II</to><enabled>Y</enabled> </hop>  <hop> <from>locale list</from><to>lk locale</to><enabled>Y</enabled> </hop>  <hop> <from>local</from><to>lk locale</to><enabled>Y</enabled> </hop>  <hop> <from>lk locale</from><to>locale</to><enabled>Y</enabled> </hop>  <hop> <from>removing extra chars</from><to>&quot;un-split&quot; (custom)</to><enabled>Y</enabled> </hop>  <hop> <from>&quot;un-split&quot; (custom)</from><to>eval engine</to><enabled>Y</enabled> </hop>  <hop> <from>clean versions (remove first &quot;&#47;&quot;, &quot;-&quot;, &quot;:&quot;)</from><to>valid browser version?</to><enabled>Y</enabled> </hop>  <hop> <from>valid browser version?</from><to>[fuzzy] browser</to><enabled>Y</enabled> </hop>  <hop> <from>match_browser_name to lower</from><to>lk browser category</to><enabled>Y</enabled> </hop>  <hop> <from>eval browser</from><to>eval browser II</to><enabled>Y</enabled> </hop>  <hop> <from>eval browser II</from><to>match_browser_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>lk browser category</from><to>lk 2nd browser category</to><enabled>Y</enabled> </hop>  <hop> <from>browser</from><to>browser_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name to lower</from><to>lk browser category</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name to lower</from><to>lk 2nd browser category</to><enabled>Y</enabled> </hop>  <hop> <from>eval os</from><to>eval os 2nd</to><enabled>Y</enabled> </hop>  <hop> <from>lk os name &amp; category</from><to>lk snd os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>eval os 2nd</from><to>match_os_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>match_os_name to lower</from><to>lk os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>os list</from><to>ua_os_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>ua_os_name to lower</from><to>lk os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>ua_os_name to lower</from><to>lk snd os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name unknown?</from><to>browser II</to><enabled>Y</enabled> </hop>  <hop> <from>lk snd os name &amp; category</from><to>match_os_name unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>match_os_name unknown?</from><to>os II</to><enabled>Y</enabled> </hop>  <hop> <from>eval platform</from><to>platform not found and is Windows or Mac?</to><enabled>Y</enabled> </hop>  <hop> <from>platform not found and is Windows or Mac?</from><to>platform = os_category</to><enabled>Y</enabled> </hop>  <hop> <from>platform not found and is Windows or Mac?</from><to>platform</to><enabled>Y</enabled> </hop>  <hop> <from>browser II</from><to>clean versions (remove first &quot;&#47;&quot;, &quot;-&quot;, &quot;:&quot;)</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name unknown?</from><to>clean versions (remove first &quot;&#47;&quot;, &quot;-&quot;, &quot;:&quot;)</to><enabled>Y</enabled> </hop>  <hop> <from>valid browser version?</from><to>eval os</to><enabled>Y</enabled> </hop>  <hop> <from>[fuzzy] browser</from><to>eval os</to><enabled>Y</enabled> </hop>  <hop> <from>os</from><to>eval platform</to><enabled>Y</enabled> </hop>  <hop> <from>platform = os_category</from><to>local</to><enabled>Y</enabled> </hop>  <hop> <from>platform</from><to>local</to><enabled>Y</enabled> </hop>  <hop> <from>engine 1, 2</from><to>eval browser</to><enabled>Y</enabled> </hop>  <hop> <from>eval engine II</from><to>engine 1, 2</to><enabled>Y</enabled> </hop>  <hop> <from>os_version list</from><to>lk replacements</to><enabled>Y</enabled> </hop>  <hop> <from>os II</from><to>lk replacements</to><enabled>Y</enabled> </hop>  <hop> <from>match_os_name unknown?</from><to>lk replacements</to><enabled>Y</enabled> </hop>  <hop> <from>lk replacements</from><to>os</to><enabled>Y</enabled> </hop>  <hop> <from>lk 2nd browser category</from><to>browser_name unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>eval spider</from><to>eval proxy</to><enabled>Y</enabled> </hop>  <hop> <from>eval proxy</from><to>eval utility</to><enabled>Y</enabled> </hop>  <hop> <from>remove fields</from><to>Select values</to><enabled>Y</enabled> </hop>  <hop> <from>Mapping input specification</from><to>Filter empty rows</to><enabled>Y</enabled> </hop>  <hop> <from>locale</from><to>remove fields</to><enabled>Y</enabled> </hop>  <hop> <from>eval utility</from><to>none of the previous?</to><enabled>Y</enabled> </hop>  <hop> <from>none of the previous?</from><to>browser_name</to><enabled>Y</enabled> </hop>  <hop> <from>none of the previous?</from><to>remove unused</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name</from><to>remove unused</to><enabled>Y</enabled> </hop>  <hop> <from>remove unused</from><to>Select values 2</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>output</to><enabled>N</enabled> </hop>  <hop> <from>Select values 2</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>Mapping output specification</to><enabled>Y</enabled> </hop>  <hop> <from>Unknown?</from><to>eval spider</to><enabled>Y</enabled> </hop>  <hop> <from>Unknown?</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Token separator</from><to>removing extra chars</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>Filter rows</to><enabled>N</enabled> </hop>  <hop> <from>Filter rows</from><to>ua_output</to><enabled>N</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>ua_output</to><enabled>N</enabled> </hop>  <hop> <from>Select values</from><to>FirefoxHome?</to><enabled>Y</enabled> </hop>  <hop> <from>FirefoxHome?</from><to>os_category &#47; platform</to><enabled>Y</enabled> </hop>  <hop> <from>FirefoxHome?</from><to>Unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>os_category &#47; platform</from><to>Unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>Filter empty rows</from><to>removing non printable</to><enabled>Y</enabled> </hop>  <hop> <from>removing non printable</from><to>Token separator</to><enabled>Y</enabled> </hop>  </order>
+  <hop> <from>sample user agents</from><to>Filter empty rows</to><enabled>N</enabled> </hop>  <hop> <from>eval engine</from><to>eval engine II</to><enabled>Y</enabled> </hop>  <hop> <from>locale list</from><to>lk locale</to><enabled>Y</enabled> </hop>  <hop> <from>local</from><to>lk locale</to><enabled>Y</enabled> </hop>  <hop> <from>lk locale</from><to>locale</to><enabled>Y</enabled> </hop>  <hop> <from>removing extra chars</from><to>&quot;un-split&quot; (custom)</to><enabled>Y</enabled> </hop>  <hop> <from>&quot;un-split&quot; (custom)</from><to>eval engine</to><enabled>Y</enabled> </hop>  <hop> <from>clean versions (remove first &quot;&#47;&quot;, &quot;-&quot;, &quot;:&quot;)</from><to>valid browser version?</to><enabled>Y</enabled> </hop>  <hop> <from>valid browser version?</from><to>[fuzzy] browser</to><enabled>Y</enabled> </hop>  <hop> <from>match_browser_name to lower</from><to>lk browser category</to><enabled>Y</enabled> </hop>  <hop> <from>eval browser</from><to>eval browser II</to><enabled>Y</enabled> </hop>  <hop> <from>eval browser II</from><to>match_browser_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>lk browser category</from><to>lk 2nd browser category</to><enabled>Y</enabled> </hop>  <hop> <from>browser</from><to>browser_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name to lower</from><to>lk browser category</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name to lower</from><to>lk 2nd browser category</to><enabled>Y</enabled> </hop>  <hop> <from>eval os</from><to>eval os 2nd</to><enabled>Y</enabled> </hop>  <hop> <from>lk os name &amp; category</from><to>lk snd os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>eval os 2nd</from><to>match_os_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>match_os_name to lower</from><to>lk os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>os list</from><to>ua_os_name to lower</to><enabled>Y</enabled> </hop>  <hop> <from>ua_os_name to lower</from><to>lk os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>ua_os_name to lower</from><to>lk snd os name &amp; category</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name unknown?</from><to>browser II</to><enabled>Y</enabled> </hop>  <hop> <from>lk snd os name &amp; category</from><to>match_os_name unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>match_os_name unknown?</from><to>os II</to><enabled>Y</enabled> </hop>  <hop> <from>eval platform</from><to>platform not found and is Windows or Mac?</to><enabled>Y</enabled> </hop>  <hop> <from>platform not found and is Windows or Mac?</from><to>platform = os_category</to><enabled>Y</enabled> </hop>  <hop> <from>platform not found and is Windows or Mac?</from><to>platform</to><enabled>Y</enabled> </hop>  <hop> <from>browser II</from><to>clean versions (remove first &quot;&#47;&quot;, &quot;-&quot;, &quot;:&quot;)</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name unknown?</from><to>clean versions (remove first &quot;&#47;&quot;, &quot;-&quot;, &quot;:&quot;)</to><enabled>Y</enabled> </hop>  <hop> <from>valid browser version?</from><to>eval os</to><enabled>Y</enabled> </hop>  <hop> <from>[fuzzy] browser</from><to>eval os</to><enabled>Y</enabled> </hop>  <hop> <from>platform = os_category</from><to>local</to><enabled>Y</enabled> </hop>  <hop> <from>platform</from><to>local</to><enabled>Y</enabled> </hop>  <hop> <from>engine 1, 2</from><to>eval browser</to><enabled>Y</enabled> </hop>  <hop> <from>eval engine II</from><to>engine 1, 2</to><enabled>Y</enabled> </hop>  <hop> <from>os_version list</from><to>lk replacements</to><enabled>Y</enabled> </hop>  <hop> <from>os II</from><to>lk replacements</to><enabled>Y</enabled> </hop>  <hop> <from>match_os_name unknown?</from><to>lk replacements</to><enabled>Y</enabled> </hop>  <hop> <from>lk replacements</from><to>os</to><enabled>Y</enabled> </hop>  <hop> <from>lk 2nd browser category</from><to>browser_name unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>eval spider</from><to>eval proxy</to><enabled>Y</enabled> </hop>  <hop> <from>eval proxy</from><to>eval utility</to><enabled>Y</enabled> </hop>  <hop> <from>remove fields</from><to>Select values</to><enabled>Y</enabled> </hop>  <hop> <from>Mapping input specification</from><to>Filter empty rows</to><enabled>Y</enabled> </hop>  <hop> <from>locale</from><to>remove fields</to><enabled>Y</enabled> </hop>  <hop> <from>eval utility</from><to>none of the previous?</to><enabled>Y</enabled> </hop>  <hop> <from>none of the previous?</from><to>browser_name</to><enabled>Y</enabled> </hop>  <hop> <from>none of the previous?</from><to>remove unused</to><enabled>Y</enabled> </hop>  <hop> <from>browser_name</from><to>remove unused</to><enabled>Y</enabled> </hop>  <hop> <from>remove unused</from><to>Select values 2</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>output</to><enabled>N</enabled> </hop>  <hop> <from>Select values 2</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>Mapping output specification</to><enabled>Y</enabled> </hop>  <hop> <from>Unknown?</from><to>eval spider</to><enabled>Y</enabled> </hop>  <hop> <from>Unknown?</from><to>Dummy (do nothing)</to><enabled>Y</enabled> </hop>  <hop> <from>Token separator</from><to>removing extra chars</to><enabled>Y</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>Filter rows</to><enabled>N</enabled> </hop>  <hop> <from>Filter rows</from><to>ua_output</to><enabled>N</enabled> </hop>  <hop> <from>Dummy (do nothing)</from><to>ua_output</to><enabled>N</enabled> </hop>  <hop> <from>Select values</from><to>FirefoxHome?</to><enabled>Y</enabled> </hop>  <hop> <from>FirefoxHome?</from><to>os_category &#47; platform</to><enabled>Y</enabled> </hop>  <hop> <from>os_category &#47; platform</from><to>Unknown?</to><enabled>Y</enabled> </hop>  <hop> <from>Filter empty rows</from><to>removing non printable</to><enabled>Y</enabled> </hop>  <hop> <from>removing non printable</from><to>Token separator</to><enabled>Y</enabled> </hop>  <hop> <from>sample user_agent</from><to>Filter empty rows</to><enabled>N</enabled> </hop>  <hop> <from>os</from><to>is FirefoxOS?</to><enabled>Y</enabled> </hop>  <hop> <from>is FirefoxOS?</from><to>os=FirefoxOS</to><enabled>Y</enabled> </hop>  <hop> <from>is FirefoxOS?</from><to>eval platform</to><enabled>Y</enabled> </hop>  <hop> <from>os=FirefoxOS</from><to>eval platform</to><enabled>Y</enabled> </hop>  <hop> <from>FirefoxHome?</from><to>Unknown?</to><enabled>Y</enabled> </hop>  </order>
   <step>
     <name>&quot;un-split&quot; (custom)</name>
     <type>ReplaceString</type>
@@ -469,6 +508,7 @@ Eventually, a reevaluation will have to be made.
         <use_regex>no</use_regex>
         <replace_string>Maemo^Browser^</replace_string>
         <replace_by_string>Maemo Browser </replace_by_string>
+        <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
       </field>
@@ -478,6 +518,7 @@ Eventually, a reevaluation will have to be made.
         <use_regex>no</use_regex>
         <replace_string>Opera^</replace_string>
         <replace_by_string>Opera </replace_by_string>
+        <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
       </field>
@@ -690,8 +731,8 @@ Eventually, a reevaluation will have to be made.
       </field>        <select_unspecified>Y</select_unspecified>
     </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>831</xloc>
-      <yloc>1574</yloc>
+      <xloc>830</xloc>
+      <yloc>1617</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1109,7 +1150,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
 </formula>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>490</xloc>
+      <xloc>495</xloc>
       <yloc>559</yloc>
       <draw>Y</draw>
       </GUI>
@@ -1210,6 +1251,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
         <use_regex>yes</use_regex>
         <replace_string>^(&#47;|\-|:|\s)</replace_string>
         <replace_by_string/>
+        <replace_field_by_string/>
         <whole_word>no</whole_word>
         <case_sensitive>no</case_sensitive>
       </field>
@@ -1248,7 +1290,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
 </formula>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>488</xloc>
+      <xloc>495</xloc>
       <yloc>319</yloc>
       <draw>Y</draw>
       </GUI>
@@ -1268,6 +1310,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>browser_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1327,7 +1370,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>488</xloc>
+      <xloc>495</xloc>
       <yloc>483</yloc>
       <draw>Y</draw>
       </GUI>
@@ -1347,6 +1390,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>browser_II_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1426,6 +1470,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>engine_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1485,7 +1530,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>488</xloc>
+      <xloc>495</xloc>
       <yloc>230</yloc>
       <draw>Y</draw>
       </GUI>
@@ -1505,6 +1550,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>engine_II_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1584,6 +1630,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>os_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1643,7 +1690,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>489</xloc>
+      <xloc>495</xloc>
       <yloc>861</yloc>
       <draw>Y</draw>
       </GUI>
@@ -1663,6 +1710,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>os_II_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1742,6 +1790,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>platform_identified</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1801,8 +1850,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>493</xloc>
-      <yloc>1202</yloc>
+      <xloc>495</xloc>
+      <yloc>1271</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -1821,6 +1870,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>is_proxy</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>N</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1852,6 +1902,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>is_spider</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>N</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1883,6 +1934,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>is_utility</resultfieldname>
     <usevar>Y</usevar>
     <allowcapturegroups>N</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -1896,6 +1948,34 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>119</xloc>
       <yloc>1711</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>is FirefoxOS?</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+<send_true_to>os=FirefoxOS</send_true_to>
+<send_false_to>eval platform</send_false_to>
+    <compare>
+<condition>
+ <negated>N</negated>
+ <leftvalue>user_agent</leftvalue>
+ <function>CONTAINS</function>
+ <rightvalue/>
+ <value><name>constant</name><type>String</type><text>Mozilla&#47;5.0 (Mobile; rv:</text><length>-1</length><precision>-1</precision><isnull>N</isnull><mask/></value> </condition>
+    </compare>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>495</xloc>
+      <yloc>1117</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2011,8 +2091,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>727</xloc>
-      <yloc>1399</yloc>
+      <xloc>726</xloc>
+      <yloc>1446</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2097,7 +2177,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </lookup>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>637</xloc>
+      <xloc>630</xloc>
       <yloc>1029</yloc>
       <draw>Y</draw>
       </GUI>
@@ -2158,6 +2238,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <resultfieldname>is_locale</resultfieldname>
     <usevar>N</usevar>
     <allowcapturegroups>Y</allowcapturegroups>
+    <replacefields>N</replacefields>
     <canoneq>N</canoneq>
     <caseinsensitive>N</caseinsensitive>
     <comment>N</comment>
@@ -2193,8 +2274,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </fields>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>560</xloc>
-      <yloc>1399</yloc>
+      <xloc>559</xloc>
+      <yloc>1446</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2218,8 +2299,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
 </formula>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>727</xloc>
-      <yloc>1486</yloc>
+      <xloc>726</xloc>
+      <yloc>1533</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2309,8 +2390,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <spreadsheet_type>JXL</spreadsheet_type>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>1114</xloc>
-      <yloc>1399</yloc>
+      <xloc>1113</xloc>
+      <yloc>1446</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2473,7 +2554,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
 </formula>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>493</xloc>
+      <xloc>495</xloc>
       <yloc>1029</yloc>
       <draw>Y</draw>
       </GUI>
@@ -2512,7 +2593,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
 </formula>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>637</xloc>
+      <xloc>630</xloc>
       <yloc>944</yloc>
       <draw>Y</draw>
       </GUI>
@@ -2629,6 +2710,45 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>1146</xloc>
       <yloc>861</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>os=FirefoxOS</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>os</field_name>
+<formula_string>&quot;FirefoxOS&quot;</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>os</replace_field>
+</formula>
+       <formula><field_name>os_category</field_name>
+<formula_string>&quot;mobile&quot;</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>os_category</replace_field>
+</formula>
+       <formula><field_name>browser_name</field_name>
+<formula_string>&quot;Firefox Mobile (FFOS)&quot;</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>browser_name</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>630</xloc>
+      <yloc>1116</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2799,6 +2919,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
       <name>${Internal.Transformation.Filename.Directory}&#47;files&#47;${UA_FILE}_parsed</name>
       <extention>xls</extention>
       <do_not_open_newfile_init>Y</do_not_open_newfile_init>
+      <create_parent_folder>N</create_parent_folder>
       <split>N</split>
       <add_date>N</add_date>
       <add_time>N</add_time>
@@ -2810,6 +2931,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
       <protect_sheet>N</protect_sheet>
       <password>Encrypted </password>
       <splitevery>0</splitevery>
+      <usetempfiles>N</usetempfiles>
+      <tempdirectory/>
       </file>
     <template>
       <enabled>N</enabled>
@@ -2868,6 +2991,23 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
         <format/>
       </field>
     </fields>
+    <custom>
+    <header_font_name>arial</header_font_name>
+    <header_font_size>10</header_font_size>
+    <header_font_bold>N</header_font_bold>
+    <header_font_italic>N</header_font_italic>
+    <header_font_underline>no</header_font_underline>
+    <header_font_orientation>horizontal</header_font_orientation>
+    <header_font_color>none</header_font_color>
+    <header_background_color>none</header_background_color>
+    <header_row_height/>
+    <header_alignment>left</header_alignment>
+    <header_image/>
+    <row_font_name>arial</row_font_name>
+    <row_font_size>10</row_font_size>
+    <row_font_color>none</row_font_color>
+    <row_background_color>none</row_background_color>
+      </custom>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>615</xloc>
@@ -2896,7 +3036,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>560</xloc>
-      <yloc>1273</yloc>
+      <yloc>1342</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2921,7 +3061,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>739</xloc>
-      <yloc>1273</yloc>
+      <yloc>1342</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -2961,7 +3101,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>656</xloc>
-      <yloc>1202</yloc>
+      <yloc>1271</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -3026,8 +3166,8 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
       </remove>      <remove>        <name>new_version</name>
       </remove>    </fields>     <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>727</xloc>
-      <yloc>1574</yloc>
+      <xloc>726</xloc>
+      <yloc>1617</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -3080,6 +3220,31 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     </step>
 
   <step>
+    <name>removing non printable</name>
+    <type>Janino</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+       <formula><field_name>user_agent</field_name>
+<formula_string>user_agent.replaceAll(&quot;[\\p{Cntrl}]*&quot;, &quot;&quot;)</formula_string>
+<value_type>String</value_type>
+<value_length>-1</value_length>
+<value_precision>-1</value_precision>
+<replace_field>user_agent</replace_field>
+</formula>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>329</xloc>
+      <yloc>111</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
     <name>sample user agents</name>
     <type>CsvInput</type>
     <description/>
@@ -3100,6 +3265,7 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <lazy_conversion>N</lazy_conversion>
     <add_filename_result>N</add_filename_result>
     <parallel>N</parallel>
+    <newline_possible>Y</newline_possible>
     <encoding/>
     <fields>
       <field>
@@ -3118,6 +3284,39 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>50</xloc>
       <yloc>111</yloc>
+      <draw>Y</draw>
+      </GUI>
+    </step>
+
+  <step>
+    <name>sample user_agent</name>
+    <type>DataGrid</type>
+    <description/>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+         <partitioning>
+           <method>none</method>
+           <schema_name/>
+           </partitioning>
+    <fields>
+      <field>
+        <name>user_agent</name>
+        <type>String</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <length>1024</length>
+        <precision>-1</precision>
+      </field>
+    </fields>
+    <data>
+      <line> <item>Mozilla&#47;5.0 (Mobile; rv:18.0) Gecko&#47;18.0 Firefox&#47;18.0</item> </line>
+    </data>
+     <cluster_schema/>
+ <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
+      <xloc>58</xloc>
+      <yloc>263</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
@@ -3169,9 +3368,11 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
     <endedLine/>
     <fileNameInField>N</fileNameInField>
     <fileNameField/>
+    <create_parent_folder>N</create_parent_folder>
     <file>
       <name>${Internal.Transformation.Filename.Directory}&#47;ua_output</name>
       <is_command>N</is_command>
+      <servlet_output>N</servlet_output>
       <do_not_open_new_file_init>Y</do_not_open_new_file_init>
       <extention>txt</extention>
       <append>N</append>
@@ -3352,31 +3553,6 @@ outFieldIndex = data.outputRowMeta.indexOfValue("user_agent_token");
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
       <xloc>781</xloc>
       <yloc>661</yloc>
-      <draw>Y</draw>
-      </GUI>
-    </step>
-
-  <step>
-    <name>removing non printable</name>
-    <type>Janino</type>
-    <description/>
-    <distribute>Y</distribute>
-    <copies>1</copies>
-         <partitioning>
-           <method>none</method>
-           <schema_name/>
-           </partitioning>
-       <formula><field_name>user_agent</field_name>
-<formula_string>user_agent.replaceAll(&quot;[\\p{Cntrl}]*&quot;, &quot;&quot;)</formula_string>
-<value_type>String</value_type>
-<value_length>-1</value_length>
-<value_precision>-1</value_precision>
-<replace_field>user_agent</replace_field>
-</formula>
-     <cluster_schema/>
- <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
-      <xloc>329</xloc>
-      <yloc>111</yloc>
       <draw>Y</draw>
       </GUI>
     </step>
