@@ -24,9 +24,11 @@ package "mosh"
 package "python27"
 package "python27-distribute"
 
-easy_install_package "boto" do
-  easy_install_binary "/usr/bin/easy_install-2.7"
-  python_binary "/usr/bin/python2.7"
+for pkg in ["boto", "dnspython"] do
+  easy_install_package pkg do
+    easy_install_binary "/usr/bin/easy_install-2.7"
+    python_binary "/usr/bin/python2.7"
+  end
 end
 
 cookbook_file "/usr/local/bin/get_hosts" do

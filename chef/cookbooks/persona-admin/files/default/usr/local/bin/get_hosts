@@ -7,6 +7,7 @@ import logging
 import json
 import argparse
 import textwrap
+import dns.resolver # easy_install-2.7 dnspython
 
 my_metadata = boto.utils.get_instance_metadata()
 default_region = my_metadata['placement']['availability-zone'][0:-1]
@@ -25,6 +26,7 @@ reservations = conn_ec2.get_all_instances(instance_ids=[my_instance_id])
 #  raise Exception("The instance you're running this from appears to be in %s VPC(s). Aborting" % len(my_vpc))
 
 my_env = reservations[0].instances[0].tags['Env']
+all_envs = ['prod','stage']
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                  epilog=textwrap.dedent('''\
@@ -32,7 +34,9 @@ Examples:
   Show all stacks
     get_hosts
   Show all hosts in a stack
-    get_hosts univ -o table
+    get_hosts 0727 -o table
+  Show all hosts in a the current live production stack
+    get_hosts prod -o table
   Show all webheads and keysigns in a stack in json
     get_hosts 0727 webhead keysign -o json
   Iterate over a tier of hosts
@@ -46,15 +50,16 @@ parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
 parser.add_argument("-e", "--elb", help="query for Elastic Load Balancers instead of instances",
                     action="store_true")
-parser.add_argument("-r", "--region", help="region to query in (defult: %s)" % default_region,
-                    default=default_region)
-parser.add_argument("-n", "--environment", help="environment to query in (defult: %s)" % my_env,
-                    default=my_env)
+parser.add_argument("-r", "--region", help="region to query in (default: %s)" % default_region,
+                    default=default_region, choices=['us-west-2', 'us-east-1'])
+parser.add_argument("-n", "--environment", help="environment to query in (default: %s)" % my_env,
+                    default=my_env, choices=all_envs)
 parser.add_argument("-o", "--output", help="set the output format",
                     choices=["list","json","table"], default="list")
-parser.add_argument("stack", nargs='?', help="The 4 character stack identifier")
+parser.add_argument("stack", nargs='?', help="The 4 character stack identifier or an environment name")
 parser.add_argument("tier", nargs='*', help="The tier or tiers that your searching for")
 args = parser.parse_args()
+
 
 if default_region != args.region:
   conn_ec2 = boto.ec2.connect_to_region(args.region)
@@ -65,12 +70,29 @@ if args.verbose:
 if args.stack:
   output = []
   my_tiers = args.tier if len(args.tier) > 0 else False
+  if args.stack in all_envs:
+    name_map = {'prod': ('login.persona.org', 'persona-org'),
+                'stage': ('login.anosrep.org', 'w-anosrep-org')}
+    import dns.resolver
+    dns_name = name_map[args.stack][0]
+    cname_prefix = name_map[args.stack][1]
+    answers = dns.resolver.query(dns_name, 'CNAME')
+    if len(answers) != 1:
+      raise Exception("When looking up %s got back %s responses : %s" % (dns_name, len(answers), [x.to_text() for x in answers]))
+    result = answers[0].to_text()
+    logging.debug('result is %s' % result)
+    if result.startswith(cname_prefix):
+      args.environment = args.stack
+      args.stack = result[len(cname_prefix):].split('-')[1]
+    else:
+      raise Exception("The %s environment resolves %s to %s which doesn't have the expected prefix of %s" % (args.stack, dns_name, result, cname_prefix))
 
+  logging.debug('stack is %s' % args.stack)
   if args.elb:
     conn_elb = boto.ec2.elb.connect_to_region(args.region)
     load_balancers = conn_elb.get_all_load_balancers()
     for load_balancer in load_balancers:
-      env = load_balancer.name.split('-')[-1] if load_balancer.name.split('-')[-1] in ['prod','stage','dev'] else False
+      env = load_balancer.name.split('-')[-1] if load_balancer.name.split('-')[-1] in all_envs else False
       pos = -2 if env else -1
       stack = load_balancer.name.split('-')[pos]
       name = '-'.join(load_balancer.name.split('-')[0:pos])
