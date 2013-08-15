@@ -19,6 +19,7 @@ package "ius-release" do
 end
 
 package "pssh"
+package "mosh"
 
 package "python27"
 package "python27-distribute"

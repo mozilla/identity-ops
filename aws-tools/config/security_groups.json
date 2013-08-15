@@ -9,6 +9,12 @@
                 "cidr_ip": "0.0.0.0/0"
             },
             {
+                "ip_protocol": "udp",
+                "from_port": 60000,
+                "to_port": 61000,
+                "cidr_ip": "0.0.0.0/0"
+            },
+            {
                 "direction": "egress",
                 "ip_protocol": -1,
                 "cidr_ip": "0.0.0.0/0"
