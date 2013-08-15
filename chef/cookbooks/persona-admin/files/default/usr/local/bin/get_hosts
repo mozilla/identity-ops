@@ -8,6 +8,24 @@ import json
 import argparse
 import textwrap
 
+my_metadata = boto.utils.get_instance_metadata()
+default_region = my_metadata['placement']['availability-zone'][0:-1]
+
+conn_ec2 = boto.ec2.connect_to_region(default_region)
+
+my_instance_id = my_metadata['instance-id']
+
+reservations = conn_ec2.get_all_instances(instance_ids=[my_instance_id])
+#my_name = reservations[0].instances[0].tags['Name']
+#my_stack = reservations[0].instances[0].tags['Stack']
+
+#my_vpc = [my_metadata['network']['interfaces']['macs'][x]['vpc-id'] for x in my_metadata['network']['interfaces']['macs'].keys()]
+#my_vpc = my_vpc[0] if len(my_vpc) == 1 else False
+#if not my_vpc:
+#  raise Exception("The instance you're running this from appears to be in %s VPC(s). Aborting" % len(my_vpc))
+
+my_env = reservations[0].instances[0].tags['Env']
+
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
                                  epilog=textwrap.dedent('''\
 Examples:
@@ -28,37 +46,28 @@ parser.add_argument("-v", "--verbose", help="increase output verbosity",
                     action="store_true")
 parser.add_argument("-e", "--elb", help="query for Elastic Load Balancers instead of instances",
                     action="store_true")
+parser.add_argument("-r", "--region", help="region to query in (defult: %s)" % default_region,
+                    default=default_region)
+parser.add_argument("-n", "--environment", help="environment to query in (defult: %s)" % my_env,
+                    default=my_env)
 parser.add_argument("-o", "--output", help="set the output format",
                     choices=["list","json","table"], default="list")
 parser.add_argument("stack", nargs='?', help="The 4 character stack identifier")
 parser.add_argument("tier", nargs='*', help="The tier or tiers that your searching for")
 args = parser.parse_args()
 
+if default_region != args.region:
+  conn_ec2 = boto.ec2.connect_to_region(args.region)
+
 if args.verbose:
   logging.basicConfig(level=logging.DEBUG)
-
-my_metadata = boto.utils.get_instance_metadata()
-region = my_metadata['placement']['availability-zone'][0:-1]
-conn_ec2 = boto.ec2.connect_to_region(region)
-
-my_instance_id = my_metadata['instance-id']
-
-reservations = conn_ec2.get_all_instances(instance_ids=[my_instance_id])
-my_name = reservations[0].instances[0].tags['Name']
-# my_stack = reservations[0].instances[0].tags['Stack']
-my_vpc = [my_metadata['network']['interfaces']['macs'][x]['vpc-id'] for x in my_metadata['network']['interfaces']['macs'].keys()]
-my_vpc = my_vpc[0] if len(my_vpc) == 1 else False
-if not my_vpc:
-  raise Exception("The instance you're running this from appears to be in %s VPC(s). Aborting" % len(my_vpc))
-my_env = reservations[0].instances[0].tags['Env']
-logging.debug([my_name, my_vpc, my_env, args.stack])
 
 if args.stack:
   output = []
   my_tiers = args.tier if len(args.tier) > 0 else False
 
   if args.elb:
-    conn_elb = boto.ec2.elb.connect_to_region(region)
+    conn_elb = boto.ec2.elb.connect_to_region(args.region)
     load_balancers = conn_elb.get_all_load_balancers()
     for load_balancer in load_balancers:
       env = load_balancer.name.split('-')[-1] if load_balancer.name.split('-')[-1] in ['prod','stage','dev'] else False
@@ -85,12 +94,12 @@ if args.stack:
     
         logging.debug(instance.tags['Name'])
   
-        if my_vpc != instance.vpc_id:
-            continue
-        if not 'Env' in instance.tags or instance.tags['Env'] != my_env:
-            continue
-        #if not 'Stack' in instance.tags or instance.tags['Stack'] != args.stack:
+        #if my_vpc != instance.vpc_id:
         #    continue
+        if not 'Env' in instance.tags or instance.tags['Env'] != args.environment:
+            continue
+        if not 'Stack' in instance.tags or instance.tags['Stack'] != args.stack:
+            continue
         if not 'Tier' in instance.tags or (my_tiers and not instance.tags['Tier'] in my_tiers):
             continue
         output.append({"ip": instance.private_ip_address,
@@ -112,11 +121,12 @@ else:
   output = []
   reservations = conn_ec2.get_all_instances(filters={'tag:App': 'identity'})
   for reservation in reservations:
-    for instance in reservation.instances:
+    for instance in [x for x in reservation.instances if x.state != 'terminated']:
       if 'Stack' in instance.tags:
         if not instance.tags['Stack'] in [x['stack'] for x in output]:
           output.append({"stack": instance.tags['Stack'],
-                        "vpc": instance.vpc_id})
+                         "environment": instance.tags['Env'],
+                         "vpc": instance.vpc_id})
       
   if args.output == "list":
     for i in output:
@@ -125,4 +135,4 @@ else:
     print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
   elif args.output == "table":
     for i in output:
-      print("{: >20} {: >20}".format(i['stack'],i['vpc']))
+      print("{: >5} {: >6} {}".format(i['stack'], i['environment'], i['vpc']))
