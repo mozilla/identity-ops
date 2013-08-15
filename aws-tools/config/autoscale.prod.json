@@ -3,7 +3,7 @@
         "launch_configuration": 
         {
             "tier" : "webhead",
-            "image_id" : "persona-webhead-5bd089991c0bea555e7f3ea884dd358493ef2a02",
+            "image_id" : "persona-webhead-5d9dc9edf43978c5cb20377f24d97a956297762c",
             "security_groups" : 
             [
                 "frontend",
@@ -23,7 +23,7 @@
         "launch_configuration": 
         {
             "tier" : "bridge-yahoo",
-            "image_id" : "identity-bigtent-dc07f16ab3635c8e10d2fe690ad2e1a883a860d7",
+            "image_id" : "identity-bridge-yahoo-e16067550222f3cc1c11e22b32cfe70be6d791eb",
             "security_groups" : 
             [
                 "frontend",
@@ -63,7 +63,7 @@
         "launch_configuration": 
         {
             "tier" : "keysign",
-            "image_id" : "persona-keysign-5bd089991c0bea555e7f3ea884dd358493ef2a02",
+            "image_id" : "persona-keysign-5d9dc9edf43978c5cb20377f24d97a956297762c",
             "security_groups" : 
             [
                 "middleware-http",
@@ -82,7 +82,7 @@
         "launch_configuration": 
         {
             "tier" : "dbwrite",
-            "image_id" : "persona-dbwrite-5bd089991c0bea555e7f3ea884dd358493ef2a02",
+            "image_id" : "persona-dbwrite-5d9dc9edf43978c5cb20377f24d97a956297762c",
             "security_groups" : 
             [
                 "middleware-http",
