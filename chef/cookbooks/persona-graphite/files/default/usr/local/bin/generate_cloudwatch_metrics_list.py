@@ -11,17 +11,17 @@ metadata=boto.utils.get_instance_metadata()
 region=metadata['placement']['availability-zone'][:-1] if metadata != None else 'us-west-2'
 conn_elb = boto.ec2.elb.connect_to_region(region)
 load_balancers = conn_elb.get_all_load_balancers()
-persona_load_balancer_names = ['browserid-org', 
-                               'diresworb-org', 
-                               'bt-login-persona-org', 
-                               'bt-login-anosrep-org', 
-                               'persona-org', 
+persona_load_balancer_names = ['persona-org', 
                                'w-anosrep-org', 
-                               'google-login-anosrep-org',
-                               'google-login-persona-org',
+                               'w-login-anosrep-org',
                                'dbwrite', 
+                               'dbread-univ', 
                                'keysign', 
-                               'proxy']
+                               'proxy-univ',
+                               'yahoo-login-persona-org', 
+                               'yahoo-login-anosrep-org', 
+                               'gmail-login-anosrep-org',
+                               'gmail-login-persona-org']
 base_metrics=[
   {
   "Namespace": "AWS/ELB",
@@ -100,8 +100,8 @@ for load_balancer in load_balancers:
     for x in lb_metrics:
       x['Dimensions.member.1.Value'] = load_balancer.name
     metrics['metrics'].extend(lb_metrics)
-    stack = load_balancer.name.split('-')[-1:][0]
-    name = '-'.join(load_balancer.name.split('-')[:-1])
+    stack = load_balancer.name.split('-')[-2:][0] if load_balancer.name.split('-')[-1:][0] in ['stage','prod'] else load_balancer.name.split('-')[-1:][0]
+    name =  '-'.join(load_balancer.name.split('-')[:-2]) + '.' + load_balancer.name.split('-')[-1:][0] if load_balancer.name.split('-')[-1:][0] in ['stage','prod'] else '-'.join(load_balancer.name.split('-')[:-1])
     names.append({"aws_name": load_balancer.name,
                   "graphite_name": "%s.%s" % (stack, name)})
 
