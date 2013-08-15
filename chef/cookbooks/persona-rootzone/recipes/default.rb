@@ -20,6 +20,9 @@ rpms = {"apr" => "apr-1.4.6-1.x86_64.rpm",
         "httpd-tools" => "httpd-tools-2.4.4-1.x86_64.rpm",
         "mod_ssl" => "mod_ssl-2.4.4-1.x86_64.rpm"}
 
+# TODO : This doesn't work for apr-util-ldap and apr-util because of circular dependencies
+# TODO : This doesn't work for httpd, mod_ssl, and httpd-tools because of circular dependencies
+
 for rpm in rpms.keys do
   remote_file "#{Chef::Config[:file_cache_path]}/#{rpms[rpm]}" do
     source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpms[rpm]}"
@@ -66,15 +69,22 @@ node[:persona][:rootzone].each do |x|
     mode 0644
     notifies :restart, "service[httpd]", :delayed
   end
+  file "/etc/sysconfig/network-scripts/ifcfg-#{x[:interface]}" do
+    content "DEVICE=#{x[:interface]}\nBOOTPROTO=static\nIPADDR=#{x[:ip][node[:aws_region]]}\nNETMASK=255.255.255.0\n"
+    owner "root"
+    group "root"
+    mode 0644
+    notifies :restart, "service[network]", :delayed
+  end
   if x.include? :gateway then
     ruby_block "inject_gateway" do
       block do
         f = Chef::Util::FileEdit.new("/etc/sysconfig/network")
-        f.insert_line_if_no_match(/^GATEWAY=/, "GATEWAY=#{x[:gateway]}")
+        f.insert_line_if_no_match(/^GATEWAY=/, "GATEWAY=#{x[:gateway][node[:aws_region]]}")
         f.write_file
       end
       not_if do
-        open('/etc/sysconfig/network') { |f| f.lines.find { |line| line.include?("GATEWAY=#{x[:gateway]}") } }
+        open('/etc/sysconfig/network') { |f| f.lines.find { |line| line.include?("GATEWAY=#{x[:gateway][node[:aws_region]]}") } }
       end
       notifies :restart, "service[network]", :delayed
     end

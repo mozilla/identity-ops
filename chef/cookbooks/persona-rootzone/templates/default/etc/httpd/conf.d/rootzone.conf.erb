@@ -37,8 +37,8 @@ LoadModule rewrite_module modules/mod_rewrite.so
 #</VirtualHost>
 
 <% node[:persona][:rootzone].each do |x| %>
-<VirtualHost <%= x[:ip] %>:443>
-    # <%= x[:external_ip] %>
+<VirtualHost <%= x[:ip][node[:aws_region]] %>:443>
+    # <%= x[:external_ip][node[:aws_region]] %>
     ErrorLog logs/ssl_error_log
     TransferLog logs/ssl_access_log
     LogLevel warn
@@ -92,8 +92,8 @@ when "www.browserid.org" %>
 
 </VirtualHost>
 
-<VirtualHost <%= x[:ip] %>:80>  
-    # <%= x[:external_ip] %>
+<VirtualHost <%= x[:ip][node[:aws_region]] %>:80>  
+    # <%= x[:external_ip][node[:aws_region]] %>
 <% case x[:cert][:cert_name]
 when "www.browserid.org" %>
   <%= "    ServerName browserid.org" %>
