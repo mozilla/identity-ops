@@ -479,19 +479,14 @@ case cmd
 when "import"
   opts[:sections].each do |section|
     mgr.import_from_file section, "#{section}.json"
+    mgr.reload
   end
-  mgr.reload
 when "export"
   opts[:sections].each do |section|
     mgr.export_to_file section
   end
 when "destroystack"
   mgr.delete_hosts_in_hostgroup opts[:hostgroup]
-  mgr.reload
-when "sync"
-  opts[:sections].each do |section|
-    mgr.sync_from_file section, "#{section}.json"
-  end
   mgr.reload
 end
 
