@@ -28,6 +28,9 @@ service "ntpd" do
   action [:enable, :start]
 end
 
+package "yum-plugin-security"
+package "yum-autoupdate"
+
 cookbook_file "/etc/sysconfig/yum-autoupdate" do
   source "etc/sysconfig/yum-autoupdate"
   owner "root"

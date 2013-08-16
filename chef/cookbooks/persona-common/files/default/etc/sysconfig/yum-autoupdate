@@ -5,86 +5,13 @@
 #     true - Run yum-autoupdate
 #     false - Do not run yum-autoupdate (default)
 #   + anything other than true defaults to false
-ENABLED="false"
-
-# SENDEMAIL
-#     true - Send emails when there is something to report (default)
-#     false - Do not send any emails
-#   + anything other than false defaults to true
-SENDEMAIL="true"
-
-# SENDONLYERRORS
-#     true - Only emails when there is an error
-#     false - Send email when there is an update and/or an error (default)
-#   + anything other than true defaults to false
-SENDONLYERRORS="false"
-
-# MAILLIST
-#   This is a comma deliminated list
-#   Example:  MAILLIST="root,me@mydomain.com,you@yourdomain.org"
-MAILLIST="root"
-
-# MAXWAITTIME
-#   yum-autoupdate waits for a random time before starting
-#   This setting sets the maximum time in minutes.
-#   Set to 0 for no waiting
-MAXWAITTIME=180
-
-# CONFIGFILE
-#   Change this if you want to use a different yum.conf file.
-CONFIGFILE="/etc/yum.conf"
-
-# EXCLUDE
-#   This is a space deliminated list
-#   Example:  EXCLUDE="kernel* openafs* *-kmdl-* kmod-* *firmware*"
-EXCLUDE="kernel* openafs* *-kmdl-* kmod-* *firmware*"
-
-# PRERUN
-#   A binary or set of commands to run prior to updating (but after sleep)
-PRERUN=""
-
-# ADDONRUN
-#   A binary or set of commands to run prior to updating (but after sleep)
-ADDONRUN=""
-
-# POSTRUN
-#   A binary or set of commands to run after updating (but before mailing)
-POSTRUN=""
-
-# USE_YUMSEC
-#   This switches from using yum update to using yum-plugin-security
-#     true  - run 'yum --security' update rather than 'yum update'
-#     false - defaults to traditional behavior running 'yum update' (default)
-#   + anything other than true defaults to false
-USE_YUMSEC="false"
-
-# DEBUG
-#     true - turn on debug mode - be more verbose
-#     false - Do not run in debug mode (default)
-#   + anything other than true defaults to false
-DEBUG="false"
-
-[root@ip-10-148-25-135 ~]# less /etc/sysconfig/yum-autoupdate
-# This file controls the configuration of yum-autoupdate
-# For it to work as expected it should be /etc/sysconfig/yum-autoupdate
-
-# ENABLED
-#     true - Run yum-autoupdate
-#     false - Do not run yum-autoupdate (default)
-#   + anything other than true defaults to false
 ENABLED="true"
 
 # SENDEMAIL
 #     true - Send emails when there is something to report (default)
 #     false - Do not send any emails
 #   + anything other than false defaults to true
-SENDEMAIL="true"
-
-# SENDONLYERRORS
-#     true - Only emails when there is an error
-#     false - Send email when there is an update and/or an error (default)
-#   + anything other than true defaults to false
-SENDONLYERRORS="false"
+SENDEMAIL="false"
 
 # MAILLIST
 #   This is a comma deliminated list
@@ -108,64 +35,11 @@ EXCLUDE="kernel* openafs* *-kmdl-* kmod-* *firmware*"
 
 # PRERUN
 #   A binary or set of commands to run prior to updating (but after sleep)
-PRERUN=""
-
-# ADDONRUN
-#   A binary or set of commands to run prior to updating (but after sleep)
-ADDONRUN=""
-[root@ip-10-148-25-135 ~]# cat /etc/sysconfig/yum-autoupdate
-# This file controls the configuration of yum-autoupdate
-# For it to work as expected it should be /etc/sysconfig/yum-autoupdate
-
-# ENABLED
-#     true - Run yum-autoupdate
-#     false - Do not run yum-autoupdate (default)
-#   + anything other than true defaults to false
-ENABLED="true"
-
-# SENDEMAIL
-#     true - Send emails when there is something to report (default)
-#     false - Do not send any emails
-#   + anything other than false defaults to true
-SENDEMAIL="true"
-
-# SENDONLYERRORS
-#     true - Only emails when there is an error
-#     false - Send email when there is an update and/or an error (default)
-#   + anything other than true defaults to false
-SENDONLYERRORS="false"
-
-# MAILLIST
-#   This is a comma deliminated list
-#   Example:  MAILLIST="root,me@mydomain.com,you@yourdomain.org"
-MAILLIST="root"
-
-# MAXWAITTIME
-#   yum-autoupdate waits for a random time before starting
-#   This setting sets the maximum time in minutes.
-#   Set to 0 for no waiting
-MAXWAITTIME=180
-
-# CONFIGFILE
-#   Change this if you want to use a different yum.conf file.
-CONFIGFILE="/etc/yum.conf"
-
-# EXCLUDE
-#   This is a space deliminated list
-#   Example:  EXCLUDE="kernel* openafs* *-kmdl-* kmod-* *firmware*"
-EXCLUDE="kernel* openafs* *-kmdl-* kmod-* *firmware*"
-
-# PRERUN
-#   A binary or set of commands to run prior to updating (but after sleep)
-PRERUN=""
-
-# ADDONRUN
-#   A binary or set of commands to run prior to updating (but after sleep)
-ADDONRUN=""
+PRERUN="yum-complete-transaction --cleanup-only"
 
 # POSTRUN
 #   A binary or set of commands to run after updating (but before mailing)
-POSTRUN=""
+POSTRUN="cp -f \$TEMPMAILFILE /tmp/yum-autoupdate.lastrun"
 
 # USE_YUMSEC
 #   This switches from using yum update to using yum-plugin-security
@@ -173,9 +47,3 @@ POSTRUN=""
 #     false - defaults to traditional behavior running 'yum update' (default)
 #   + anything other than true defaults to false
 USE_YUMSEC="true"
-
-# DEBUG
-#     true - turn on debug mode - be more verbose
-#     false - Do not run in debug mode (default)
-#   + anything other than true defaults to false
-DEBUG="false"
