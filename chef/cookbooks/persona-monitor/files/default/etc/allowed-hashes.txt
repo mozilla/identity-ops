@@ -6,11 +6,10 @@
 # Method to gather hashes
 # for site in persona anosrep; do for app in login yahoo.login gmail.login; do echo "`curl -s https://$app.$site.org/.well-known/browserid | sha1sum` https://$app.$site.org/.well-known/browserid"; if [ "$app" = "login" ]; then echo "`curl -s https://$app.$site.org/include.js | sha1sum` https://$app.$site.org/include.js"; fi; done; done
 4e624b6a10415818198d5069f31978eca5035f45  - https://login.persona.org/.well-known/browserid
-8fba45a641028a09201f3a52224ac433e89f5d7b  - https://login.persona.org/include.js
+6b4dc3760dde3f934a7bd19c542d7c44cb3cc756  - https://login.persona.org/include.js
 a6ec16e995b67cc93c83d522a0d99ca354166f9a  - https://yahoo.login.persona.org/.well-known/browserid
 311cbec10b04874a756cb80aed88f44b6f00b518  - https://gmail.login.persona.org/.well-known/browserid
 c5b1100acfa2ae066b04570015bee8b8bb53b518  - https://login.anosrep.org/.well-known/browserid
-bbeafa9df263bebd18c0b9d99e64ca05e77224dc  - https://login.anosrep.org/include.js
+f0cc9378ec8cae66247ebd43be888c36776eb3a9  - https://login.anosrep.org/include.js
 5bc24db26d67c55b90934d53878eee91d3b52b06  - https://yahoo.login.anosrep.org/.well-known/browserid
 439c0c97469ba469b51d3a0582bfea72fee15459  - https://gmail.login.anosrep.org/.well-known/browserid
-
