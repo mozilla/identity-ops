@@ -114,7 +114,7 @@ if __name__=='__main__':
         "uri" : "ldap://ldap.db.scl3.mozilla.com/",
         "bind_user" : "uid=bind-generateusers,ou=logins,dc=mozilla",
         "bind_password" : "DEFAULT PASSWORD",
-        "teams" : ["team_identity_dev", "team_services_ops", "team_services_qa"],
+        "teams" : ["team_identity_dev", "team_services_ops", "team_services_qa", "team_opsec"],
         "base_dn" : "dc=mozilla",
         "output" : '-',
         "databag" : False,
