@@ -16,10 +16,10 @@ for team in node[:access][:teams][:create] do
   end
 
   file "/etc/sudoers.d/#{team}" do
-    mode 0660
+    mode 0440
     owner "root"
     group "root"
-    content "%#{team} ALL = NOPASSWD: ALL"
+    content "%#{team} ALL = NOPASSWD: ALL\n"
   end
 end
 
