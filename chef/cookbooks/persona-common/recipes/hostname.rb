@@ -38,6 +38,13 @@ res = file "/etc/chef/ohai/hints/ec2.json" do
 res.run_action(:create)
 reload_ohai ||= res.updated?
 
+if reload_ohai then
+  res = ohai "reload" 
+  res.run_action(:reload)
+end
+
+reload_ohai=false
+
 # Note max hostname length : 64
 short_hostname=node[:ec2][:instance_id] ? node[:ec2][:instance_id] : "ip-#{node[:ipaddress].tr('.','-')}"
 fqdn=short_hostname + 
