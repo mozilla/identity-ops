@@ -21,6 +21,7 @@ acl post method POST
 
 # browserid cert fetching
 acl bidcert urlpath_regex ^/.well-known/browserid(\?.*)?$
+acl bidrealm urlpath_regex ^/.well-known/browserid-realm(\?.*)?$
 
 # bigtent auth providers
 # google
@@ -46,6 +47,7 @@ acl to_dev_kpiggybank dst <%= node[:persona][:proxy][:kpi_target_cidr] %>
 
 # Allow verifier requests over SSL.
 http_access allow bidcert ssl get
+http_access allow bidrealm ssl get
 
 # Allow bigtent-related requests.
 http_access allow bigtent_google1 get
@@ -87,6 +89,7 @@ sslproxy_cafile /etc/squid/cacert.pem
 
 # never deal with >10k responses
 reply_body_max_size 10240 bytes bidcert
+reply_body_max_size 10240 bytes bidrealm
 
 # reduce the default shutdown time from 30 seconds
 shutdown_lifetime 10 seconds
