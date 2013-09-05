@@ -1,4 +1,4 @@
-default["persona"]["dbwrite"]["rpms"]["browserid-server"] = "browserid-server-0.2013.08.28-1.el6_119486.x86_64.rpm"
+default["persona"]["dbwrite"]["rpms"]["browserid-server"] = "browserid-server-0.2013.08.28-2.el6_119660.x86_64.rpm"
 default["persona"]["dbwrite"]["rpms"]["nodejs"] = "nodejs-0.8.24-1.el6.x86_64.rpm"
 
 default["persona"]["dbwrite"]["database"]["host"] = "dbmaster-example-123456.us-west-2.elb.amazonaws.com"
