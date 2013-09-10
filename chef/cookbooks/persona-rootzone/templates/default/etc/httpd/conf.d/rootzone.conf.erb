@@ -60,8 +60,9 @@ when "www.browserid.org" %>
 <% end %>
       SSLCertificateFile /etc/pki/tls/certs/<%= x[:cert][:cert_name] %>.crt
       SSLCertificateKeyFile /etc/pki/tls/private/<%= x[:cert][:cert_name] %>.key
+<% if not x[:cert][:cert_chain].nil? %>
       SSLCertificateChainFile /etc/pki/tls/certs/<%= x[:cert][:cert_name] %>.chain.crt
-
+<% end %>
     SSLProxyCACertificateFile /etc/pki/tls/cert.pem
     SSLProxyCheckPeerCN off
     
