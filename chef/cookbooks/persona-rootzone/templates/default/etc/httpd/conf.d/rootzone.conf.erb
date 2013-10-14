@@ -43,29 +43,17 @@ LoadModule rewrite_module modules/mod_rewrite.so
     TransferLog logs/ssl_access_log
     LogLevel warn
     SSLEngine on
-    SSLProxyEngine on
     SSLProtocol all -SSLv2
     SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
 
     # <%= x[:cert][:cert_name] %>
-<% case x[:cert][:cert_name]
-when "www.browserid.org" %>
-  <%= "    ServerName browserid.org" %>
-<% when "multisan-www.persona.org" %>
-  <%= "    ServerName persona.org" %>
-<% when "wildcard.diresworb.org" %>
-  <%= "    ServerName diresworb.org" %>
-<% when "wildcard.anosrep.org" %>
-  <%= "    ServerName anosrep.org" %>
-<% end %>
+    ServerName <%= x[:server_name] %>
       SSLCertificateFile /etc/pki/tls/certs/<%= x[:cert][:cert_name] %>.crt
       SSLCertificateKeyFile /etc/pki/tls/private/<%= x[:cert][:cert_name] %>.key
 <% if not x[:cert][:cert_chain].nil? %>
       SSLCertificateChainFile /etc/pki/tls/certs/<%= x[:cert][:cert_name] %>.chain.crt
 <% end %>
-    SSLProxyCACertificateFile /etc/pki/tls/cert.pem
-    SSLProxyCheckPeerCN off
-    
+
     SetEnvIf User-Agent ".*MSIE.*" \
              nokeepalive ssl-unclean-shutdown \
              downgrade-1.0 force-response-1.0
@@ -73,6 +61,10 @@ when "www.browserid.org" %>
     CustomLog logs/ssl_request_log \
               "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
 
+    <% if x[:proxy] %>
+    SSLProxyEngine on
+    SSLProxyCACertificateFile /etc/pki/tls/cert.pem
+    SSLProxyCheckPeerCN off
     ProxyRequests Off
     ProxyPreserveHost On
 
@@ -90,21 +82,19 @@ when "www.browserid.org" %>
     RewriteEngine on
     RewriteCond %{REQUEST_METHOD} !^POST$
     RewriteRule ^/(.*)         <%= x[:url] %>$1 [L,R=301]
-
+    <% end %>
+    <% if x[:splash] %>
+    <Directory "/opt/splash">
+        AllowOverride None
+        Require all granted
+    </Directory>
+    DocumentRoot /opt/splash
+    <% end %>
 </VirtualHost>
 
 <VirtualHost <%= x[:ip][node[:aws_region]] %>:80>  
     # <%= x[:external_ip][node[:aws_region]] %>
-<% case x[:cert][:cert_name]
-when "www.browserid.org" %>
-  <%= "    ServerName browserid.org" %>
-<% when "multisan-www.persona.org" %>
-  <%= "    ServerName persona.org" %>
-<% when "wildcard.diresworb.org" %>
-  <%= "    ServerName diresworb.org" %>
-<% when "wildcard.anosrep.org" %>
-  <%= "    ServerName anosrep.org" %>
-<% end %>
+    ServerName <%= x[:server_name] %>
 
     RewriteEngine on
     RewriteCond %{REQUEST_METHOD} ^POST$
