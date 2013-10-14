@@ -79,6 +79,7 @@ def create_stack(region,
     conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
     stack = {}
 
+    # Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
     policy_attributes = {"ADH-AES128-GCM-SHA256": False,
                         "ADH-AES256-GCM-SHA384": False,
                         "ADH-AES128-SHA": False,

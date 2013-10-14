@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# https://mana.mozilla.org/wiki/pages/viewpage.action?pageId=35069456
+# Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
 
 import boto.ec2.elb
 import sys
