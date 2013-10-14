@@ -1,4 +1,6 @@
 LoadModule ssl_module modules/mod_ssl.so
+LoadModule rewrite_module modules/mod_rewrite.so
+
 Listen 443
 
 SSLPassPhraseDialog  builtin
@@ -28,17 +30,33 @@ SSLCryptoDevice builtin
 #      SSLCertificateKeyFile /etc/pki/tls/private/localhost.key
 #</VirtualHost>
 
-<VirtualHost www.persona.org:443>
+<Directory "/opt/splash">
+    AllowOverride None
+    Require all granted
+</Directory>
+
+<VirtualHost <%= @ip %>:80>
+    #ServerName www.persona.org
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} ^POST$
+    # This should be a 404 instead of 403 ( https://github.com/fmarier/checkurl/blob/no_security_improvements/check-persona-url.py#L217 )
+    RewriteRule ^/(.*)         / [L,F]
+
+    RewriteEngine on
+    RewriteCond %{REQUEST_METHOD} !^POST$
+    RewriteRule ^/(.*)                 https://www.persona.org/$1 [L,R=301]
+</VirtualHost>
+
+<VirtualHost <%= @ip %>:443>
     DocumentRoot /opt/splash
     ErrorLog logs/ssl_error_log
     TransferLog logs/ssl_access_log
     LogLevel warn
     SSLEngine on
-    SSLProxyEngine on
     SSLProtocol all -SSLv2
     SSLCipherSuite HIGH:MEDIUM:!aNULL:!MD5
 
-    ServerName www.persona.org
+    #ServerName www.persona.org
     SSLCertificateFile /etc/pki/tls/certs/multisan-www.persona.org.crt
     SSLCertificateKeyFile /etc/pki/tls/private/multisan-www.persona.org.key
     SSLCertificateChainFile /etc/pki/tls/certs/multisan-www.persona.org.chain.crt

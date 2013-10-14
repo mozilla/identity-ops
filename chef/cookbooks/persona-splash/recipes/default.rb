@@ -37,6 +37,19 @@ service "httpd" do
   action [:enable]
 end
 
+file "/etc/httpd/conf.d/ssl.conf" do
+  action :delete
+  notifies :restart, "service[httpd]", :delayed
+end
+
+cookbook_file "/etc/httpd/conf/httpd.conf" do
+  source "etc/httpd/conf/httpd.conf"
+  owner "root"
+  group "root"
+  mode 0644
+  notifies :restart, "service[httpd]", :delayed
+end
+
 directory "/opt/splash" do
   owner "root"
   group "root"
@@ -80,8 +93,13 @@ file "/etc/httpd/conf.d/ssl.conf" do
   notifies :restart, "service[httpd]", :delayed
 end
 
-cookbook_file "/etc/httpd/conf.d/splash.conf" do
-  source "etc/httpd/conf.d/splash.conf"
+template "/etc/httpd/conf.d/splash.conf" do
+  source "etc/httpd/conf.d/splash.conf.erb"
+  if node[:persona][:splash][:ip].is_a? Hash then
+    variables(:ip => node[:persona][:splash][:ip][node[:aws_region]])
+  else
+    variables(:ip => node[:persona][:splash][:ip])
+  end
   owner "root"
   group "root"
   mode 0644
