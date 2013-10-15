@@ -15,12 +15,13 @@
             "w-anosrep-org",
             "w-login-anosrep-org"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "persona"
     },
     {
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "identity-bridge-yahoo-55e483a64ba107ab1617f98a416cd20f150769a7",
+            "image_id": "identity-bridge-yahoo-8f96da3cf79de7b476d239b461390706d1a879d0",
             "instance_type": "c1.medium",
             "security_groups": [
                 "frontend",
@@ -32,7 +33,8 @@
         "load_balancers": [
             "yahoo-login-anosrep-org"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "bridge-yahoo"
     },
     {
         "desired_capacity": 3,
@@ -49,7 +51,8 @@
         "load_balancers": [
             "gmail-login-anosrep-org"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "bridge-gmail"
     },
     {
         "desired_capacity": 2,
@@ -65,7 +68,8 @@
         "load_balancers": [
             "keysign"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "persona"
     },
     {
         "desired_capacity": 3,
@@ -83,6 +87,7 @@
         "load_balancers": [
             "dbwrite"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "persona"
     }
 ]

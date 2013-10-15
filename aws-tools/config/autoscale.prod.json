@@ -14,7 +14,8 @@
         "load_balancers": [
             "persona-org"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "persona"
     },
     {
         "desired_capacity": 3,
@@ -31,7 +32,8 @@
         "load_balancers": [
             "yahoo-login-persona-org"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "bridge-yahoo"
     },
     {
         "desired_capacity": 3,
@@ -48,7 +50,8 @@
         "load_balancers": [
             "gmail-login-persona-org"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "bridge-gmail"
     },
     {
         "desired_capacity": 2,
@@ -64,7 +67,8 @@
         "load_balancers": [
             "keysign"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "persona"
     },
     {
         "desired_capacity": 3,
@@ -82,6 +86,7 @@
         "load_balancers": [
             "dbwrite"
         ],
-        "subnet": "private"
+        "subnet": "private",
+        "application": "persona"
     }
 ]

@@ -159,6 +159,8 @@ def create_stack(region,
     existing_subnets = conn_vpc.get_all_subnets(filters=[('vpcId', [vpc.id])])
 
     for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
+        if load_balancers_params['application'] != application:
+            continue
         load_balancers_params['name'] = '%s-%s' % (load_balancers_params['name'], name)
         for listener in load_balancers_params['listeners']:
             if len(listener) == 4:
@@ -229,7 +231,7 @@ def create_stack(region,
                       'PolicyNames.member.1': policy_name}
             
             result = conn_elb.get_list('SetLoadBalancerPoliciesOfListener', params, None)
-            logging.debug("New Policy '%s' created and applied to load balancer %s in %s" % (policy_name, load_balancer_name, region))
+            logging.debug("New Policy '%s' created and applied to load balancer %s in %s" % (policy_name, load_balancers_params['name'], region))
 
         if environment == 'prod':
             # monitor the ELB
@@ -283,6 +285,8 @@ def create_stack(region,
     # see us having more than one autoscale group for each launch configuration
 
     for autoscale_params in json.load(open('config/autoscale.%s.json' % stack_type, 'r')):
+        if autoscale_params['application'] != application:
+            continue
         launch_configuration_params = autoscale_params['launch_configuration']
         tier = launch_configuration_params['tier']
 
@@ -451,7 +455,6 @@ End-of-message
 def destroy_stack(region,
                   environment,
                   stack_type,
-                  application,
                   name):
     # Find associated ELBs
     # Find ELB associated Autoscale groups
@@ -584,7 +587,7 @@ def show_stack(region, environment, stack_type, name):
         print json.dumps(output[x], sort_keys=True, indent=4, separators=(',', ': '))
     print "```"
 
-def point_dns_to_stack(region, stack_type, name):
+def point_dns_to_stack(region, stack_type, application, name):
     import sys
     import os
     import json
@@ -593,20 +596,30 @@ def point_dns_to_stack(region, stack_type, name):
     from dynect.DynectDNS import DynectRest  # sudo pip install https://github.com/dyninc/Dynect-API-Python-Library/zipball/master
 
     if stack_type == 'stage':
-        elbs = {'firefoxos.anosrep.org': 'w-anosrep-org',
-                'login.anosrep.org': 'w-anosrep-org',
-                'www.anosrep.org': 'w-anosrep-org',
-                'static.login.anosrep.org': 'w-login-anosrep-org',
-                'verifier.login.anosrep.org': 'w-login-anosrep-org',
-                'gmail.login.anosrep.org': 'gmail-login-anosrep-org',
-                'yahoo.login.anosrep.org': 'yahoo-login-anosrep-org'}
         zone = 'anosrep.org'
+        if application == 'persona':
+            elbs = {'firefoxos.anosrep.org': 'w-anosrep-org',
+                    'login.anosrep.org': 'w-anosrep-org',
+                    'www.anosrep.org': 'w-anosrep-org',
+                    'static.login.anosrep.org': 'w-login-anosrep-org',
+                    'verifier.login.anosrep.org': 'w-login-anosrep-org'}
+        elif application == 'bridge-yahoo':
+            elbs = {'yahoo.login.anosrep.org': 'yahoo-login-anosrep-org'}
+        elif application == 'bridge-gmail':
+            elbs = {'gmail.login.anosrep.org': 'gmail-login-anosrep-org'}
+        else:
+            raise ValueError("application value is bad : %s" % application)
     elif stack_type == 'prod':
-        elbs = {'login.persona.org': 'persona-org',
-                'www.persona.org': 'persona-org',
-                'gmail.login.persona.org': 'gmail-login-persona-org',
-                'yahoo.login.persona.org': 'yahoo-login-persona-org'}
         zone = 'persona.org'
+        if application == 'persona':
+            elbs = {'login.persona.org': 'persona-org',
+                    'www.persona.org': 'persona-org'}
+        elif application == 'bridge-yahoo':
+            elbs = {'yahoo.login.persona.org': 'yahoo-login-persona-org'}
+        elif application == 'bridge-gmail':
+            elbs = {'gmail.login.persona.org': 'gmail-login-persona-org'}
+        else:
+            raise ValueError("application value is bad : %s" % application)
     new_names = {}
 
     # TODO : This doesn't work for prod because we need to inject multiple regions into traffic mangement
@@ -668,32 +681,34 @@ if __name__ == '__main__':
     #region = 'us-east-1'
     #availability_zones = ['a','b','d']
    
-    #environment = 'identity-dev'
-    environment = 'identity-prod'
+    environment = 'identity-dev'
+    #environment = 'identity-prod'
 
 #     stack = create_stack(region=region,
-#                          environment=environment, 
-#                          stack_type='stage', 
-#                          application='persona', 
-#                          availability_zones=availability_zones, 
-#                          path=path,
-#                          replace=False, 
-#                          name='0813',
-#                          key_name=None,
-#                          mini_stack=False,
-#                          generic=False,
-#                          hydrate=True)
+#                            environment=environment, 
+#                            stack_type='stage', 
+#                            application='bridge-yahoo', 
+#                            availability_zones=availability_zones, 
+#                            path=path,
+#                            replace=False, 
+#                            name='1234',
+#                            key_name=None,
+#                            mini_stack=False,
+#                            generic=False,
+#                            hydrate=True)
 
-    destroy_stack(region=region,
-                  environment=environment,
-                  stack_type='prod',
-                  application='persona', 
-                  name='0809')
+#     destroy_stack(region=region,
+#                   environment=environment,
+#                   stack_type='stage',
+#                   name='1234')
 
 #     show_stack(region,
 #                environment,
 #                'prod',
-#                '0810')
+#                '1234')
 
-#     point_dns_to_stack(region, 'stage', '0813')
+#     point_dns_to_stack(region=region, 
+#                        stack_type='stage', 
+#                        application='bridge-yahoo',
+#                        name='1014')
       

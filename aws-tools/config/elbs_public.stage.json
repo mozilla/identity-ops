@@ -1,6 +1,7 @@
 [
     {
         "name": "w-anosrep-org",
+        "application": "persona",
         "subnet" : "public",
         "security_groups" :
         [
@@ -32,6 +33,7 @@
     },
     {
         "name": "w-login-anosrep-org",
+        "application": "persona",
         "subnet" : "public",
         "security_groups" :
         [
@@ -63,6 +65,7 @@
     },
     {
         "name": "yahoo-login-anosrep-org",
+        "application": "bridge-yahoo",
         "subnet" : "public",
         "security_groups" :
         [
@@ -82,6 +85,7 @@
     },
     {
         "name": "gmail-login-anosrep-org",
+        "application": "bridge-gmail",
         "subnet" : "public",
         "security_groups" :
         [
