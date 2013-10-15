@@ -1,102 +1,87 @@
 [
     {
-        "launch_configuration": 
-        {
-            "tier" : "webhead",
-            "image_id" : "persona-webhead-5d9dc9edf43978c5cb20377f24d97a956297762c",
-            "security_groups" : 
-            [
+        "desired_capacity": 8,
+        "launch_configuration": {
+            "image_id": "persona-webhead-55e483a64ba107ab1617f98a416cd20f150769a7",
+            "instance_type": "c1.medium",
+            "security_groups": [
                 "frontend",
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "c1.medium"
+            "tier": "webhead"
         },
-        "load_balancers":
-        [
+        "load_balancers": [
             "persona-org"
         ],
-        "subnet": "private",
-        "desired_capacity": 8
+        "subnet": "private"
     },
     {
-        "launch_configuration": 
-        {
-            "tier" : "bridge-yahoo",
-            "image_id" : "identity-bridge-yahoo-e16067550222f3cc1c11e22b32cfe70be6d791eb",
-            "security_groups" : 
-            [
+        "desired_capacity": 3,
+        "launch_configuration": {
+            "image_id": "identity-bridge-yahoo-55e483a64ba107ab1617f98a416cd20f150769a7",
+            "instance_type": "c1.medium",
+            "security_groups": [
                 "frontend",
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "c1.medium"
+            "tier": "bridge-yahoo"
         },
-        "load_balancers":
-        [
+        "load_balancers": [
             "yahoo-login-persona-org"
         ],
-        "subnet": "private",
-        "desired_capacity": 3
+        "subnet": "private"
     },
     {
-        "launch_configuration": 
-        {
-            "tier" : "bridge-gmail",
-            "image_id" : "identity-bridge-gmail-83a9b24504489bf6f09add22a8e83b1ec7002ae8",
-            "security_groups" : 
-            [
+        "desired_capacity": 3,
+        "launch_configuration": {
+            "image_id": "identity-bridge-gmail-8aa8ec8ff2ee96b899dedfb66b601f0da471e64d",
+            "instance_type": "m1.small",
+            "security_groups": [
                 "frontend",
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "m1.small"
+            "tier": "bridge-gmail"
         },
-        "load_balancers":
-        [
+        "load_balancers": [
             "gmail-login-persona-org"
         ],
-        "subnet": "private",
-        "desired_capacity": 3
+        "subnet": "private"
     },
     {
-        "launch_configuration": 
-        {
-            "tier" : "keysign",
-            "image_id" : "persona-keysign-5d9dc9edf43978c5cb20377f24d97a956297762c",
-            "security_groups" : 
-            [
+        "desired_capacity": 2,
+        "launch_configuration": {
+            "image_id": "persona-keysign-55e483a64ba107ab1617f98a416cd20f150769a7",
+            "instance_type": "c1.medium",
+            "security_groups": [
                 "middleware-http",
                 "administrable"
             ],
-            "instance_type" : "c1.medium"
+            "tier": "keysign"
         },
-        "load_balancers":
-        [
+        "load_balancers": [
             "keysign"
         ],
-        "subnet": "private",
-        "desired_capacity": 2
+        "subnet": "private"
     },
     {
-        "launch_configuration": 
-        {
-            "tier" : "dbwrite",
-            "image_id" : "persona-dbwrite-5d9dc9edf43978c5cb20377f24d97a956297762c",
-            "security_groups" : 
-            [
+        "desired_capacity": 3,
+        "launch_configuration": {
+            "image_id": "persona-dbwrite-55e483a64ba107ab1617f98a416cd20f150769a7",
+            "instance_type": "c1.medium",
+            "security_groups": [
                 "middleware-http",
                 "dbwrite",
                 "internet-outbound",
                 "administrable"
             ],
-            "instance_type" : "c1.medium"
+            "tier": "dbwrite"
         },
-        "load_balancers":
-        [
+        "load_balancers": [
             "dbwrite"
         ],
-        "subnet": "private",
-        "desired_capacity": 3
+        "subnet": "private"
     }
 ]

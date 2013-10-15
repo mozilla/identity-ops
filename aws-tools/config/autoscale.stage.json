@@ -2,7 +2,7 @@
     {
         "desired_capacity": 8,
         "launch_configuration": {
-            "image_id": "persona-webhead-8af08a934c3203817cf57cc25cbf76afece48ee7",
+            "image_id": "persona-webhead-9dbc6b259e214dedcdb4b6ac776486fbf247259d",
             "instance_type": "c1.medium",
             "security_groups": [
                 "frontend",
@@ -20,7 +20,7 @@
     {
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "identity-bridge-yahoo-e16067550222f3cc1c11e22b32cfe70be6d791eb",
+            "image_id": "identity-bridge-yahoo-55e483a64ba107ab1617f98a416cd20f150769a7",
             "instance_type": "c1.medium",
             "security_groups": [
                 "frontend",
@@ -37,7 +37,7 @@
     {
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "identity-bridge-gmail-83a9b24504489bf6f09add22a8e83b1ec7002ae8",
+            "image_id": "identity-bridge-gmail-8aa8ec8ff2ee96b899dedfb66b601f0da471e64d",
             "instance_type": "m1.small",
             "security_groups": [
                 "frontend",
@@ -54,7 +54,7 @@
     {
         "desired_capacity": 2,
         "launch_configuration": {
-            "image_id": "persona-keysign-8af08a934c3203817cf57cc25cbf76afece48ee7",
+            "image_id": "persona-keysign-9dbc6b259e214dedcdb4b6ac776486fbf247259d",
             "instance_type": "c1.medium",
             "security_groups": [
                 "middleware-http",
@@ -70,7 +70,7 @@
     {
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "persona-dbwrite-8af08a934c3203817cf57cc25cbf76afece48ee7",
+            "image_id": "persona-dbwrite-9dbc6b259e214dedcdb4b6ac776486fbf247259d",
             "instance_type": "c1.medium",
             "security_groups": [
                 "middleware-http",
