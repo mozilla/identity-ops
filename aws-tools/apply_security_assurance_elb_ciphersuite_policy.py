@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# https://mana.mozilla.org/wiki/pages/viewpage.action?pageId=35069456
+# Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
 
 import boto.ec2.elb
 import sys
@@ -18,29 +18,45 @@ conn_elb = boto.ec2.elb.connect_to_region(region)
 #import logging
 #logging.basicConfig(level=logging.DEBUG)
 
-policy_attributes = {"ADH-AES128-SHA": False,
+policy_attributes = {"ADH-AES128-GCM-SHA256": False,
+                    "ADH-AES256-GCM-SHA384": False,
+                    "ADH-AES128-SHA": False,
+                    "ADH-AES128-SHA256": False,
                     "ADH-AES256-SHA": False,
+                    "ADH-AES256-SHA256": False,
                     "ADH-CAMELLIA128-SHA": False,
                     "ADH-CAMELLIA256-SHA": False,
                     "ADH-DES-CBC3-SHA": False,
                     "ADH-DES-CBC-SHA": False,
                     "ADH-RC4-MD5": False,
                     "ADH-SEED-SHA": False,
+                    "AES128-GCM-SHA256": True,
+                    "AES256-GCM-SHA384": True,
                     "AES128-SHA": True,
+                    "AES128-SHA256": True,
                     "AES256-SHA": True,
+                    "AES256-SHA256": True,
                     "CAMELLIA128-SHA": True,
                     "CAMELLIA256-SHA": True,
                     "DES-CBC3-MD5": False,
                     "DES-CBC3-SHA": False,
                     "DES-CBC-MD5": False,
                     "DES-CBC-SHA": False,
+                    "DHE-DSS-AES128-GCM-SHA256": True,
+                    "DHE-DSS-AES256-GCM-SHA384": True,
                     "DHE-DSS-AES128-SHA": True,
+                    "DHE-DSS-AES128-SHA256": True,
                     "DHE-DSS-AES256-SHA": True,
+                    "DHE-DSS-AES256-SHA256": True,
                     "DHE-DSS-CAMELLIA128-SHA": False,
                     "DHE-DSS-CAMELLIA256-SHA": False,
                     "DHE-DSS-SEED-SHA": False,
+                    "DHE-RSA-AES128-GCM-SHA256": True,
+                    "DHE-RSA-AES256-GCM-SHA384": True,
                     "DHE-RSA-AES128-SHA": True,
+                    "DHE-RSA-AES128-SHA256": True,
                     "DHE-RSA-AES256-SHA": True,
+                    "DHE-RSA-AES256-SHA256": True,
                     "DHE-RSA-CAMELLIA128-SHA": False,
                     "DHE-RSA-CAMELLIA256-SHA": False,
                     "DHE-RSA-SEED-SHA": False,
@@ -71,6 +87,8 @@ policy_attributes = {"ADH-AES128-SHA": False,
                     "Protocol-SSLv2": False,
                     "Protocol-SSLv3": True,
                     "Protocol-TLSv1": True,
+                    "Protocol-TLSv1.1": True,
+                    "Protocol-TLSv1.2": True,
                     "PSK-3DES-EDE-CBC-SHA": False,
                     "PSK-AES128-CBC-SHA": False,
                     "PSK-AES256-CBC-SHA": False,
