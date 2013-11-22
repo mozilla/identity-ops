@@ -108,7 +108,7 @@ conn_elb.build_complex_list_params(params,
                                    [(x, policy_attributes[x]) for x in policy_attributes.keys()],
                                    'PolicyAttributes.member',
                                    ('AttributeName', 'AttributeValue'))
-policy = conn_elb.get_list('CreateLoadBalancerPolicy', params, None)
+policy = conn_elb.get_list('CreateLoadBalancerPolicy', params, None, verb='POST')
 
 # Apply the Ciphersuite Policy to your ELB
 params = {'LoadBalancerName': load_balancer_name,
