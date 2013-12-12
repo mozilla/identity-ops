@@ -81,7 +81,7 @@ s3_file "/opt/bid_metrics/etl/GeoIPCity.dat.gz" do
   owner "bid_metrics"
   group "bid_metrics"
   mode 0600
-  checksum "9e2d0734cccf6248f9a364678c3d5bc31bf681bfd69e73fcc5cb0d541cc70c56"
+  checksum "3f0c0ab43ebf743a26dbfe87a3cb6a4c77cf676500226810915bdc43e5b5f71b"
   notifies :run, "execute[gunzip -c GeoIPCity.dat.gz > GeoIPCity.dat]", :immediately
 end
 
