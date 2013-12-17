@@ -1,19 +1,32 @@
 #!/usr/bin/env python
 """Bind a DNS name to a CloudFormation stack output variable
 
-usage: bind_dns.py [-h] [-d] REGION STACKNAME VARIABLE FQDN
+usage: bind_dns.py [-h] [-d] FQDN REGION [STACKNAME] [VARIABLE]
 
 Bind a DNS name to a CloudFormation stack output variable
 
 positional arguments:
+  FQDN         Fully qualified DNS Name to CNAME to the stack output variable
   REGION       AWS region containing CloudFormation stack
   STACKNAME    Name of the CloudFormation stack
   VARIABLE     The CloudFormation stack output variable name
-  FQDN         Fully qualified DNS Name to CNAME to the stack output variable
 
 optional arguments:
   -h, --help   show this help message and exit
   -d, --debug  Output debug information
+
+Examples :
+
+Show all CloudFormation stacks in us-east-1 :
+  ./bind_dns.py foo.example.com us-east-1
+
+Show all CloudFormation output variables in stack foostack :
+  ./bind_dns.py foo.example.com us-east-1 foostack
+
+Bind the DNS name foo.example.com to the CloudFormation output variable 
+called ELBName for the stack foostack :
+  ./bind_dns.py foo.example.com us-east-1 foostack ELBName
+
 
 """
 
