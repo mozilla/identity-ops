@@ -93,6 +93,22 @@ else:
     logging.basicConfig(level=logging.INFO)
 
 # Check arguments
+
+conn_route53 = boto.connect_route53()
+all_zones = (conn_route53.get_all_hosted_zones()['ListHostedZonesResponse']
+             ['HostedZones'])
+zone_id = False
+for zone in all_zones:
+    if args.fqdn.endswith(zone['Name']):
+        # This assumes we won't match multiple zones
+        zone_id = zone['Id'].split('/')[-1]
+        zone_name = zone['Name']
+
+if not zone_id:
+    parser.error("argument FQDN: invalid choice: %s (fqdn must exist in of "
+                 "these zones : %s)" 
+                 % (args.fqdn, [x['Name'] for x in all_zones]))
+
 conn_cfn = boto.cloudformation.connect_to_region(args.region)
 stacks = [x for x in conn_cfn.describe_stacks()
           if x.stack_name == args.stackname]
@@ -113,21 +129,6 @@ if len(stack_elbs) == 0:
                       if x.resource_type == 'AWS::ElasticLoadBalancing::LoadBalancer'])))
 
 # This assumes there aren't multiple outputs with the same name
-
-conn_route53 = boto.connect_route53()
-all_zones = (conn_route53.get_all_hosted_zones()['ListHostedZonesResponse']
-             ['HostedZones'])
-zone_id = False
-for zone in all_zones:
-    if args.fqdn.endswith(zone['Name']):
-        # This assumes we won't match multiple zones
-        zone_id = zone['Id'].split('/')[-1]
-        zone_name = zone['Name']
-
-if not zone_id:
-    parser.error("argument FQDN: invalid choice: %s (fqdn must exist in of "
-                 "these zones : %s)" 
-                 % (args.fqdn, [x['Name'] for x in all_zones]))
 
 conn_elb = boto.ec2.elb.connect_to_region(args.region)
 elb = conn_elb.get_all_load_balancers([stack_elbs[0].physical_resource_id])
