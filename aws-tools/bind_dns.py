@@ -83,6 +83,8 @@ if args.fqdn[-1] != '.':
 
 if args.debug:
     logging.basicConfig(level=logging.DEBUG)
+else:
+    logging.basicConfig(level=logging.INFO)
 
 # Check arguments
 conn_cfn = boto.cloudformation.connect_to_region(args.region)
