@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Bind a DNS name to a CloudFormation generated ELB
 
-usage: bind_dns.py [-h] [-d] FQDN REGION [STACKNAME] [ELBNAME]
+usage: bind_dns.py [-h] [-d] FQDN [REGION] [STACKNAME] [ELBNAME]
 
 Bind a DNS name to a CloudFormation generated ELB
 
@@ -17,6 +17,13 @@ optional arguments:
   -d, --debug  Output debug information
 
 Examples :
+
+Show the alias of an existing Route53 DNS name
+  ./bind_dns.py foo.example.com
+
+Show the alias of an existing Route53 DNS name and the CloudFormation stack
+that generated it :
+  ./bind_dns.py foo.example.com us-east-1
 
 Show all CloudFormation stacks in us-east-1 :
   ./bind_dns.py foo.example.com us-east-1
@@ -51,6 +58,13 @@ get_change_status = lambda response: response['ChangeInfo']['Status']
 
 epilog="""Examples :
 
+Show the alias of an existing Route53 DNS name
+  %(name)s foo.example.com
+
+Show the alias of an existing Route53 DNS name and the CloudFormation stack
+that generated it :
+  %(name)s foo.example.com us-east-1
+
 Show all CloudFormation stacks in us-east-1 :
   %(name)s foo.example.com us-east-1
 
@@ -73,7 +87,7 @@ parser = argparse.ArgumentParser(
                  epilog=epilog)
 parser.add_argument('fqdn', metavar="FQDN",
                     help='Fully qualified DNS Name to alias to the ELB')
-parser.add_argument('region', metavar="REGION", choices=all_regions, 
+parser.add_argument('region', metavar="REGION", nargs="?",
                     help='AWS region containing CloudFormation stack')
 parser.add_argument('stackname', metavar='STACKNAME', nargs="?", default=None,
                     help='Name of the CloudFormation stack')
@@ -92,8 +106,7 @@ if args.debug:
 else:
     logging.basicConfig(level=logging.INFO)
 
-# Check arguments
-
+# Validate that the zone of the fqdn is hosted in route53
 conn_route53 = boto.connect_route53()
 all_zones = (conn_route53.get_all_hosted_zones()['ListHostedZonesResponse']
              ['HostedZones'])
@@ -105,12 +118,51 @@ for zone in all_zones:
         zone_name = zone['Name']
 
 if not zone_id:
-    parser.error("argument FQDN: invalid choice: %s (fqdn must exist in of "
+    parser.error("argument FQDN: invalid choice: %s (fqdn must exist in one of "
                  "these zones : %s)" 
                  % (args.fqdn, [x['Name'] for x in all_zones]))
 
+# Determine if the fqdn is an alias
+matching_rrsets = [x for x in conn_route53.get_all_rrsets(zone_id) 
+                   if x.type == 'A' and x.name == args.fqdn]
+if len(matching_rrsets) == 1:
+    alias=matching_rrsets[0].alias_dns_name
+else:
+    alias=False
+
+# If region is empty and fqdn exists show its alias
+if not args.region:
+    if alias:
+        print(alias)
+        sys.exit(0)
+
+# Validate the region
+if args.region not in all_regions:
+    parser.error("argument REGION: invalid choice: %s (region must be one of "
+                 " : %s)" 
+                 % (args.region, ', '.join(all_regions)))
+
 conn_cfn = boto.cloudformation.connect_to_region(args.region)
-stacks = [x for x in conn_cfn.describe_stacks()
+all_stacks = conn_cfn.describe_stacks()
+
+# If no stackname argument is given and there's an alias
+# Look through all stack outputs to see if any contain the alias
+# We're using stack outputs instead of resources because there is no way to
+# do a case-insensitive search through stack resources in the AWS API
+if (not args.stackname) and alias:
+    matching_stack = False
+    for stack in all_stacks:
+        for output in stack.outputs:
+            # Trim the trailing "." for comparison
+            if alias[0:-1].lower() in output.value.lower():
+                matching_stack = stack.stack_name
+                break
+        if matching_stack:
+            break
+    print("%s %s" % (alias, matching_stack if matching_stack else ''))
+
+# Validate that stackname exists
+stacks = [x for x in all_stacks
           if x.stack_name == args.stackname]
 if len(stacks) == 0:
     parser.error("argument STACKNAME: invalid choice: %s (choose from %s)" 
@@ -118,6 +170,7 @@ if len(stacks) == 0:
            ', '.join([x.stack_name for x in conn_cfn.describe_stacks()])))
 
 # This assumes we don't get multiple stack results from our search
+# Validate that the resource exists
 stack_resources = conn_cfn.describe_stack_resources(stacks[0].stack_name)
 stack_elbs = [x for x in stack_resources 
         if x.resource_type == 'AWS::ElasticLoadBalancing::LoadBalancer' 
@@ -171,7 +224,7 @@ change = conn_route53.get_change(get_change_id(commit
 logging.debug('%s' % change)
 
 while get_change_status(change['GetChangeResponse']) == 'PENDING':
-    time.sleep(5)
+    time.sleep(10)
     change = conn_route53.get_change(get_change_id(change
                                            ['GetChangeResponse']))
     logging.info('Waiting for DNS change to sync across AWS')
