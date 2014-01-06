@@ -60,7 +60,7 @@ fi
 
 hash="`sha1sum $tmpfile | cut -d" " -f1`"
 
-if ! grep "$hash" $filename; then
+if ! grep "$hash" $filename >/dev/null; then
     hashlist="`grep -v "^#.*" $filename | awk '{print $1}'`"
     echo "CRITICAL: $uri content mis-match. got $hash which wasn't among these hashes `echo $hashlist` $suffix"
     exit 2
