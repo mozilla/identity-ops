@@ -30,31 +30,41 @@ tmpfile="`mktemp`"
 trap "rm -f $tmpfile" EXIT
 
 timeout=3
-http_code="`curl --insecure --silent --max-time $timeout --output $tmpfile --write-out "%{http_code}" $uri`"
+output="`curl --insecure --silent --max-time $timeout --output $tmpfile --write-out "%{http_code} %{size_download} %{time_namelookup} %{time_connect} %{time_total}" $uri`"
 rc=$?
 
+read -ra element <<<"$output"
+# %{http_code} %{size_download} %{time_namelookup} %{time_connect} ${time_total}
+http_code="${element[0]}"
+size_download="${element[1]}"
+time_namelookup="${element[2]}"
+time_connect="${element[3]}"
+time_total="${element[4]}"
+
+suffix="| size=${size_download}B;;;0 time_namelookup=${time_namelookup}s;;;0;${timeout} time_connect=${time_connect}s;;;0;${timeout} time=${time_total}s;;;0;${timeout}"
+
 if [ $rc -eq 28 ]; then
-    echo "CRITICAL: $uri timed out after $timeout seconds"
+    echo "CRITICAL: $uri timed out after $timeout seconds $suffix"
     exit 2
 fi
 
 if [ $rc -ne 0 ]; then
-    echo "UNKNOWN: cannot fetch $uri (curl returned $rc)"
+    echo "UNKNOWN: cannot fetch $uri (curl returned $rc) $suffix"
     exit 3
 fi
 
 if [ "$http_code" != "200" ]; then
-    echo "CRITICAL: $uri returned HTTP $http_code"
+    echo "CRITICAL: $uri returned HTTP $http_code $suffix"
     exit 2
 fi
 
 hash="`sha1sum $tmpfile | cut -d" " -f1`"
 
 if ! grep "$hash" $filename; then
-    hashlist="`grep -v "^#.*" $filename`"
-    echo "CRITICAL: $uri content mis-match. got $hash which wasn't among these hashes $hashlist"
+    hashlist="`grep -v "^#.*" $filename | awk '{print $1}'`"
+    echo "CRITICAL: $uri content mis-match. got $hash which wasn't among these hashes `echo $hashlist` $suffix"
     exit 2
 fi
 
-echo "OK: $uri has target sha1 $checksum"
+echo "OK: $uri has target sha1 $hash $suffix"
 exit 0
