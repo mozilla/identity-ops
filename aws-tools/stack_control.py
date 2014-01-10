@@ -160,7 +160,8 @@ def create_stack(region,
                         "RC4-SHA": True,
                         "SEED-SHA": False}
 
-    policy_name = 'Mozilla-Security-Assurance-Ciphersuite-Policy-v-1-2'
+
+    policy_name = 'Mozilla-Security-Assurance-Ciphersuite-Policy-v-2-0'
 
     ami_map = json.load(open('config/ami_map.json', 'r'))
 
@@ -178,7 +179,7 @@ def create_stack(region,
     existing_subnets = conn_vpc.get_all_subnets(filters=[('vpcId', [vpc.id])])
 
     for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
-        if load_balancers_params['application'] != application:
+        if application and load_balancers_params['application'] != application:
             continue
         load_balancers_params['name'] = '%s-%s' % (load_balancers_params['name'], name)
         for listener in load_balancers_params['listeners']:
@@ -242,8 +243,11 @@ def create_stack(region,
                                                [(x, policy_attributes[x]) for x in policy_attributes.keys()],
                                                'PolicyAttributes.member',
                                                ('AttributeName', 'AttributeValue'))
-            policy = conn_elb.get_list('CreateLoadBalancerPolicy', params, None)
-            
+            policy = conn_elb.get_list(action='CreateLoadBalancerPolicy', 
+                                       params=params, 
+                                       markers=None,
+                                       verb='POST')
+
             # Apply the Ciphersuite Policy to your ELB
             params = {'LoadBalancerName': load_balancers_params['name'],
                       'LoadBalancerPort': listener,
@@ -304,7 +308,7 @@ def create_stack(region,
     # see us having more than one autoscale group for each launch configuration
 
     for autoscale_params in json.load(open('config/autoscale.%s.json' % stack_type, 'r')):
-        if autoscale_params['application'] != application:
+        if application and autoscale_params['application'] != application:
             continue
         launch_configuration_params = autoscale_params['launch_configuration']
         tier = launch_configuration_params['tier']
@@ -492,7 +496,7 @@ def destroy_stack(region,
     conn_elb = boto.ec2.elb.connect_to_region(region)
     conn_ec2 = boto.ec2.connect_to_region(region)
     conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
-
+    
     existing_autoscale_groups = conn_autoscale.get_all_groups()
     existing_launch_configurations = conn_autoscale.get_all_launch_configurations()
     existing_load_balancers = conn_elb.get_all_load_balancers()
@@ -626,6 +630,14 @@ def point_dns_to_stack(region, stack_type, application, name):
             elbs = {'yahoo.login.anosrep.org': 'yahoo-login-anosrep-org'}
         elif application == 'bridge-gmail':
             elbs = {'gmail.login.anosrep.org': 'gmail-login-anosrep-org'}
+        elif not application:
+            elbs = {'firefoxos.anosrep.org': 'w-anosrep-org',
+                    'login.anosrep.org': 'w-anosrep-org',
+                    'www.anosrep.org': 'w-anosrep-org',
+                    'static.login.anosrep.org': 'w-login-anosrep-org',
+                    'verifier.login.anosrep.org': 'w-login-anosrep-org',
+                    'gmail.login.anosrep.org': 'gmail-login-anosrep-org',
+                    'yahoo.login.anosrep.org': 'yahoo-login-anosrep-org'}
         else:
             raise ValueError("application value is bad : %s" % application)
     elif stack_type == 'prod':
@@ -637,6 +649,11 @@ def point_dns_to_stack(region, stack_type, application, name):
             elbs = {'yahoo.login.persona.org': 'yahoo-login-persona-org'}
         elif application == 'bridge-gmail':
             elbs = {'gmail.login.persona.org': 'gmail-login-persona-org'}
+        elif not application:
+            elbs = {'login.persona.org': 'persona-org',
+                    'www.persona.org': 'persona-org',
+                    'gmail.login.persona.org': 'gmail-login-persona-org',
+                    'yahoo.login.persona.org': 'yahoo-login-persona-org'}
         else:
             raise ValueError("application value is bad : %s" % application)
     new_names = {}
