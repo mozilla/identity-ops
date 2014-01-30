@@ -14,7 +14,7 @@
     "enabled": true
   },
   "bcrypt_work_factor": 12,
-  "max_compute_processes": 0,
+  "max_compute_processes": null,
   "max_compute_duration": 10,
   "maximum_event_loop_lag": 1000,
   "disable_primary_support": false,
@@ -39,10 +39,8 @@
   "dbwriter_url": "http://<%= node[:stack][:load_balancers].include?('dbwrite') ? node[:stack][:load_balancers][:dbwrite][:dns_name] : node[:persona][:dbwrite_host] %>",
   "browserid_url": "http://127.0.0.1:62700",
   "proxy_idps": <%= JSON.generate(node[:persona][:proxy_idps]) %>,
-  "kpi": {
-    "backend_sample_rate": <%= node[:persona][:webhead][:kpi_backend_sample_rate] %>,
-    "backend_db_url": "<%= node[:persona][:webhead][:kpi_backend_db_url] %>"
-  },
+  "kpi_backend_sample_rate": <%= node[:persona][:webhead][:kpi_backend_sample_rate] %>,
+  "kpi_backend_db_url": "<%= node[:persona][:webhead][:kpi_backend_db_url] %>",
 <% if node[:stack][:load_balancers].include?('proxy') or node[:proxy][:host] %>
   "http_proxy": {
     "host": "<%= node[:stack][:load_balancers].include?('proxy') ? node[:stack][:load_balancers][:proxy][:dns_name] : node[:proxy][:host] %>",
