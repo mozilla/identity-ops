@@ -20,10 +20,24 @@ for rpm in rpms do
   end
 end
 
-directory "/var/browserid/certifier" do
-  owner "browserid"
-  group "browserid"
-  mode 0700
+group "browserid" do
+  gid 450
+end
+
+user "browserid" do
+  home "/opt/browserid"
+  comment "Browserid Application User"
+  shell "/bin/bash"
+  uid 450
+  gid 450
+end
+
+for dir in ["/var/browserid", "/var/browserid/certifier", "/var/browserid/log"]
+  directory dir do
+    owner "browserid"
+    group "browserid"
+    mode 0700
+  end
 end
 
 package "nodejs" do
