@@ -106,4 +106,4 @@ elif args.output == "json":
   print(json.dumps(output, sort_keys=True, indent=4, separators=(',', ': ')))
 elif args.output == "table":
   for i in output:
-    print("{: >5} {: >5} {}".format(i['autoscale_group'], i['dns'], i['id']))
+    print("{0: >5} {1: >5} {2}".format(i['autoscale_group'], i['dns'], i['id']))
