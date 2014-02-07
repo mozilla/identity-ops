@@ -36,5 +36,6 @@
   "verifier_url": "<%= node[:persona][:verifier_url] %>",
   "keysigner_url": "http://<%= node[:stack][:load_balancers].include?('keysign') ? node[:stack][:load_balancers][:keysign][:dns_name] : node[:persona][:keysign_host] %>",
   "dbwriter_url": "http://<%= node[:stack][:load_balancers].include?('dbwrite') ? node[:stack][:load_balancers][:dbwrite][:dns_name] : node[:persona][:dbwrite_host] %>",
-  "browserid_url": "http://127.0.0.1:62700"
+  "browserid_url": "http://127.0.0.1:62700",
+  "winston_logging_maxsize": 104857600
 }
