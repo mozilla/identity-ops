@@ -1,19 +1,29 @@
 #!/usr/bin/env python
-import argparse
+
+import sys
+try:
+    # If this is python2.6 you need to install argparse with "pip install argparse"
+    import argparse
+except ImportError:
+    print("The module argparse doesn't appear to be installed. Try running 'sudo pip install argparse'")
+    sys.exit(1)
 import boto.ec2
 import boto.cloudformation
 import boto.ec2.autoscale
 import logging
 import textwrap
 import json
-import sys
 
 my_metadata = boto.utils.get_instance_metadata()
 default_region = my_metadata['placement']['availability-zone'][0:-1]
 #default_region='us-east-1'
 
-all_regions = [x.name for x in 
-               boto.ec2.connect_to_region('us-east-1').get_all_regions()]
+try:
+    all_regions = [x.name for x in 
+                   boto.ec2.connect_to_region('us-east-1').get_all_regions()]
+except (boto.exception.EC2ResponseError, boto.exception.NoAuthHandlerFound):
+    print("Insufficient AWS privileges. Confirm your ~/.boto file is setup with your AWS API keys. http://boto.readthedocs.org/en/latest/boto_config_tut.html#details")
+    sys.exit(1)
 
 conn_ec2 = boto.ec2.connect_to_region(default_region)
 
