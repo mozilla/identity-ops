@@ -2,6 +2,7 @@
 
 import boto.iam
 import argparse
+import time
 
 def get_file(filename):
   with open(filename, 'r') as f:
@@ -38,5 +39,6 @@ result = conn_iam.upload_server_cert(cert_name=args.name,
     path=args.path)
 
 print("Result : %s for uploading cert %s" % (result, args.name))
+time.sleep(5)
 all_certs = conn_iam.get_all_server_certs()['list_server_certificates_response']['list_server_certificates_result']['server_certificate_metadata_list']
-print(all_certs[args.name])
+print([x for x in all_certs if x['arn'] == args.name])
