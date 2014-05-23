@@ -40,6 +40,7 @@ class OpsviewManager
     end
     @token_header = get_token
     @cache = {}
+    @payload = {}
   end
 
   def get_token
@@ -97,11 +98,13 @@ class OpsviewManager
         begin
           params = {:params => {:page => page}}
           params[:params][:json_filter] = filter.to_json if filter
+          params[:params][:order] = 'dependency' if section == 'servicecheck'
           response = RestClient.get [@url, 'config', section].join('/'),
             @token_header.merge(params)
         rescue => e
           raise "Could not reach opsview at #{@url}. #{e}. #{e.http_body}"
         end
+        @logger.debug("Got back page response of \"#{response}\"")
         data = JSON.parse(response)
         totalpages = data['summary']['totalpages'].to_i
         result['list'] = result['list'] + data['list']
@@ -125,31 +128,60 @@ class OpsviewManager
     data
   end
 
-  def lookup_by_name(section, name)
+  def lookup_by_name(section, name, ref)
     data = get_section(section)
     #@logger.debug(data.to_json)
     id = data['list'].map {|x| x['id'] if x['name'] == name}.compact
     raise "We got back multiple objects with the same name #{name} in section #{section}" if id.length > 1
+    if id.length == 0 then
+      id = @payload['list'].map {|x| x['id'] if x['name'] == name}.compact
+    end
     raise "Found no item with name #{name} in section #{section}" if id.length == 0
     @logger.debug("Found id #{id[0]} for object #{name}")
     {'ref' => "/rest/config/#{section}/#{id[0]}",
      'name' => name}
   end
 
-  def import_from_file(section, filename)
+  def import_from_file(section, opts, filename)
+    raise Trollop::CommandlineError, "Can't set both include and exclude" if opts[:include].length > 0 and 
+      opts[:include][0] != "false" and 
+      opts[:exclude].length > 0 and 
+      opts[:exclude][0] != "false"
+    raise Trollop::CommandlineError, "Can't set both keyword-include and keyword-exclude" if opts[:keyword_include].length > 0 and 
+      opts[:keyword_include][0] != "false" and 
+      opts[:keyword_exclude].length > 0 and 
+      opts[:keyword_exclude][0] != "false"
+    sections_with_keywords = ["contact", "host", "servicecheck", "sharednotificationprofile"] # http://docs.opsview.com/doku.php?id=opsview-core:restapi:config
     key_config = get_section_import_config(section)
     existing_objects = export_section(section)['list']
     existing_object_names = existing_objects.map {|x| x['name']}.compact
     existing_object_ids = existing_objects.map {|x| x['id']}.compact
-    payload = JSON.parse(File.read(filename))
-    @logger.info("Beginning transformation of #{payload['list'].length} items")
+    @payload = JSON.parse(File.read(filename))
+    @logger.info("Beginning transformation of #{@payload['list'].length} items")
 
-    def process_lookup(section, child, parent)
-      @logger.debug("Looking up #{section}:#{child} for #{parent}")
-      lookup_by_name(section, child)
+    def process_lookup(section, child_name, child_ref, parent)
+      @logger.debug("Looking up #{section}:#{child_name} for #{parent}")
+      lookup_by_name(section, child_name, child_ref)
     end
 
-    payload['list'].map! do |obj|
+    @payload['list'].delete_if{|x| opts[:include].length > 0 and opts[:include][0] != "false" and not opts[:include].include? x['name']}
+    @payload['list'].delete_if{|x| opts[:exclude].length > 0 and opts[:exclude][0] != "false" and opts[:exclude].include? x['name']}
+
+    @payload['list'].delete_if do |x|
+      opts[:keyword_include].length > 0 and 
+      opts[:keyword_include][0] != "false" and 
+      sections_with_keywords.include? section and
+      (opts[:keyword_include] & x['keywords'].map {|y| y['name']}.compact).length == 0
+    end
+
+    @payload['list'].delete_if do |x|
+      opts[:keyword_exclude].length > 0 and 
+      opts[:keyword_exclude][0] != "false" and 
+      sections_with_keywords.include? section and
+      (opts[:keyword_include] & x['keywords'].map {|y| y['name']}.compact).length > 0
+    end
+
+    @payload['list'].map! do |obj|
       @logger.info("Beginning transformation of #{obj['name']}")
       for i in key_config.keys do
         case key_config[i]
@@ -173,12 +205,12 @@ class OpsviewManager
                 # @logger.debug("subobj['name'] #{subobj['name']}")
                 if subobj[j].class == Array
                   subobj[j].map! do |subsubobj|
-                    process_lookup(key_config[i][j], subsubobj['name'], subobj['name'])
+                    process_lookup(key_config[i][j], subsubobj['name'], subsubobj['ref'], subobj['name'])
                   end
                 elsif subobj[j].class == NilClass then
                   # Do no transformation
                 else
-                  subobj[j] = process_lookup(key_config[i][j], subobj[j]['name'], subobj['name'])
+                  subobj[j] = process_lookup(key_config[i][j], subobj[j]['name'], subobj[j]['ref'], subobj['name'])
                 end
               end
             subobj
@@ -186,7 +218,7 @@ class OpsviewManager
           else
             if obj[i].class == Array then
               obj[i].map! do |subobj|
-                process_lookup(key_config[i], subobj['name'], obj['name'])
+                process_lookup(key_config[i], subobj['name'], subobj['ref'], obj['name'])
               end
             elsif obj[i].class == NilClass then
               # Do no transformation
@@ -197,7 +229,7 @@ class OpsviewManager
               # @logger.debug("obj[i].class #{obj[i].class}")
               #@logger.debug("obj #{obj.to_json}")
               # @logger.debug("obj['name'] #{obj['name']}")
-              obj[i] = process_lookup(key_config[i], obj[i]['name'], obj['name'])
+              obj[i] = process_lookup(key_config[i], obj[i]['name'], obj[i]['ref'], obj['name'])
             end
           end
         end
@@ -206,7 +238,7 @@ class OpsviewManager
       obj
     end
 
-    payload['list'].map! do |obj|
+    @payload['list'].map! do |obj|
       if existing_object_names.include? obj['name'] then
         # This object already exists
         existing_obj = existing_objects.map {|x| x if x['name'] == obj['name']}.compact
@@ -226,16 +258,21 @@ class OpsviewManager
     # Crazy one off
     # https://secure.opsview.com/wsvn/wsvn/opsview/trunk/opsview-core/lib/Opsview/ResultSet/Timeperiods.pm#Line43
     if section == 'timeperiod' then
-      payload['list'].delete_if {|x| x['id'] == '1'}
+      @payload['list'].delete_if {|x| x['id'] == '1'}
     end
-  
-    @logger.info("About to import #{section}:#{payload['list'].map {|x| [x['id'], x['name']]}.compact.to_json}")
-    @logger.info("Beginning import of #{payload['list'].length} items into #{section}")
+
+    # avoid changing the admin role and locking ourselves out
+    #if section == 'role' then
+    #  @payload['list'].delete_if {|x| x['name'] == 'Administrator'}
+    #end
+
+    @logger.info("About to import #{section}:#{@payload['list'].map {|x| [x['id'], x['name']]}.compact.to_json}")
+    @logger.info("Beginning import of #{@payload['list'].length} items into #{section}")
   
     if not @dryrun then
       begin
         response = RestClient.put [@url, 'config', section].join('/'),
-          payload.to_json,
+          @payload.to_json,
           @token_header
       rescue => e
         raise "Could not reach opsview at #{@url}. #{e}. #{e.http_body}"
@@ -245,7 +282,7 @@ class OpsviewManager
       @logger.info("Import of #{section} complete")
     else
       print "dryrun : Would have imported : \n"
-      print JSON.pretty_generate(payload)
+      print JSON.pretty_generate(@payload)
       print "\ndryrun : over the existing : \n"
       print JSON.pretty_generate(existing_objects)
     end
@@ -287,7 +324,7 @@ class OpsviewManager
     when 'servicegroup'
       key_config = {'servicechecks' => STRIP}
     when 'notificationmethod'
-      key_config = {'notificationprofiles' => COPY}
+      key_config = {'notificationprofiles' => STRIP}
     when 'hostcheckcommand'
       key_config = {'plugin' => COPY,
                     'hosts' => STRIP}
@@ -314,7 +351,7 @@ class OpsviewManager
                     # http://docs.opsview.com/doku.php?id=opsview-community:restapi:config#contacts
                     'role' => 'role'}
     when 'servicecheck'
-      key_config = {'dependencies' => 'servicecheck',
+      key_config = {'dependencies' => 'servicecheck', # circular dependency
                     'keywords' => 'keyword',
                     'attribute' => 'attribute',
                     'check_period' => 'timeperiod',
@@ -322,6 +359,7 @@ class OpsviewManager
                     'snmptraprules' => COPY,
                     'plugin' => COPY,
                     'checktype' => COPY,
+                    'hosts' => STRIP, 
                     'hosttemplates' => STRIP, # this isn't mentioned in the docs but is returned
                     'servicegroup' => 'servicegroup'}
     when 'hosttemplate'
@@ -363,6 +401,9 @@ class OpsviewManager
 
     if data['list'].length > 1 then
       raise "got multiple results"
+    end
+    if data['list'].length < 1 then
+      raise "got no results"
     end
   
     @logger.debug("data is #{data.to_json}")
@@ -436,6 +477,14 @@ opts = case cmd
     Trollop::options do
       opt :sections, "Config sections you would like to import", :type => :strings,
         :default => ordered_section_list
+      opt :include, "Specific items you would like include", :type => :strings,
+        :default => ["false"] # This is a workaround for https://gitorious.org/trollop/mainline/source/43d5a92971f41079c77f4b0b13bcc8d25dcba197:lib/trollop.rb#L173
+      opt :exclude, "Specific items you would like to exclude", :type => :strings,
+        :default => ["false"] # This is a workaround for https://gitorious.org/trollop/mainline/source/43d5a92971f41079c77f4b0b13bcc8d25dcba197:lib/trollop.rb#L173
+      opt :keyword_include, "Include items associated with these keywords", :type => :strings,
+        :default => ["false"] # This is a workaround for https://gitorious.org/trollop/mainline/source/43d5a92971f41079c77f4b0b13bcc8d25dcba197:lib/trollop.rb#L173
+      opt :keyword_exclude, "Exclude items associated with these keywords", :type => :strings,
+        :default => ["false"] # This is a workaround for https://gitorious.org/trollop/mainline/source/43d5a92971f41079c77f4b0b13bcc8d25dcba197:lib/trollop.rb#L173
       opt :username, "OpsView API User Name", :type => :string, :default => 'admin'
       opt :password, "OpsView API User Password", :type => :string, :default => 'initial'
       opt :url, "OpsView API URL", :type => :string, :default => 'http://localhost/rest'
@@ -478,7 +527,7 @@ mgr = OpsviewManager.new opts
 case cmd
 when "import"
   opts[:sections].each do |section|
-    mgr.import_from_file section, "#{section}.json"
+    mgr.import_from_file section, opts, "#{section}.json"
     mgr.reload
   end
 when "export"
