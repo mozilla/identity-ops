@@ -57,7 +57,7 @@ import time
 #logging.basicConfig(level=logging.DEBUG)
 logging.basicConfig(level=logging.INFO)
 
-all_userids = ['142069644989', '351644144250']
+all_userids = ['142069644989', '351644144250','361527076523','613808223628']
 all_regions = [x.name for x in 
                boto.ec2.connect_to_region('us-east-1').get_all_regions()]
 
