@@ -2,7 +2,7 @@
 import boto.ec2
 import sys
 import time
-region='us-west-2'
+region='us-east-1'
 conn_ec2 = boto.ec2.connect_to_region(region)
 images = conn_ec2.get_all_images()
 if sys.argv[1][0:3] != 'ami':
@@ -14,7 +14,10 @@ else:
 print "ids are '%s'" % ids
 
 for id in ids:
-  while conn_ec2.get_image(id).state != 'available':
-    print "waiting on %s" % id
-    time.sleep(10)
+  state=False
+  while state != 'available':
+    if state:
+      print "waiting on %s which is %s" % (id, state) 
+      time.sleep(10)
+    state = conn_ec2.get_image(id).state
   print "%s is available" % id
