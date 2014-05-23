@@ -20,8 +20,13 @@ rpms = {"apr" => "apr-1.4.6-1.x86_64.rpm",
         "httpd-tools" => "httpd-tools-2.4.4-1.x86_64.rpm",
         "mod_ssl" => "mod_ssl-2.4.4-1.x86_64.rpm"}
 
-# TODO : This doesn't work for apr-util-ldap and apr-util because of circular dependencies
+# TODO : This doesn't work for apr-util-ldap and apr-util because of circular dependencies. 
 # TODO : This doesn't work for httpd, mod_ssl, and httpd-tools because of circular dependencies
+# The current workaround for both of these issues is to download all 3 rpms and do a single "yum install" command for all 3
+# for rpm in apr-1.4.6-1.x86_64.rpm apr-util-1.5.2-1.x86_64.rpm apr-util-ldap-1.5.2-1.x86_64.rpm httpd-2.4.4-1.x86_64.rpm httpd-tools-2.4.4-1.x86_64.rpm mod_ssl-2.4.4-1.x86_64.rpm; do
+#   wget https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/$rpm
+# done
+# yum install *.rpm
 
 for rpm in rpms.keys do
   remote_file "#{Chef::Config[:file_cache_path]}/#{rpms[rpm]}" do
