@@ -10,8 +10,7 @@
 include_recipe "persona-common::default"
 include_recipe "persona-common::app"
 
-rpms = [node[:persona][:keysign][:rpms]["browserid-server"],
-        node[:persona][:keysign][:rpms][:nodejs]]
+rpms = [node[:persona][:keysign][:rpms]["browserid-server"]]
 
 for rpm in rpms do
   remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
@@ -19,8 +18,7 @@ for rpm in rpms do
   end
 end
 
-package "nodejs" do
-  source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:keysign][:rpms][:nodejs]}"
+package "nodejs-svcops" do
   notifies :restart, "daemontools_service[browserid-keysign]", :delayed
 end
 
