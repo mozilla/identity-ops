@@ -53,7 +53,8 @@ def create_stack(region,
                  key_name=None,
                  mini_stack=False,
                  generic=False,
-                 hydrate=True):
+                 hydrate=True,
+                 git_branch_or_commit='HEAD'):
     if name == None:
         # Maybe we set the stack name to the username of the user creating with a number suffix?
         import random
@@ -400,6 +401,8 @@ End-of-message
 ''' % json.dumps(user_data, sort_keys=True, indent=4, separators=(',', ': '))
                 if generic:
                     launch_configuration_params['user_data'] += "cd /root/identity-ops && git pull\n"
+                if git_branch_or_commit:
+                    launch_configuration_params['user_data'] += "cd /root/identity-ops && git pull && git checkout %s\n" % git_branch_or_commit
                 if hydrate:
                     launch_configuration_params['user_data'] += "chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json\n"
         except IOError:
@@ -790,7 +793,8 @@ if __name__ == '__main__':
 #                            key_name=None,
 #                            mini_stack=False,
 #                            generic=False,
-#                            hydrate=True)
+#                            hydrate=True,
+#                            git_branch_or_commit='b9173b3cb40e55e4bd775d75df3a0a42d0d2469a')
 
 #     destroy_stack(region=region,
 #                   environment=environment,
