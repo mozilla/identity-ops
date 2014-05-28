@@ -1,7 +1,7 @@
 {
     "Persona Base 20140128": {
         "date": "01/28/2014 00:00",
-        "us-east-1": "",
+        "us-east-1": "ami-5447b23c",
         "us-west-2": "ami-aeddbd9e"
     },
     "Scientific Linux 6.3 x86_64": {
