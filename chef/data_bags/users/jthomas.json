@@ -1,0 +1,13 @@
+{
+    "comment": "Jason Thomas",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-dss AAAAB3NzaC1kc3MAAACBAPme8vgiBir+CrUUn9jNbVj6Lym1HWvy2RjWlZNQJg94XkQUHr1B/XEEQYQ2x2kcZ5ok6LopMAWpUXhX0Yh+DJaSn+UCt32u0ihY8ioTa7zNu/ZbsraNprZBbPxbuCcYW2m6zVkSqNr+SDkJLcWv4ZjhX/FlMLSTgur/jUplk2YXAAAAFQDXYstoiRUHFp+ePZBL6aNWqkS00QAAAIEArAv+1CKXWOfEcvLeBjvGdgxzPd15TdUX5Xd/UQAdgIwL8ZoHltKlTYE+yu83P5wP3AE3ca+EfWW50+i5+XNm4uuE/VhftHfzQxiv/ChwVwTnQKt784iGu1zfJMRWu9RVSYBjOcC1U29s8OJjQM2YBZpQXS/NnEeOXcRfi9JvdG4AAACBAPfevdXiP+B18rrFj2E3EJ+mN9y0zFE1lXmnmtYeBVrm2OECgPwlX5mm8LOQsFwBCe86c4Xq2zOHLHvnhVRCFp51Wr/lEHizyeJHYLVRAAvepPzVBx2jvKzhqOTmJxnlXol/eTNI/+3j0TS2kVcZp6SeXg9eFvXr15NPFBCaE8uX jthomas@mozilla.com"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/jthomas",
+    "id": "jthomas",
+    "uid": 1700
+}

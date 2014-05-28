@@ -1,0 +1,15 @@
+{
+    "comment": "Austin King",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA4BkgcDrcyoGA4mOVXaYsFW/QFhUQnVyURRQgmWYQOqgz/uNS29+ZknBuVfrZ7C8k6bJLnHiYTY916PnKhv1g/OG4vtl03BykaIMerXYua+k7+yT3y9uZFt3H2n6dpKbycQ2Gp0Thip5G/4jPhos3TvbrGN+uImrLFLCwUUSORY8vGT0Zd1ts435U+c35T7/M9I7MAEN23LRw91K7+WVYgN+PXaq5S6jhvo9MCoaNXV9cACq7lPF3oRaJ9LW8rdGYRzNWIHH0KkEJtQ7l3imvPhNjvdeHrEp6oa3bPTci7Hy7BzMm6HrvqWNi3yeM+EGsTExfBjr/jpDMic4ewGTkVw== ozten@austin-kings-macbook-air.local",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAwQ7j0kUla4nGF5fJvx49QB+NQ6DzJ1cNnNYvQekQ4dg2mIETM7Pr4IsZOhaKdE9kTukf+zIH/xiydaAHR7P6nw1X8nmsjUSMz2tuemRBzYHprKcKoDZVomqq3Qp4wGqB7QePpP8tD9xrSJZiFZxU7vlHx+KMLvoRkDURBR2xpaHKFs8SF+p803vKdtP0CUICHri1Tm3/7NzHYlXXQ7XjKhtgPAUz36VF7oqJF0k6u2e0b+0OulbD+4wAIfagLDjXlAfIILQqSlpIcTjBAjg9L89gDgo2NTjpqLcBZbx8eIpHalW+BoZlaiPhPCRfThZjKCzcSob/LlaN5W82BYufMQ== aking@ubuntu",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAu4Ok9PgukouUWHGFwcokRprIVhqH1blgoul+YqB6w8M0OH7NQqh4E4kTOMNGIsmqDdGxBBHweJcUX+Oa1ydqX4+yaDna3VQo5e3r4W5bSQeFe5t1+tBPY5qkjBSUe/rUo2qCgrFA8sgIgTGefp0G85jim/a9fVJOX0NTywRqepnncWoIUJFyTIj9BVM5L13Fov+cUGaWduYuXB15wnfV5ypvhttcks0U2w3gG/7MBt5uqnAk+Hj8rsAuoWbz8DghNlpB5UIzsMWiifQg0nAP8pdnyTwPV4PNF0oDwCB89PCe/05je/F/7qM4n00YhWCWNC/uhEPWfaadjRz1Z7cXcw== shout@ozten.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/aking",
+    "id": "aking",
+    "uid": 1046
+}

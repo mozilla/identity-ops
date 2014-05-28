@@ -1,0 +1,13 @@
+{
+    "comment": "Andrew Chilton",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQD1tdO8KTNEgQQ1kCBS7/Y7+jH1YrJ9dG6uIgp/LveLfEJ7WjDdSK5GkF3hwBpa3BZzeoClpEruLrBAs7oPmahR0OqjxYrsOHx9XSwvlH3NaJcSweSXQUtWwbTLLIsTMmeawZSNwod9BLo2z8Vc2Ql9M7wcBEucC1MRETmCjlQ/3YUL5KmF8Q1sWWq+7W8V9EbBFnICoTlo88uO2vJFPM7QgxsaGd9QOuB1SOtMebtGJZzPgH8+b9ATc+fZ21EnAj/VXPBvuGamkmw2PayWWhkUNnEbHSyr0k0LBIJtymyeetlisWui3oFELh/OYSbOzcx1drv1C81nQScD6jTOeBJypKm3E0SiSPoG4Lq5Qx5q7/Rw5o9ub57aWd0KckR+94Gv1HOg5Drs9VQzGQRpCU/STdEEfy+C9k/nPXhUGoFjhltV6d2atgEkuxgoWNj2glfPxtqL432awbCuwXGsSWoYUgMw9wY4gN9u9J8OrvZdKjO0HbAH7FlnBS+ze9ig8cMbiK/yOx7qsDS9GFlqQYNzIge0g+vxDJjt5VJ904KYLeGRRb1D6TSYv0tkpjZbMQN6sGZb7+fGs50PX2CRPsbxN+xuJYIP13Tbun2Wat3QRApAGe0JfdkiRZAN3Cs88ApUQv7WMyHcx+byHZldSYQUHA56qyh3zFTRZ/3nWPyJrw== chilts@tiger"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/achilton",
+    "id": "achilton",
+    "uid": 2425
+}

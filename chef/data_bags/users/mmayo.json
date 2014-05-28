@@ -1,0 +1,13 @@
+{
+    "comment": "Mark Mayo",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAzwU1QjvcVlJEMtXK0EdjApu8pf37gTTXrxG7zE7gBiRkQW28a+ZZ+z4GhlP49p2bzxxTNVPrRau95GTZ4L+w36a/xM6CzvnbQZMi9iNKK6xYDuOTH0sDl7lzh5se38eVSJKJJUsjhTrVVD+p6ruJyu1SIInr3FDcpW+ANQjx3sbSK32EUFSM0/u9AKn9X0/Ab8OEeaRIyf7UkKy052EeIqtNlWkn1KK4d2j4BBmhlEyi653WdgeJ9Zwa7lFOCVocZZ9c1t7D5H8y3F5RX+JTUupFVUMTKCuT9MkhZ+2XQELYExFMlJ3F7naINhW4F/SFPYyoyVe8QcHpUmVlxbNd+w== mark@leela.local"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/mmayo",
+    "id": "mmayo",
+    "uid": 1788
+}

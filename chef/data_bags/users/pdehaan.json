@@ -1,0 +1,13 @@
+{
+    "comment": "Peter deHaan",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC5nVLcF5M0JUAR5SA6Q705BKjGd1KyDbZLhjZ34gWybyzgWlnCmENkkniC/eVHs6HEhj+pCFkJHLez1HitTrd7/xURAL4am3TvR9F/M542hi2OhEPsTNahyREQMRWNFwA9+6kvxSEMe4eDH0FeX0EMtxqSi0+UBY/pxQg0DsHPbBcUrzyWGDUYdTlp7ZEEeuIgQPupkMGNYA2W/9IRbzgE+vxcYxFbr6umIcQY3Bt78YcLqsZeLHHrjzdOpkz4C9bZGiMJUJSB0/BlgxM3KL/pDAHUuEzVmiWILQSnsfoS27OXBwhjjaJjzunefqmk+JlM5LXrtWarmnRPNWlR1O3z pdehaan@host-4-19.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_services_qa"
+    ],
+    "home": "/home/pdehaan",
+    "id": "pdehaan",
+    "uid": 2487
+}

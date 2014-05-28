@@ -1,0 +1,13 @@
+{
+    "comment": "Dean Wilson",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCcoPnlzJGY21R7yWP+wkIyyIJOxRogzbn7dhAG3kiYqhYZDQhD+aZ84lsXhlg4Ff87ooL95wDnV4XhgXPS/G9vlydLBNu+Ep9s4yu2YbELnJiDxwIZTCOqx2Ppt8uE6juUGIobqaQt2hrliVKumpFoYkI1xSx+oWlqSsubqCtYHPZytdlD8kt9TFD5u9+W0peiF3b3rQrU7NY69rah3IbrQVngmGf8XkkHRUDZNOqR0heXnwyEhbfZ51awLmocxMbdCmcbIPVdbK2YPq8v5lAyRbBhD3IY9+O+WTE9s1nnLu0Up5FWCQ78OwaIGlNsAoLflqek8d2UQFWPJKMf7rjkSkcqTGhBvbNymf10indjQj0AGsYyg0s5gnUx/FpRhCgfuaZWVhKZi/AugHl/oX2SDNWrRD5XAlJzaHNUFFfzXiqlDVh8AHaGLO0O9jUVssI8B9S0sWttwZaS2j8a372b+ZWHXu4pOL4F0g2Qd5cVwLjrMsrd6BpnBY8HQOT1Jip5t6m+fxRkRwy7HibG2wDNL1TlGJgof+RaZHKhllnc0c2WIrmoZ8TBHy+6GmHqyNl+F0aMO6U2OqbszbX/o8uMTMS4JVi86cKAuidhbnEIwBMeAeJkSpignAiBoZeWFU21sB44/ReRxrA2j9HpReihH1d59YoGDZNZ3L59i6G7/Q== dwilson@minituls.vm.bytemark.co.uk"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/dwilson2",
+    "id": "dwilson2",
+    "uid": 2282
+}

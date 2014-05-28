@@ -1,0 +1,13 @@
+{
+    "comment": "Brian Warner",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAgEAsB9+/JXDomN95Z7hOhUynvL/i+E8V+3T1tQKKd8WiPJ/U3udcY59QpFqryjGO/B2YlkFshN7QT8y6IxPtApF9RON4QXWmt4dqTFiV4JrjRkJY+YqErEWycbNoGL0MyCuZvKi7NvNVsHMKrbTFFmGtQoLORSIRBb/vNwCTdpsvs5p6FE65iZe8IHWafWExNi1VOhTXvia6W2bUx7FxxmxoGceDfOdDgJ/whLCSn+FQXXpY8bMhNcBN1UhTyjUYe/3RkONbmwJ1nkHaUgaEHV2JDOUbfVq+hHbIbwH9t6frsKVnSLqLpkS/xuAaoIVPyaG18/ODQ90kGPUinuBR6meNsnm2pt4j+1LBy7Zwo8eATk6H4G5uAP/5oTOIMrGU8RSLUKwUc+m18qc2ZVQKbwnxgKgy7am9UiWor/MSHVLbIrPfPfymVFltVXLS/6BjHGtQQVOZ1Yq64B/Kbc8eFGUxBCDaUJJO6zqU+kcbOTuWV6K7SW3o2xL2USU0mkZccnTdbVIDS6TH3VfiGiXWaDfF2Kb973R6/a4tvn+BY3LwzN9nfzSAo7A6NFOf0YZITVf9pRAgEf8jcG6k8u86MXaDNGLYZqYiao3nI8F4GW7A9jaMcOahxX3Vk7dW4d/r0i64/DCeoEWhtHolIMxYPtbHPSQpM+itR2xapr7ntvaPmM= warner@mozilla.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/bwarner",
+    "id": "bwarner",
+    "uid": 1281
+}

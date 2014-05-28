@@ -1,0 +1,13 @@
+{
+    "comment": "John Morrison",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-dss AAAAB3NzaC1kc3MAAACBAM7zVxPWngiuDXYlV21F0qh10Q30Vam2OzS+KGmdO9dYAvSZkRjQMCZZh0FiBGdl6k0TGhVvOXjQ1uKYGq0RJYSpPIm7mmOZoc+/pjh7ZTqbVRSiDP39jf8LzJHTqTP1Pl4LAVLfeqtOjUc/AX26I3Izx3lSh1TnOEGnLNbTyw9VAAAAFQCHJiaxtZ7WO+5Ta7Xj11IWGCa6DQAAAIAkFcLLBq+MvhrApPXJZ2ltoipv340ucXCx/mTtJW49V3bGL6DVOeju++iTiO6JpYKZ7wCi2d4SPaGlHL1E6CqC98HBlJ6ZsfX6h71ObpytLQf7JN+RFu/dc4WpXXrHCEVKkl4kVPhZ9X7C5nvox6mf29k1qZBCgf5/GF6nBXK6zAAAAIEAi9IT5XxKTPaT6WTMxzThlQ3TUdLeocroARWSc0AGIq74Y9Q56qoHza0Tl0GsMcI0WW0zVjXszkj9pj0vUV+AqcDMfyzm+XhNfEQZTUpnNsAMKJNVHOCyGxOQ6CNf4W+Ye4mXhwM3VIsdyY3KoLTe+xxBuE6L2kUeQGBRprNAy34= jrgm@mozilla.com"
+    ],
+    "groups": [
+        "team_services_qa"
+    ],
+    "home": "/home/jmorrison",
+    "id": "jmorrison",
+    "uid": 1801
+}

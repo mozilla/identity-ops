@@ -1,0 +1,13 @@
+{
+    "comment": "Samuel Penrose",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDAQmJ8/5GrugLilUkViW8ByWJOb8MCpwX2fl+FasxJekKWS+5WYHGYhUVl8apc2U5W439ZjWwLlAy8157GFrO9y3KBRsZhUQolwn8dyGAEkmbemfBkQevKsISkIraI0TrDExtbqv0s0UQ6OY/dD8tSxP9HVc5A+VUHA2UqRrNvMPY/z2fwmII0GS3tRQa1Dz/4jHXUHev3PDULn/lcQytlqpsFmrXMTZN5rtCnBjGEOwQfQADnD4DmudZ20HqEw9dmeCTsASH70JtsjRIBMBC4y5wgtB2caTC6jz62CLD/1HegCW7g3DiWx/RUVteRU7qy7JTI3kUyg+VVZE+HYpPH spenrose@host-2-7.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/spenrose",
+    "id": "spenrose",
+    "uid": 2499
+}

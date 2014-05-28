@@ -1,0 +1,13 @@
+{
+    "comment": "Lloyd Hilaiel",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAo55WIqvbG9Ehds55Y86tdFM+dPU8H6WeN/SDgYzbuIjH2dvZCrIoUh4+aIBiWt6Xb5ggCy0AuU2O2p74wWt6hsEnUbrD8sDRzTYOvtIsL+g99ZxGAYsoxTfhIszpbrb1/2TvMvtXKUmJ98t4eA/MUs9EthZT8UNKG/vsKEmY1rYHOEEQa9YClVxkd3XB3zg1fwAgX2OEkC6uvptagKRHTwd8hcEq6QaFyANW1OcnZQAvd2/cKDCFODFPOu+Y3E6QWYBYFKXyXNUPRZFqTMggNYMJwQrqnNnGNN8phP/Q0mmBYy2uhJ/7PUv4VCJloTSJ4S9mv1Reiom68/8ddy04wQ== lth@host-4-236.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/lhilaiel",
+    "id": "lhilaiel",
+    "uid": 1413
+}

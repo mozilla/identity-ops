@@ -1,0 +1,13 @@
+{
+    "comment": "Jeremy Orem",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-dss AAAAB3NzaC1kc3MAAACBAPL8jtXRpmHTqN0scfqsf44VfEZLWn9PVJY+p+BNNVKKP7Ffmk9TYAFRhBdRCd0UK1DpmJSRe3NEV4D4lScWvEVqtXs1DviewSeMxOt8Jr7FKYXs5493sWWqGWNK1YyP2t64JAYenWm4ZrA68nPmkpIWjSQNRSPf4UoOQZjLvOu3AAAAFQCf8m792xsHBTlslB0x889JxIamaQAAAIA1W2DIbA9dUiLkN8T3U1U+FkOj/QDc34RlBnCkyZWLw0gKxfLqsuXisxfYJNjU8kCsMnIE7Bb4NTBcBbmFFgzeRKpNrrfEP7iq3QfipaoUQ4dyRhV10SaViAdKXRIM2S1zDavfXuTUoP7M8DJRyeXeGdmU4W7pfuiVGYGmAtOu1QAAAIEArUTjZtUrCDsLMuZhBeuwJE7/kqdXXA45g/OlCtkAgStB14kth3erq00/6wqlT4X6UkRPGcrPjx7l8hZuFu7Vt3EQZUO1uqzLZQ1UARx84BpLwa00AZV9oIpgcPBiZDS10YgJGz0NQ8fRnvhsFwci+BGkXO/hPf0tGVpq8GZR1yI= oremj@jlap"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/oremj",
+    "id": "oremj",
+    "uid": 505
+}

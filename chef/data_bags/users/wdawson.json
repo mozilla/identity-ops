@@ -1,0 +1,13 @@
+{
+    "comment": "Wesley  Dawson",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAyNrM4tZNl5a70/eb2ASW4hDrfT0jO1nuCLPpUPNvoZGmuq3C2BO8qwC3v4Cn+nitkDexJaEBfbayco0+NEO2aF0QPmzWemf+a8nqLv+QsdKCLlyLjrZ1ZVBnpfxE6tIx6ahNhUTMblyCr5uAWfdyT+68+YwC755lSlpYt66UIkXGkh1GpLs76DKRufSZ4U5ZEjCoZWFd5NjQOlrs8tNlZ2WKVYK6HmuGDeIaVCPppVs8gJgH47T874f+UMyyiT0MF3Xk9g/Hlx+l3p5b1Eh6tqFPm4OvFQ+4o4gGJdXKJMKenGGP00GCiTBHqmeGgjWDq33iPCJ0a0RVbR1ZTgUeFQ== wes@sirith"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/wdawson",
+    "id": "wdawson",
+    "uid": 1617
+}

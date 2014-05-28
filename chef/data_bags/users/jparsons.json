@@ -1,0 +1,13 @@
+{
+    "comment": "Jedediah Parsons",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqGO87SVcCwYp8yr2YVjYPJJczhlrb+h8uLPhhbVeYZSRhCBwFDIaORiMnHsBLLm4v4pq/tsJNlYWRRTaf1v1WAQLCKr1tY6TbBTq/dWhHFyLcJAbUmBUj5W0e6O62UnJ9VdSUJuDOHOkPD8ehOCKUlx3JMSJTrpKbEt92Fjk1/Jw3YCyCr0UQlphWPHTQKqRgXaahfuXKVH7oNQKQWC1X/73hPoBS/cY9lzOyYntsyvbzNzHWBFpuTlxqodcP8Sfl5KJZje33RwZSRsmf2RsSoQwSOlz7UY7CZ6khxFAB4WRXqA+0VSxbsPH9JKPCJjzCv9CHNxpr0iXShrHdziIT jparsons@mozilla.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/jparsons",
+    "id": "jparsons",
+    "uid": 1963
+}

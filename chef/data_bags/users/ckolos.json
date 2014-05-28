@@ -1,0 +1,13 @@
+{
+    "comment": "Chris Kolosiwsky",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDXgUXatkZjlxxGqkJyHEj/fi+v96gvMied114uWJ+RCOuIxob5Ir03BFQTpp2XUGTwz7hAfrEOE7JtkuLVNVB3rKjqX97edZhi0hfg4xEa11s8zCBhow+p565i03L5KU5d51Xz5WEM7z7gABQGZIKpMGJVxqn1siWtxLyt0eBeYNQZdHKvKtiS/RHD0NRzHq4qFuVZHd2Nng1iuhCYvd/TalrjYfpvyKd5mAiqFuAo+UAbBeaRCByyyC/93UsIzaFCMTr3tPJUki1rt5Hqi81rv97RnNdWfi7CDErp/BD9buMXKbVqoVdhsSQ6JjxUWTA9JDwUxPAASSNf7tIphjiv ckolos@host-4-245.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/ckolos",
+    "id": "ckolos",
+    "uid": 1732
+}

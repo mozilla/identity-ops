@@ -1,0 +1,13 @@
+{
+    "comment": "Dan Callahan",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCxZF6renf1OFRv+WmSc6JiIsS6wod8mbvqGX34SLLr33lMxgPyWDFccLxrn0HSRqbuVwTGc/jd4St2fE+ED9Jh+XHn3dt9Y1O2aoh2la6b7jYPzYIWnlyO7RiXwZh+pVLfSCxQ1wgPssw2BtEI5rrDxxrmpi+poM8p+xkEu0ziU0Qeype/+KHsxsyo+v3QpKr9qlOMbuss40336iu62MgL+aJo6w5RvUNegD1Kt8VAB77X7nFS57OOrVAI2YxIeiwKjibwThOgKWl+4Z+SRF3XhaYc2Zz934z9h5dQPgBOJeyHOhdK0+y/oaATe03BFQJ89ze+QlA2PZT+z7Iv9Lcr dan@formata.local"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/dcallahan",
+    "id": "dcallahan",
+    "uid": 1904
+}
