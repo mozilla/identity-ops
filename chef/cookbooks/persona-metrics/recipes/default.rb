@@ -165,3 +165,5 @@ cookbook_file "/opt/bid_metrics/bin/process_metrics.sh" do
   group "bid_metrics"
   mode 0755
 end
+
+include_recipe "persona-common::monitor"

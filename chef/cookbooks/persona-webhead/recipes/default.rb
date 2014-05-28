@@ -107,3 +107,5 @@ template "/etc/nginx/conf.d/redirect.conf" do
             :base_site_name => node[:persona][:public_url][/https?:\/\/([^\/]*)/, 1].split('.')[-2..-1].join('.'))
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
+
+include_recipe "persona-common::monitor"

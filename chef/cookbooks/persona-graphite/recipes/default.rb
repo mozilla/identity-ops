@@ -56,3 +56,5 @@ end
 execute "/usr/local/bin/generate_cloudwatch_metrics_list.py" do
   creates "/opt/cloudwatch2graphite/conf/metrics.json"
 end
+
+include_recipe "persona-common::monitor"

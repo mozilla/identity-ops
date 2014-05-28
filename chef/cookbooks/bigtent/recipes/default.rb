@@ -109,3 +109,5 @@ cookbook_file "/etc/nginx/conf.d/idbigtent.conf" do
   mode 0644
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
+
+include_recipe "persona-common::monitor"

@@ -112,3 +112,5 @@ for patch_file in ["usr/local/opsview-web/root/wrappers/default",
 end
 
 include_recipe "persona-monitor::nagios_plugins"
+
+include_recipe "persona-common::monitor"

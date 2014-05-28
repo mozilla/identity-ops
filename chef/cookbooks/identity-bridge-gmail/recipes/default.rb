@@ -100,3 +100,4 @@ cookbook_file "/etc/nginx/conf.d/idbridgegmail.conf" do
   notifies :restart, "daemontools_service[nginx]", :delayed
 end
 
+include_recipe "persona-common::monitor"

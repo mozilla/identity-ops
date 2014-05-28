@@ -29,3 +29,5 @@ end
 service "squid" do
   action [:enable, :start]
 end
+
+include_recipe "persona-common::monitor"

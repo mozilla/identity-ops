@@ -121,3 +121,5 @@ end
 service "httpd" do
   action [:start]
 end
+
+include_recipe "persona-common::monitor"

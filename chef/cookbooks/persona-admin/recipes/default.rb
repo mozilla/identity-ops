@@ -45,3 +45,5 @@ cookbook_file "/usr/local/bin/get_region" do
   mode 0755
 end
 
+include_recipe "persona-common::monitor"
+
