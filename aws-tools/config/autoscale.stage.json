@@ -1,8 +1,9 @@
 [
     {
+        "application": "persona",
         "desired_capacity": 8,
         "launch_configuration": {
-            "image_id": "persona-webhead-9dbc6b259e214dedcdb4b6ac776486fbf247259d",
+            "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
             "security_groups": [
                 "frontend",
@@ -15,13 +16,13 @@
             "w-anosrep-org",
             "w-login-anosrep-org"
         ],
-        "subnet": "private",
-        "application": "persona"
+        "subnet": "private"
     },
     {
+        "application": "bridge-yahoo",
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "identity-bridge-yahoo-8f96da3cf79de7b476d239b461390706d1a879d0",
+            "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
             "security_groups": [
                 "frontend",
@@ -33,13 +34,13 @@
         "load_balancers": [
             "yahoo-login-anosrep-org"
         ],
-        "subnet": "private",
-        "application": "bridge-yahoo"
+        "subnet": "private"
     },
     {
+        "application": "bridge-gmail",
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "identity-bridge-gmail-8aa8ec8ff2ee96b899dedfb66b601f0da471e64d",
+            "image_id": "Persona Base 20140128",
             "instance_type": "m1.small",
             "security_groups": [
                 "frontend",
@@ -51,13 +52,13 @@
         "load_balancers": [
             "gmail-login-anosrep-org"
         ],
-        "subnet": "private",
-        "application": "bridge-gmail"
+        "subnet": "private"
     },
     {
+        "application": "persona",
         "desired_capacity": 2,
         "launch_configuration": {
-            "image_id": "persona-keysign-9dbc6b259e214dedcdb4b6ac776486fbf247259d",
+            "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
             "security_groups": [
                 "middleware-http",
@@ -68,13 +69,13 @@
         "load_balancers": [
             "keysign"
         ],
-        "subnet": "private",
-        "application": "persona"
+        "subnet": "private"
     },
     {
+        "application": "persona",
         "desired_capacity": 3,
         "launch_configuration": {
-            "image_id": "persona-dbwrite-9dbc6b259e214dedcdb4b6ac776486fbf247259d",
+            "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
             "security_groups": [
                 "middleware-http",
@@ -87,7 +88,6 @@
         "load_balancers": [
             "dbwrite"
         ],
-        "subnet": "private",
-        "application": "persona"
+        "subnet": "private"
     }
 ]
