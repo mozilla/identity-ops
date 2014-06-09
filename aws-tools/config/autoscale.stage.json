@@ -10,6 +10,7 @@
                 "internet-outbound",
                 "administrable"
             ],
+            "instance_profile_logical_name": "IdentityWebheadStage",
             "tier": "webhead"
         },
         "load_balancers": [
@@ -29,6 +30,7 @@
                 "internet-outbound",
                 "administrable"
             ],
+            "instance_profile_logical_name": "IdentityBridgeYahooStage",
             "tier": "bridge-yahoo"
         },
         "load_balancers": [
@@ -47,6 +49,7 @@
                 "internet-outbound",
                 "administrable"
             ],
+            "instance_profile_logical_name": "IdentityBridgeGmailStage",
             "tier": "bridge-gmail"
         },
         "load_balancers": [
@@ -64,6 +67,7 @@
                 "middleware-http",
                 "administrable"
             ],
+            "instance_profile_logical_name": "IdentityKeysignStage",
             "tier": "keysign"
         },
         "load_balancers": [
@@ -83,6 +87,7 @@
                 "internet-outbound",
                 "administrable"
             ],
+            "instance_profile_logical_name": "IdentityDbwriteStage",
             "tier": "dbwrite"
         },
         "load_balancers": [
