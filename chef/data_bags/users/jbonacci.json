@@ -1,0 +1,13 @@
+{
+    "comment": "James Bonacci",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAwQROHqQmzCFrmqwp91Ts47aYIYfsx5bAglD2JP6HrNSbRLi2A64vKVDZEPm6YN9CZd/XxxSKD+6WWlM8RA+leqfdtxuqeZQCcnpDOpMB6fLV1pb1Nhh7l/cJwjfcXLio5GMhTCPwMdVlNcQibvRAB8jsw1kx/cFjZp+349xCw8y1a0LGBw637Fz1jyjVJZ5R6KZlNdsUQ0TGcaoQC8LIQ8kzJjA90VsfgeCE/NjwSGSynjxCr3hD6hm4l6DeIYUJ/ziS1a6QeT2jcJm4n2kUv4rLLQwShWQAjBva04peTYGNG8mhiqsuQi1Uu4hd94kNiCW5Ak510fFwb+mpW3nL0Q== jbonacci@host-4-182.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_services_qa"
+    ],
+    "home": "/home/jbonacci",
+    "id": "jbonacci",
+    "uid": 1667
+}

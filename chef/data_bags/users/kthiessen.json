@@ -1,0 +1,13 @@
+{
+    "comment": "Karl Thiessen",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbU4u3jkovxvrGMpxEPWdxx9xJe7hPhMS2ldvaWlarGduWfMFXnpuZ3q1Qr3naEZCReJCu16izEsbtnBfuR//40gtfT01EnAwSq1BXaR8gWt5yKKJP0yA3+vbOg2wLBahE1vf5hRnPxL0Go6M9rwh40IfudfwqeEHd5XWFTU0okKHXzx6VCyRS+VIHQHhxEAMwJsGEcp2KROyPUDRHj60jyRDIgMtSOnNysKdKQvQeZNuebzlIRHzyumkX79QZ4sCpmJq+bzfV3pwFf4Xm2dXuTBJFHAQDZevmvFK3Kk8tDv7fSl0pWVujvF3VzL6vzlPZ75Mdhj+QEW9iBvTlIPPf kthiessen@mozilla.com"
+    ],
+    "groups": [
+        "team_services_qa"
+    ],
+    "home": "/home/kthiessen",
+    "id": "kthiessen",
+    "uid": 2222
+}

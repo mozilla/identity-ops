@@ -1,0 +1,13 @@
+{
+    "comment": "Fran\u00e7ois Marier",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCVa154P5jcb0x/Qq1hihJV2U9Fbm/TTIrx5kdKnyjBIBCWjqCLLVNFKoW5hlb0epZvFwUKNp9GFEFHa5f0FaZ6K6MuGuQSsYlVEVff/0MwwEsAqnoj4QUfXgQ5xnbtMpiv13CkInYOvPrn1sR4/ZvoVhNPRGjZz8Jgrob/5zIsOumLfu2QNA5BF3ISNevPLVxPAYROSSRiGZh52bLYW+tnndE5BgSEediyW8YQoNpHB7YANNv3Zp1BogWqRqptuYBOWhlOoQ3BBlyVaJsp6A26r1bUSze/AC7igt6P5SzrkxifmFT4VHoCFz6CWDzcIbU9Gcp8xe4ubEba0adLMTQR francois@akranes"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/fmarier",
+    "id": "fmarier",
+    "uid": 1953
+}

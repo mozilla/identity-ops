@@ -1,0 +1,13 @@
+{
+    "comment": "Daniel Thornton",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3ri8+ysHfdNpqlMidI9tbHaHxBaAozzym/iPvyChkDLugppyoyPKyJGn42dcpKJA7xRdNFDaZTDtSkOMxah+/6Ov/y5doOvGFoR4ykZVzb7pVUmRGAXNVzIoiQgzjhhha/YOnyab5NyMUA9JVZV+3lsoz0YBjlYuvbRyQ3C38HD11X2Y9T7ZqPJ4MB6s0Dnfe88SnuZFdzBxZzLCsZ/jXgTXqB8WbUbSs5ShtK3YW5DIHw2+3k7hw1QOROcS4ibrV8JOwCjE2Csm3UZklQd3cz7S9Sp34KSy8XxQ4YasGojw8Ut5zklJhgbebAwm5ckkW27WrS+qw12k7R91fnWrd"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/dthornton",
+    "id": "dthornton",
+    "uid": 2015
+}

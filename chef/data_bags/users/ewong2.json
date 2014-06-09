@@ -1,0 +1,13 @@
+{
+    "comment": "Edwin Wong",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC09wlxkYgS2PIaJXWaE2YH1i03/uxI5F8fWZfYs7CZIfs5FGTlQDszo+Hkz1zCd7Vn8TuYAf4qEp3IxajidbPI9oXD+2CGNQuCgFF5KChlPobgxWqDUYsbSTg8vD8mpiLtZ0oLkNLbx/Ld0KxpEkMVr3y2fRoJNDVU2z2vzzsojdlQ730bVk8dH4AEe9HP5b9lJUcsazXd6leYTF2t9eXEzx184rPWQu1pcsCk5FAzH+mknTlOvB6fQWEmXNBKzyUOqFIXa5D6P4TJ0CwVSh9BByMKIXc+RJiLAEwmQ1qmVoftBenlLNwMQ9lic9SYCS4wP3uCZ282FnmelN8jhRGP ewong@mozilla.com"
+    ],
+    "groups": [
+        "team_services_qa"
+    ],
+    "home": "/home/ewong2",
+    "id": "ewong2",
+    "uid": 2249
+}

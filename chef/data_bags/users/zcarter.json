@@ -1,0 +1,13 @@
+{
+    "comment": "Zachary Carter",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDRowvullj1anKlSZo7RZuGOnD4xiCsNrGr7W5+a6fT2wyn88pJjnxNjUSQYyucMrBAdIR+oqa+UYkceRW88yS7SzBEoa0mjY1h4+RO5Ka6JNWtAqITxxdG0QuWkpAajqaXK/vqFncnpugAS5IROszvUEVwrZf2hlg0IK5inCYCMOvBj1fOR5dWd3Oiy8OBPOnnAHJLmXXmMWj4sDTvPPRfABpAtqInU6l8xScuaHRhqLeX+gaLrQBDvcudNXTsChirxZWsqgOqfqAEtweES1unDftN4/kYeKBHVOsb19BspSZ2g2a2fOLDp6aFXXcWGqhbfrk1hiE1ffMClhktTPgp zack.carter@gmail.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/zcarter",
+    "id": "zcarter",
+    "uid": 2107
+}

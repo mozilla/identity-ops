@@ -1,0 +1,14 @@
+{
+    "comment": "Justin Lazaro",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6zvVb5IehBKG5TCoz1Zwci//IAi6Hmn91jWwTF/mk8/IpbXEvsG5bLUNTbnuC/AUCKtVvvI8R0BW6hdfT6ZsMP0+p9a8BTuibD7b+ao1a6d4KJFH1tsYcbfn6eFU6oq5+0mYq8RaSyaePgRtmpQyxO4pDnvTTsgDtZEX1fJ94/SfBFN0zOcCxyzPdJowtJtghTCbODuRNBHESOohvn/sQ8FIwglzCjdrh8QSb7mhim+JV7bzskk4KEVeLGBijTueiFC7w6rI1pHxnkkoBA2SFpBmj16a/DVk3PXUzQyJ6nVMHwMEr2FsfuA9AVahleFk0AJNSkW0EoyylLEeFKqv3 jlaz@mozilla.com",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDEhzmfK1pV7Q+NQeBUxQR605iZp46Kkxkb3zyIksktFM/fGa6QiJloJoqcc7yQjOae3EIHD1K0aB9p6yQeuJ/0UgNfNCRfD8WCAF9McUY7FQKzh3bGfwxWQzEJZM07o+bDNdxI0/SEVDO9ZYEOS91/qt0WwTsU+xi21TQOw8jRB8WzYLe1s8x6lad2tKw0qMxfWmRPXXrhzcBpmq4NIV+5f+e+ou3n98ciyNo1HaCjTRcynWp+sJ2OXU6VqL/pla4mfzM/dlsaynytKZDidpqe6mW4KNBVK55itgZPU1WTPnFchgM4ai/jXigL5ctbVxIl3ToPQBWglXVd/v8xFydJFIjfdPWgpMFDoOXsrUzxfbEOmMuX7sKKRvXEZJJo2C6go5RXoZm96QHyZpFUVKuT+XlZtD45Cq8/Lih4GnJibdWtKhOYtIcTq2RoWgw+QFTmcE6og5Mla88+BOXMKCcMQuGWLo4uSRCN7xcIUi6E776180qOdefHbLFxPsZnjCJTgD9RdmRs+6+aizgiVkSolQatwB7oZhM3p51uFCzxrsCH8qjYSQzYho+6kTmBYORaOtX6NdZHOC/ge+lgTGvFKV3XMoLz8FKyvgpakZFlX9dHSLZMA6b6+oKVyD7ToJbwffqjnpgjstVRcaArzXApj7QJpgyT6Cq3R78p0xKb9w== android"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/jlazaro",
+    "id": "jlazaro",
+    "uid": 1303
+}

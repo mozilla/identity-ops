@@ -1,0 +1,13 @@
+{
+    "comment": "Ryan Seys",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0+VsXJkXKeea9cgQaEt9XbQQ9wvGxnnQOEgl/U36fht+qSU3AZwTQkftuB/9AKwf9emGwteQS1yYO4ZFsq1wscIrdWM1NKwpPlXDhKTFbM8BIOohIk116ElP4s4DhyrdLX51fTedU7ZUcSahQvD6xyES7DAFeCNW4wArpDm4ZdVmN2PrxNsQ/DBcwB4XGNcMJEv0zc7UbtpFCm174LVc7YZvlli1NgOK2H3FSb7C1j4yNUIMyDjB4I+m5QKvbBRZj5RaOyMSQaEGiMMoQZ5XaSxuobR5vMQuIHN3mP6AD9YYHyHkxUZ21mXXgQZYa7cLs1Ye6l5ZjTpLwozvATIpZ rseys@host-2-20.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/rseys",
+    "id": "rseys",
+    "uid": 2396
+}

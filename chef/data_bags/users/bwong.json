@@ -1,0 +1,14 @@
+{
+    "comment": "Benson Wong",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCrz7rvsdRJV07X32REWMc6g+tg43gjP7RfWyWjCDeqCfjTIuD+MDAO5xw6rQyX+JAz5gYQfzebQpudbUXDe/aoV3NCejaINs3sK9a/f78/xz4AWK8t2Mn/qIMpPSBlWUY695F+bmTakOXq+P3uzgL0hvk2ROiTIvV/Q5SIhQXn9d0CVnuBPw6svNb0PeZMLJwoBKRIHg+ufwcLRJjgvxuxPvktinIp4gtgnrQgnLje7cL0LXEDBYGzGmlWIPV2k46H/H2Y9OyVNIMNf3XzM9Ef2HUAg5ydl0bpyvu79K5yQFgNGU+8P9KbC0tXcGHUaD67b/5Q8SMveH/h+SWnx/tR bwong@bwong-09481.local",
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAIEAsQV7DkVUK3o6REZ+ZK4xIrOQndw4LDCQuKmIj7ie1FQs/4dzpLv8Aj+h/LCEjkPbd3FIYEzDEy4FKPxJ/Yha8sUxHJrxo7C4gwi3qRjqu4ghu1sJ4a3A51RLxxHRX35iIh4lWGXFdLZOTHi8xxCC2l7r7cmXmoJzdu6/wSXKvX8= mostlygeek@gmail.com"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/bwong",
+    "id": "bwong",
+    "uid": 2275
+}

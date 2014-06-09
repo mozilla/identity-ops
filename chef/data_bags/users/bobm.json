@@ -1,0 +1,13 @@
+{
+    "comment": "Bob Micheletto",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC6EZ+dLxM+4Ka657d1B/mkyQOFEOxJElujJ2rDUyDG3mTIwh33eaysvKR3+cHKGmMJzDGMDgz/tWkdWaC6Metm66o7fJWWLKZ4pr4M0Y25AutPn2GNwEzcu7JKUDNsluV5CpnVWguItXxRcigvw7hyHj17MNEaf/SmnAgwxU7v4SjiwI1TL8rFgijMrUg6DE7cBoJfKW2/A8KIg+eczJwNZGuizkrBpCP+jSCqlvfrEuwJ1N88zNoG/NmU9J52SvDEjs3shN8Imoj5xozuN+bBaj5WVh0Q70EpB6ks9dyWx96k2U/WK4edsfaqDEXPobDudoTi/41D6TFj+00X8K99 rmicheletto@host-6-162.mv.mozilla.com"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/bobm",
+    "id": "bobm",
+    "uid": 1925
+}

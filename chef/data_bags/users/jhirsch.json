@@ -1,0 +1,13 @@
+{
+    "comment": "Jared Hirsch",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCmMtzkfzKH5YgJUcO4RwZJVypV3CVm6ma4sZcAIlcNEwHyLkomcX9p/06XDYJrT+ZGJ+Z93Gmf3Do6xyZopnjZZKGV7m9+adlRcDuZ0DZ3rvInkKswuwqN3RsD1TZNoaO/ykvyIMyMgx0ItQdDEZXXoA8wvxS8vEZx19W5jdTbtufl+mtUK89NhUn3rBcogWDKj670t9IIezs/5CgY56tQddyC9ctuNsJswIoah2xcu2fwW/oqXs6DNOneXlakMuwJFp3rIqrP1Y6MPU18niQZ8koLf3/4C9nN61JJbvNOXphz4ODth3BiL98/vDLr+vD0DdoojdErsv/RI1h4gLBH ohai@6a68.net"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/jhirsch",
+    "id": "jhirsch",
+    "uid": 2051
+}

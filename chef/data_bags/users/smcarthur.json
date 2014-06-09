@@ -1,0 +1,13 @@
+{
+    "comment": "Sean McArthur",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKs9V3stGvcoMUsyJfvcCZ23mV/y5CmcsLTTkE6UxBZzSEqqJxt3TinX39ieKng8GviUU8Rm0T/wXTykWepNDh9q8PmtcFINYGZrrQd/EReld0YpC9/VglxqJUxdWXJzY4m7GyDYpXlunFAapjaxBaK81A2zJ6p6x4HSYblNaTfziTiXgMPEMNjROueUYzcktyQ9MYJ4wvDzS0SadV4Oj7uAStYexejKVNmkqbq1kGOzVj5/qXWhkz6BOaTubLDuYe8Xu2cJLRJVArDIWh9pPMqxOZSX7QEvJrsqrNUuJyq1ooD1ZSouN4CGambdMd+ii/CVXviKAZvu9nUCbLQwbL sean@ubuntu"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/smcarthur",
+    "id": "smcarthur",
+    "uid": 1773
+}

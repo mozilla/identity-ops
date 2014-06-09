@@ -1,0 +1,13 @@
+{
+    "comment": "Gene Wood",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAgEAvA5XbIUNdrsnm5SjbMUROnZKcEaiiaGW+G4iAxhedd/E2dmSGpybtNY2AtZXGaorz/jqWdP9LKub6FIqJt+csYCqxPG+ZU/gSgeYacMEyBGsKFR9hJR0BdZYzGPVk1CWLoM8pO354ELNorL15OfwOX3mnDHgh1yTb3W1cDJA/X/D4FxwchFjvAcDaqBWRC7yIhc2N/0NiLgvbjhkwZt8xsjCMhPxKuJ9mOxgEAOzxOUDIdLdtfYB2eBiTP2OtfYDIgvkrF4HoNZZlTxMuOTmjrCMzeBI+NMlS5bAMNt4lHF08+dPw4Ohvz0V7pIrny8W9FR0NccxBlb8NLD/ePjIjupOSv1qiERn2FigaGZrzFtuxkB1/EqI6p4+kYgwMMqFAx4l3H7RVhjSETdRTk0cjtjeHepp1n4FVq4LZv3CM1l9mD4Ho2uqaGGGPfkwPBMnO6v0HjfpV6ZvFTkGhkYvD4SsUoubs/wC6W4JTV4EzRlN5fTPTemXYfCNaZXbjvus2+w5bMpF//UjWTogqDWLL56Ouan3zmEA7hrgb7KufLVsegFCeNTvhR6iEtb8l4OvO8zEXbcdDsf5bzRqZg9LVMUA8KthODfLJWKKUu3KR50wyQT93bhlbGoPS/8cE0rXbw1CyJdKGCEzTKXEZCOA2bpfjXYUxV3cRPukHSUbGVE= gene_wood@cementhorizon.com-2012"
+    ],
+    "groups": [
+        "team_services_ops"
+    ],
+    "home": "/home/gene",
+    "id": "gene",
+    "uid": 1998
+}

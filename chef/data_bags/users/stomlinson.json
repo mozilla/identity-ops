@@ -1,0 +1,13 @@
+{
+    "comment": "Shane  Tomlinson",
+    "shell": "/bin/bash",
+    "ssh_keys": [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAmmak3c6v3AoUQHK3n75YozQcdmTxzUlr9kVJpMgqLbacjPnplSmQqDgti9+z+rTjU08yAbQ+MJx+cm5neki4H0twq9PCf/xCED71LkRp0O0XPwVRjO/DYHSjR4QO+qbiRof1naLD7zscw9VbBowatO+9TZFrrk5WPRg2UErG9bL1pISotM6uAk2E7REGHnF1e/sozNVpyvN4bufn9/6kjsRrbHf6TV211eYhqCqEePy0WERW9XkOjadRqa03HrqQcUquKTi/umstzeNPbRldK7XrogMVfvKtRp8/baaAAz0WkRtgbRkHV7lHfz2y2AL5ID/eeVlyMvO8iMz+361HoQ== stomlinson@mozilla.com"
+    ],
+    "groups": [
+        "team_identity_dev"
+    ],
+    "home": "/home/stomlinson",
+    "id": "stomlinson",
+    "uid": 1692
+}
