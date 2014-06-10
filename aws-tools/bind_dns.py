@@ -207,14 +207,16 @@ if len(matching_rrsets) == 1:
                                 type=matching_rrsets[0].type,
                                 ttl=matching_rrsets[0].ttl,
                                 alias_dns_name=matching_rrsets[0].alias_dns_name,
-                                alias_hosted_zone_id=matching_rrsets[0].alias_hosted_zone_id)
+                                alias_hosted_zone_id=matching_rrsets[0].alias_hosted_zone_id,
+                                alias_evaluate_target_health=False)
 
 record = changes.add_change(action="CREATE", 
                             name=args.fqdn, 
                             type='A', 
                             ttl=ttl,
                             alias_dns_name=canonical_hosted_zone_name,
-                            alias_hosted_zone_id=canonical_hosted_zone_elb_id)
+                            alias_hosted_zone_id=canonical_hosted_zone_elb_id,
+                            alias_evaluate_target_health=False)
 
 commit = changes.commit()
 logging.debug('Committing DNS change %s' % commit)
