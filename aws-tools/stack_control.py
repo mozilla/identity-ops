@@ -1,36 +1,19 @@
 #!/usr/bin/env python
 
 import logging
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
 import json
 import time
 import os
 import itertools
+import argparse
 
-class Stack:
-    def __init__(self,
-                 region,
-                 environment,
-                 stack_type,
-                 availability_zones,
-                 path,
-                 replace=False,
-                 name=None,
-                 key_name=None,
-                 mini_stack=False,
-                 hydrate=True):
-        self.__dict__.update(locals())
-        del self.self
+AZ_MAP = {'us-west-2': ['a', 'b', 'c'],
+          'us-east-1': ['a','b','d']}
 
-    def build(self):
-        pass
-    def destroy(self):
-        pass
-    def image(self):
-        pass
-      
-
+VPC_ENVIRONMENT_MAP = {'prod': 'identity-prod',
+                       'stage': 'identity-dev'}
 
 def test_for_stack_existence(region,
                              environment,
@@ -45,14 +28,12 @@ def test_for_stack_existence(region,
 def create_stack(region,
                  environment,
                  stack_type,
-                 application,
                  availability_zones,
                  path,
-                 replace=False,
+                 application=False,
                  name=None,
                  key_name=None,
                  mini_stack=False,
-                 generic=False,
                  hydrate=True,
                  git_branch_or_commit='HEAD'):
     if name == None:
@@ -73,11 +54,17 @@ def create_stack(region,
     import boto.iam
     import boto.ec2.cloudwatch
     import boto.ec2.cloudwatch.alarm
+    import boto.ec2.autoscale
+    import boto.ec2.autoscale.tag
+    import boto.cloudformation
+
     conn_iam = boto.iam.connect_to_region('universal')
     conn_elb = boto.ec2.elb.connect_to_region(region)
     conn_vpc = boto.vpc.connect_to_region(region)
     conn_ec2 = boto.ec2.connect_to_region(region)
     conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
+    conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
+    conn_cfn = boto.cloudformation.connect_to_region(region)
     stack = {}
 
     # Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
@@ -240,6 +227,9 @@ def create_stack(region,
     existing_security_groups = conn_ec2.get_all_security_groups()
     existing_certs = conn_iam.get_all_server_certs(path_prefix=path)['list_server_certificates_response']['list_server_certificates_result']['server_certificate_metadata_list']
     existing_subnets = conn_vpc.get_all_subnets(filters=[('vpcId', [vpc.id])])
+    iam_roles_stack_resources = conn_cfn.list_stack_resources('identity-iam-roles')
+    existing_instance_profiles = [x for x in iam_roles_stack_resources if x.resource_type == 'AWS::IAM::InstanceProfile']
+    instance_profile_map = dict([(x.logical_resource_id, x.physical_resource_id) for x in existing_instance_profiles])
 
     for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
         if application and load_balancers_params['application'] != application:
@@ -265,14 +255,7 @@ def create_stack(region,
 
         security_groups = [x for x in existing_security_groups if x.name in [environment + '-' + y for y in load_balancers_params['security_groups']]]
 
-        # This doesn't converge the configuration of the loadbalancer
-        # it merely checks if it exists
-        if load_balancers_params['name'] in [x.name for x in existing_load_balancers]:
-            if replace:
-                conn_elb.delete_load_balancer(load_balancers_params['name'])
-            else:
-                continue
-
+        logging.debug('About to create load balancer %s' % load_balancers_params['name'])
         stack['loadbalancer'].append(conn_elb.create_load_balancer(
                                        name=load_balancers_params['name'],
                                        zones=None,
@@ -282,6 +265,7 @@ def create_stack(region,
                                        scheme='internal' if load_balancers_params['is_internal'] else 'internet-facing'
                                        ))
         load_balancer = stack['loadbalancer'][-1]
+        logging.info('Created load balancer %s' % load_balancer.name)
         
         # TODO : tag the load_balancer
 
@@ -294,6 +278,7 @@ def create_stack(region,
         }
         # healthcheck_params['access_point'] = load_balancer[name]
         load_balancer.configure_health_check(boto.ec2.elb.healthcheck.HealthCheck(**healthcheck_params))
+        logging.info('Healthcheck configured on %s' % load_balancer.name)
 
         # set the Ciphersuite for https listeners
         https_listeners = [x[0] for x in load_balancers_params['listeners'] if x[2] == 'HTTPS']
@@ -310,6 +295,7 @@ def create_stack(region,
                                        params=params, 
                                        markers=None,
                                        verb='POST')
+            logging.info('Load balancer ciper suite policy %s created for %s' % (policy_name, load_balancer.name))
 
             # Apply the Ciphersuite Policy to your ELB
             params = {'LoadBalancerName': load_balancers_params['name'],
@@ -317,7 +303,7 @@ def create_stack(region,
                       'PolicyNames.member.1': policy_name}
             
             result = conn_elb.get_list('SetLoadBalancerPoliciesOfListener', params, None)
-            logging.debug("New Policy '%s' created and applied to load balancer %s in %s" % (policy_name, load_balancers_params['name'], region))
+            logging.info("New policy %s applied to load balancer %s" % (policy_name, load_balancers_params['name']))
 
         if environment == 'prod':
             # monitor the ELB
@@ -339,6 +325,7 @@ def create_stack(region,
                 description="Alarm when the rate of %s exceeds the threshold %s for %s seconds on the %s ELB" % (
                              metric, threshold, period, load_balancers_params['name']))
             conn_cw.put_metric_alarm(metric_alarm)
+            logging.info("Cloudwatch alarm %s created" % ("%s %s" % (load_balancers_params['name'], metric)))
         
         stack['loadbalancer'].append(load_balancer)
 
@@ -346,7 +333,10 @@ def create_stack(region,
 
     stack_info = {}
     stack_info['load_balancers'] = {}
-    for x in [y for y in existing_load_balancers if y.vpc_id == vpc.id and y.name.endswith('-%s' % name) or y.name.endswith('-univ-%s' % stack_type)]:
+    for x in [y for y in existing_load_balancers 
+              if y.vpc_id == vpc.id 
+              and y.name.endswith('-%s' % name) 
+              or y.name.endswith('-univ-%s' % stack_type)]:
         if x.name.endswith('-univ-%s' % stack_type):
             si_tier_name = x.name[:-len('-univ-%s' % stack_type)]
         elif x.name.endswith('-%s' % name):
@@ -360,9 +350,6 @@ def create_stack(region,
                        'environment': environment})
     
     # auto scale
-    import boto.ec2.autoscale
-    import boto.ec2.autoscale.tag
-    conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
 
     stack['launch_configuration'] = []
     stack['autoscale_group'] = []
@@ -376,39 +363,47 @@ def create_stack(region,
         launch_configuration_params = autoscale_params['launch_configuration']
         tier = launch_configuration_params['tier']
 
-        if 'AWS_CONFIG_DIR' in os.environ:
-            user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'userdata.%s.%s.json' % (stack_type, tier))
-        else:
-            user_data_filename = 'config/userdata.%s.%s.json' % (stack_type, tier)
+#         if 'AWS_CONFIG_DIR' in os.environ:
+#             user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'userdata.%s.%s.json' % (stack_type, tier))
+#         else:
+#             user_data_filename = 'config/userdata.%s.%s.json' % (stack_type, tier)
 
-        try:
-            with open(user_data_filename, 'r') as f:
-                user_data = json.load(f)
-                user_data.update({'tier': tier})
-                user_data.update({'stack': stack_info})
-                user_data.update({'aws_region': region})
-                if not generic:
-                    if stack_type == 'stage':
-                        user_data['run_list'].append('recipe[access]')
-                else:
-                    # strip everything out except the run_list and tier
-                    user_data = {'run_list': user_data['run_list'],
-                                 'tier': user_data['tier']}
-                launch_configuration_params['user_data'] = '''#!/bin/bash
-cat > /etc/chef/node.json <<End-of-message
-%s
+        gpg_filename_suffix = {'stage': 'login.anosrep.org',
+                               'prod': 'login.persona.org'}[stack_type]
+        if 'AWS_CONFIG_DIR' in os.environ:
+            gpg_private_key_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 
+                                                    '%s@%s.priv' % (tier, gpg_filename_suffix))
+        else:
+            gpg_private_key_filename = 'config/%s@%s.priv' % (tier, gpg_filename_suffix)
+
+        with open(gpg_private_key_filename, 'r') as f:
+            gpg_private_key = f.read()
+        attributes = {'tier': tier,
+                      'stack': stack_info,
+                      'aws_region': region,
+                      'access': {'teams' : {'create' : ['team_services_ops']}}}
+        launch_configuration_params['user_data'] = '''#!/bin/bash
+yum --assumeyes install https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/python-manage_s3_secrets-1.0.0-1.noarch.rpm https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/python-combine-1.0.0-1.noarch.rpm
+oldumask="`umask`" && umask 077
+cat > /etc/chef/gpg_key.priv <<End-of-message
+%(gpg_private_key)s
 End-of-message
-''' % json.dumps(user_data, sort_keys=True, indent=4, separators=(',', ': '))
-                if generic:
-                    launch_configuration_params['user_data'] += "cd /root/identity-ops && git pull\n"
-                if git_branch_or_commit:
-                    launch_configuration_params['user_data'] += "cd /root/identity-ops && git pull && git checkout %s\n" % git_branch_or_commit
-                if hydrate:
-                    launch_configuration_params['user_data'] += "chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json\n"
-        except IOError:
-            # There is no userdata file
-            pass
-        
+cat > /tmp/attributes.json <<End-of-message
+%(attributes)s
+End-of-message
+/usr/bin/manage_s3_secrets get --gpgkey /etc/chef/gpg_key.priv %(filename)s | \
+  /usr/bin/combine --json /tmp/attributes.json /dev/stdin > \
+  /etc/chef/node.json
+umask $oldumask
+rm -f /tmp/attributes.json
+''' % {'gpg_private_key': gpg_private_key ,
+       'attributes': json.dumps(attributes,
+                                indent=4),
+       'filename': 'persona.%s.%s.json' % (tier, stack_type)}
+        launch_configuration_params['user_data'] += "cd /root/identity-ops && git pull && git checkout %s\n" % git_branch_or_commit
+        if hydrate:
+            launch_configuration_params['user_data'] += "chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json\n"
+
         launch_configuration_params['name'] = '%s-%s-%s-%s' % (environment, stack_type, tier, name)
         # TODO : pull the "key_name" out of the json config
         # and set this per stack_type. prod keys for prod servers etc.
@@ -438,8 +433,10 @@ End-of-message
         launch_configuration_params['instance_monitoring'] = True
 
         # IAM role
-        # launch_configuration_params['instance_profile_name'] = '%s-%s' % (environment, tier)
-        if 'instance_profile_name' not in launch_configuration_params:
+        if 'instance_profile_logical_name' in launch_configuration_params:
+            launch_configuration_params['instance_profile_name'] = instance_profile_map[launch_configuration_params['instance_profile_logical_name']]
+            del(launch_configuration_params['instance_profile_logical_name'])
+        else:
             launch_configuration_params['instance_profile_name'] = 'identity'
 
         ag_subnets = [x.id for x in existing_subnets if 'Name' in x.tags and environment + '-' + autoscale_params['subnet'] in x.tags['Name']]
@@ -463,6 +460,7 @@ End-of-message
                 launch_configuration_params['placement'] = subnet.availability_zone
                 launch_configuration_params['subnet_id'] = subnet.id
                 reservation = conn_ec2.run_instances(launch_configuration_params)
+                logging.info("Instance %s created manually (not autoscaled)" % reservation.instances)
                 current_capacity += 1
                 reservation.instances[0].add_tag('Name', instance_name)
                 reservation.instances[0].add_tag('App', 'identity')
@@ -483,10 +481,12 @@ End-of-message
             # http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_CreateLaunchConfiguration.html
             # https://github.com/boto/boto/blob/7d1c814c4fecaa69b887e5f1b723ab1f8361cde0/boto/ec2/autoscale/__init__.py#L240
             conn_autoscale.create_launch_configuration(launch_configuration)
+            logging.info("Launch configuration %s created" % launch_configuration.name)
 
+            ag_loadbalancers = ['%s-%s' % (x, name) for x in autoscale_params['load_balancers']]
             autoscale_group = boto.ec2.autoscale.AutoScalingGroup(
                     group_name=launch_configuration_params['name'],
-                    load_balancers=['%s-%s' % (x, name) for x in autoscale_params['load_balancers']],
+                    load_balancers=ag_loadbalancers,
                     availability_zones=[region + x for x in availability_zones],
                     launch_config=launch_configuration,
                     min_size=1,
@@ -495,6 +495,12 @@ End-of-message
                     desired_capacity=0,
                     connection=conn_autoscale)
             conn_autoscale.create_auto_scaling_group(autoscale_group)
+            logging.info("Autoscale group %s created with launch "
+                         "configuration %s with a desired capacity "
+                         "of 0 bound to loadbalancers %s" % 
+                         (autoscale_group.name,
+                          launch_configuration.name,
+                          ag_loadbalancers))
             
             stack['autoscale_group'].append(conn_autoscale.get_all_groups(names=[launch_configuration_params['name']])[0])
             autoscale_group = stack['autoscale_group'][-1]
@@ -519,13 +525,18 @@ End-of-message
                                                                          value=tier,
                                                                          propagate_at_launch=True,
                                                                          resource_id=launch_configuration_params['name'])])    
+            logging.info("Autoscale group %s tagged" % launch_configuration_params['name'])
 
             # Now we set_desired_capacity up from 0 so instances start spinning up
             if mini_stack:
                 autoscale_params['desired_capacity'] = 1
 
+            ag_desired_capacity = autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1
             conn_autoscale.set_desired_capacity(launch_configuration_params['name'],
-                                                autoscale_params['desired_capacity'] if 'desired_capacity' in autoscale_params else 1)
+                                                ag_desired_capacity)
+            logging.info("Autoscale group %s desired capacity increased from 0 to %s" % 
+                         (launch_configuration_params['name'],
+                          ag_desired_capacity))
 
             # Let's see how it's going
             # conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
@@ -537,7 +548,7 @@ End-of-message
     # stack_filename = "/home/gene/Documents/identity-stack-%s.pkl" % name
     # pickle.dump(stack, open(stack_filename, 'wb'))
     # logging.info('pickled stack to %s' % stack_filename)
-    logging.debug('%s : stack %s:%s created' % (time.strftime('%c'), region, name))
+    logging.info('%s : stack %s:%s created' % (time.strftime('%c'), region, name))
     return stack
 
 def destroy_stack(region,
@@ -586,18 +597,23 @@ def destroy_stack(region,
 
     # Delete alarms
     conn_cw.delete_alarms(alarms)
+    logging.info('Alarms %s deleted' % alarms)
+
     
     # Disassociate EIPs and release them
     for autoscale_group in autoscale_groups:
         for address in [x for x in existing_addresses if x.instance_id in [y.instance_id for y in autoscale_group.instances]]:
             if not conn_ec2.disassociate_address(association_id=address.association_id):
                 logging.error('failed to disassociate eip %s from instance %s' % (address.public_ip, address.instance_id))
+            logging.info('Disassociated EIP %s from %s' % (address.public_ip, address.instance_id))
             if not conn_ec2.release_address(allocation_id=address.allocation_id):
                 logging.error('failed to release eip %s' % address.public_ip)
+            logging.info('Released EIP %s' % address.public_ip)
 
     # Shutdown all instances in the stack
     for autoscale_group in autoscale_groups:
         autoscale_group.shutdown_instances()
+        logging.info('Shutting down instances for autoscale group %s' % autoscale_group.name)
 
     # Wait for all instances to terminate and deleting autoscale groups
     existing_autoscale_groups = conn_autoscale.get_all_groups()
@@ -609,25 +625,29 @@ def destroy_stack(region,
             if remaining_live_instances == 0:
                 time.sleep(5)
                 autoscale_group.delete()
+                logging.info('Autoscale group %s deleted' % autoscale_group.name)
                 break
             else:
-                logging.debug('waiting 10 seconds for remaining %s instances in the %s autoscale group to finish shutting down' % (remaining_live_instances, autoscale_group.name))
+                logging.info('waiting 10 seconds for remaining %s instances in the %s autoscale group to finish shutting down' % (remaining_live_instances, autoscale_group.name))
                 time.sleep(10)
                 existing_autoscale_groups = conn_autoscale.get_all_groups([x.name for x in autoscale_groups])
                 if attempts > 30:
                     logging.error('unable to delete autoscale group %s after 5 minutes' % autoscale_group.name)
                     autoscale_group.get_activities()
                     autoscale_group.delete()
+                    logging.info('Autoscale group %s deleted' % autoscale_group.name)
                     break
 
     # Delete launch configurations
     for launch_configuration in launch_configurations:
         launch_configuration.delete()
+        logging.info('Launch configuration %s deleted' % launch_configuration.name)
 
     # Delete load balancers
     for load_balancer in load_balancers:
         load_balancer.delete()
-    logging.debug('%s : stack %s:%s destroyed' % (time.strftime('%c'), region, name))
+        logging.info('Load balancer %s deleted' % load_balancer.name)
+    logging.info('%s : stack %s:%s destroyed' % (time.strftime('%c'), region, name))
 
 def get_stack(region, environment, stack_type, name):
     import pprint
@@ -770,41 +790,63 @@ def point_dns_to_stack(region, stack_type, application, name):
     # Log out, to be polite
     rest_iface.execute('/Session/', 'DELETE')
 
+def collect_arguments():
+    def type_stackname(stackname):
+        if len(stackname) > 4:
+            raise argparse.ArgumentTypeError('Stack name must not exceed 4 characters in length')
+        return stackname
+        
+    defaults = {'region': 'us-west-2',
+                'path': '/identity/',
+                'environment': 'stage',
+                'git': 'HEAD'}
+    parser = argparse.ArgumentParser(description='Manipulate Persona stacks')
+    parser.add_argument('-p', '--path',
+                        default=defaults['path'],
+                        help='ARN Path prefix (default : %s)' % defaults['path'])
+    parser.add_argument('-r', '--region', choices=['us-west-2', 'us-east-1'],
+                        default=defaults['region'],
+                        help='AWS region (default : %s)' % defaults['region'])
+    parser.add_argument('-e', '--environment', choices=['stage', 'prod'],
+                        default=defaults['environment'],
+                        help='Environment (default : %s)' % defaults['environment'])
+
+    parsers = {}
+    subparsers = parser.add_subparsers(dest='action',
+                                       help='sub-command help')
+    parsers['create'] = subparsers.add_parser('create', help='create --help')
+    parsers['create'].add_argument('-g', '--git', default=defaults['git'],
+                help='git branch name or commit hash to instruct instances to '
+                'draw from for their identity-ops chef code (default: %s)' %
+                defaults['git'])
+    parsers['create'].add_argument('name', type=type_stackname, help='Stack name')
+    parsers['destroy'] = subparsers.add_parser('destroy', help='destroy --help')
+    parsers['destroy'].add_argument('name', type=type_stackname, help='Stack name')
+    parsers['show'] = subparsers.add_parser('show', help='show --help')
+    parsers['show'].add_argument('name', type=type_stackname, help='Stack name')
+    return parser.parse_args()
+    
+
 if __name__ == '__main__':
-    path = "/identity/"
-
-    region = 'us-west-2'
-    availability_zones = ['a', 'b', 'c']
-
-    #region = 'us-east-1'
-    #availability_zones = ['a','b','d']
-   
-    environment = 'identity-dev'
-    #environment = 'identity-prod'
-
-#     stack = create_stack(region=region,
-#                            environment=environment, 
-#                            stack_type='stage', 
-#                            application='bridge-yahoo', 
-#                            availability_zones=availability_zones, 
-#                            path=path,
-#                            replace=False, 
-#                            name='1234',
-#                            key_name=None,
-#                            mini_stack=False,
-#                            generic=False,
-#                            hydrate=True,
-#                            git_branch_or_commit='b9173b3cb40e55e4bd775d75df3a0a42d0d2469a')
-
-#     destroy_stack(region=region,
-#                   environment=environment,
-#                   stack_type='stage',
-#                   name='1234')
-
-#     show_stack(region,
-#                environment,
-#                'prod',
-#                '1234')
+    args = collect_arguments()
+    if args.action == 'create':
+        stack = create_stack(region=args.region,
+                             environment=VPC_ENVIRONMENT_MAP[args.environment],
+                             stack_type=args.environment,
+                             availability_zones=AZ_MAP[args.region],
+                             path=args.path,
+                             name=args.name,
+                             git_branch_or_commit=args.git)
+    elif args.action == 'destroy':
+        stack = destroy_stack(region=args.region,
+                             environment=VPC_ENVIRONMENT_MAP[args.environment],
+                             stack_type=args.environment,
+                             name=args.name)
+    elif args.action == 'show':
+        show_stack(region=args.region,
+                   environment=VPC_ENVIRONMENT_MAP[args.environment],
+                   stack_type=args.environment,
+                   name=args.name)
 
 #     point_dns_to_stack(region=region, 
 #                        stack_type='stage', 
