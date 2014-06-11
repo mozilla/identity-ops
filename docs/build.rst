@@ -95,6 +95,10 @@ This gets the train and localization you want to build and calls the makefile wh
     git log -1
     # Confirm you've got the right commit from the ticket
     make rpm
+    # or if there's no makefile
+    # scripts/rpmbuild.sh
+    # or for persona-gmail-bridge
+    # scripts/rpmbuild.sh HEAD
     rm -rf /tmp/.npm
 
 Uploading the RPM
