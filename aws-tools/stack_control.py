@@ -800,7 +800,8 @@ def collect_arguments():
                 'path': '/identity/',
                 'environment': 'stage',
                 'git': 'HEAD'}
-    parser = argparse.ArgumentParser(description='Manipulate Persona stacks')
+    description = 'stack_control can be used to create, destroy and show information on Identity application stacks'
+    parser = argparse.ArgumentParser(description=description)
     parser.add_argument('-p', '--path',
                         default=defaults['path'],
                         help='ARN Path prefix (default : %s)' % defaults['path'])
