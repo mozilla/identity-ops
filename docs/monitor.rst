@@ -9,6 +9,8 @@ Performance monitoring is the process of gathering metrics on a system's perform
 Monitor tier (Opsview)
 ======================
 
+* tier name : ``monitor``
+
 Opsview is our primary availability monitoring system. We use it to actively interrogate the Identity applications as well as provide very limited performance monitoring.
 
 Accessing Opsview
@@ -42,33 +44,15 @@ Deploying the monitor tier
 
 Opsview instances are not autoscaled as there is only one in each region/environment combination.
 
-1. Create an ec2 instance either on the command line or web gui
+The monitor tier's Chef provisioning code can be found here : https://github.com/mozilla/identity-ops/tree/master/chef/cookbooks/persona-monitor
 
-   a) size : m1.small
-   b) IAM role : identity
-   c) vpc and subnet : The VPC of the environment you want to deploy in
-   d) AMI ID : A persona-base AMI
-   e) Security Groups : identity-dev-monitor, identity-dev-administrable, identity-dev-temp-internet
+1. Create an ec2 instance by following the Manual Deployment instructions
 
-2. Inject the secrets
+  * size : m1.small
+  * IAM role : identity
+  * Security Groups : identity-dev-monitor, identity-dev-administrable, identity-dev-temp-internet
 
-   a) Obtain the secrets from the secrets s3 bucket
-   b) Obtain the instances gpg private key from the persona-builder instance
-   c) Decrypt the secrets and write them to ``/etc/chef/node.json``
-
-3. Fetch the current or specific desired revision of the ``identity-ops`` git repo
-
-  .. code-block:: bash
-
-      cd /root/identity-ops && git pull && git checkout HEAD
-
-4. Hydrate the machine with Chef
-
-  .. code-block:: bash
-
-      chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json
-
-5. Populate the now running Opsview instance with monitors and monitoring templates.
+2. Populate the now running Opsview instance with monitors and monitoring templates.
 
    This is best done by taking an export from an existing Opsview instance using `opsview_control.rb`_ and importing it with the same tool
    
@@ -77,6 +61,8 @@ Opsview instances are not autoscaled as there is only one in each region/environ
 
 Graphite tier
 =============
+
+* tier name : ``graphite``
 
 Graphite collects, records and visualizes performance monitoring data. This tier also hosts the `Identity Gateway`_ service.
 
@@ -93,15 +79,48 @@ Accessing Graphite
 | staging     | us-west-2 | https://perf.identity.us-west-2.stage.mozaws.net/ |
 +-------------+-----------+--------------------------------------------------+
 
+These URLs use the `Identity Gateway`_ service. This means to access them you'll need
+to authenticate with Persona using your email address which is on the `approved list of users`_. 
 
+Using Graphite
+--------------
+
+Once you've logged in you can drill into the stack you're looking for in the "Tree" pane.
+
+.. image:: https://github.com/mozilla/identity-ops/wiki/graphite_tree.png
+
+For example to see performance graphs of the frontend load balancer for persona in stack ``0703`` go to ``Graphite/aws/elb/0730/persona-org``
+
+Deploying the graphite tier
+--------------------------
+
+Graphite instances are not autoscaled as there is only one in each region/environment combination.
+
+The graphite tier's Chef provisioning code can be found here : https://github.com/mozilla/identity-ops/tree/master/chef/cookbooks/persona-graphite
+
+Create an ec2 instance by following the Manual Deployment instructions
+* size : m1.small
+* IAM role : identity
+* Security Groups : ?
 
 Identity Gateway
 ================
 
+* tier name : ``graphite`` (Identity Gateway is co-hosted on the graphite tier)
 
+The identity-gateway is an Apache HTTPD server that reverse proxies traffic in order to provide a persona-based authentication layer in front of the backing services using the `mod_auth_browserid`_  Apache module. Currently the identity-gateway protects the monitor and graphite tiers. It is co-hosted on the graphite tier.
+
+.. _mod_auth_browserid: https://github.com/mozilla/identity-ops/tree/master/chef/cookbooks/identity-gateway
+
+Deploying the identity gateways
+-------------------------------
+
+As the identity-gateway is hosted on the `Graphite tier`_ it will be installed along with Graphite on the servers in the Graphite tier by chef. The presence of ``recipe[identity-gateway]`` in the ``run_list`` in the ``/etc/chef/node.json`` file on the graphite servers is what indicates to Chef ot install the identity-gateway.
 
 Nimsoft AKA WatchMouse
 ======================
+
+* tier name : ``none`` (this is an external service)
 
 `Nimsoft`_ is a commercial service which we have monitor Persona to detect if
 * fetching https://login.persona.org/include.js returns a non-200 HTTP code in less than 5 seconds
@@ -116,11 +135,4 @@ The jmx code that controls this monitor is tracked in ``svn.mozilla.org/sysadmin
 The sha1 hashes in this file need to be updated when new Persona application versions result in modified ``include.js`` code. The jmx code accommodates two sha1 hashes to enable loading in the new hash prior to deploying the new application version.
 
 .. _Nimsoft: https://dashboard.cloudmonitor.nimsoft.com/en/
-
-
-
-
-
-
-
 
