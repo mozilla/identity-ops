@@ -64,7 +64,9 @@ Graphite tier
 
 * tier name : ``graphite``
 
-Graphite collects, records and visualizes performance monitoring data. This tier also hosts the `Identity Gateway`_ service.
+`Graphite`_ collects, records and visualizes performance monitoring data. This tier also hosts the `Identity Gateway`_ service.
+
+.. _Graphite: http://graphite.wikidot.com/
 
 Accessing Graphite
 ------------------

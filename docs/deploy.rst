@@ -75,62 +75,15 @@ Automatic deployment overview
    c) Update the Nimsoft monitor to reflect this new hash as well
    d) More information on these monitoring changes can be found in the `monitoring documentation`_ 
    
-   .. _monitoring documentation: monitor.rst
-
 5. Observe the Opsview monitors of the new stack, confirming that all the instances have hydrated and are green on all monitors
 6. Communicate the stack name of the new stack to QA. Have QA test the new stack before it gets live traffic. Services QA has scripts that make it easy to fake DNS into using the new stack.
 7. Once QA signs off on the stack, update DNS to point to it. More info on how to do this can be found in the `Updating DNS`_ section.
 8. Notify QA that the new stack is live so they can test public relying parties with the new code.
-
-.. _stack_control.py documentation: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.rst
-
-.. _building identity applications and uploading the resulting packages: build.rst
+9. The following day, or at a point later than that when you feel comfortable with the stability of the new production stack, tear down the old stack. You want to wait a day so that Pentaho metrics get sent from the old stack for the final day that the stack received traffic.
 
 .. note:: Opsview has a bug which causes a potential race condition when creating "Host Groups". This can be worked around by either creating the empty host group in opsview prior to spinning up a new stack or by hoping that the bug doesn't surface and if it does, deleting the duplicate empty host group, then re-running chef-solo across the stack. If the bug does surface it will cause the slower instances in the stack to fail to self-register themselves with the Opsview server. You can see this manifest by the number of instances in a stack in Opsview showing up as fewer than you'd expect.
 
 .. note:: Updating monitoring with the new include.js sha1 hash *after* deploying a new stack is the wrong way to go about things. The better way would be to either require dev to convey any include.js changes and the new sha1 hash in a deployment ticket or to somehow determine the new hash before deploying the stack.
-
-Using stack_control
--------------------
-
-Identity applications are deployed using our `stack_control.py`_ tool. This tool drives resource creation in AWS using the `boto`_ library to interact with the AWS API. ``stack_control.py`` is run from a ``persona-builder`` server which has the needed permissions to create new Identity stacks.
-
-.. _boto: http://boto.readthedocs.org/
-.. _stack_control.py: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.py
-
-::
-
-    usage: stack_control.py [-h] [-p PATH] [-r {us-west-2,us-east-1}]
-                            [-e {stage,prod}]
-                            {destroy,create,show} ...
-
-    Manipulate Persona stacks
-
-    positional arguments:
-      {destroy,create,show}
-                            sub-command help
-        create              create --help
-        destroy             destroy --help
-        show                show --help
-
-    optional arguments:
-      -h, --help            show this help message and exit
-      -p PATH, --path PATH  ARN Path prefix (default : /identity/)
-      -r {us-west-2,us-east-1}, --region {us-west-2,us-east-1}
-                            AWS region (default : us-west-2)
-      -e {stage,prod}, --environment {stage,prod}
-                            Environment (default : stage)
-
-    usage: stack_control.py create [-h] [-g GIT] name
-
-    positional arguments:
-      name               Stack name
-
-    optional arguments:
-      -h, --help         show this help message and exit
-      -g GIT, --git GIT  git branch name or commit hash to instruct instances to
-                         draw from for their identity-ops chef code (default:
-                         HEAD)
 
 Manual deployment
 =================
@@ -173,10 +126,43 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 Updating DNS
 ============
 
-DNS is hosted with `Dynect`_. Records can be updated through the web UI or their API. Unsurfaced code exists in ``stack_control.py`` in the ``point_dns_to_stack`` method which uses the Dynect API to update the DNS for a staging deploy. The code to do the same for production doesn't yet exist. That code will require interacting with the "Traffic Management" portion of the Dynect API.
+DNS is hosted with `Dynect`_. Records can be updated through the web UI or their API. Unsurfaced code exists in ``stack_control.py`` in the ``point_dns_to_stack`` method which uses the Dynect API to update the DNS for a staging deploy. The code to do the same for production doesn't yet exist. That code would require interacting with the "Traffic Management" portion of the Dynect API.
 
-Our records have 30 second TTLs. Browsers do not typically re-resolve DNS names at the rate the TTL requires therefore additional steps need to be taken to force users to follow the updated DNS.
+Since we have a single staging environment (in us-west-2), staging DNS records are simple CNAMEs. Production is hosted in two regions (us-west-2 and us-east-1) and is DNS load balanced using Dynect's "Traffic Management" service. This results in two AWS ELB load balancers being associated with each Dynect DNS name, one for each region.
 
-.. attention:: This section is not complete
+Our Dynect DNS records have 30 second TTLs. Browsers do not typically re-resolve DNS names at the rate the TTL requires therefore additional steps need to be taken to force users to follow the updated DNS. We remove the listeners from our old ELB load balancers to force browsers to fail to connect to the old stack and do a DNS lookup to get the new IPs. We remove listeners (as opposed to destroying the ELBs) in order to retain control of the IP addresses of the old stack's ELBs. This is to prevent the IPs being re-used by a different AWS customer resulting in clients going to other customer sites and getting certificate errors when they're served some other company's SSL cert.
+
+Typically, each loosely coupled identity service (persona, bridge-gmail, bridge-yahoo) is switched from an old stack to a new stack is completed to reduce user impact. This is done in contrast to switching all services simultaneously. This is the process that we execute for each service, serially.
+
+1. Identify the names of the load balancers of the new stack that you'd like to point DNS names at
+
+   This is most easily done with the ``get_hosts`` script available on all bastion hosts. For example to determine the load balancers of the new production stack ``1120`` in ``us-east-1`` you could either, from the production bastion host in us-east-1, run
+      .. code-block:: bash
+   
+       get_hosts --elb 1120
+   or from any bastion host
+      .. code-block:: bash
+   
+       get_hosts --elb --region us-east-1 --env prod 1120
+
+2. Log into `Dynect`_ with your user account.
+3. Navigate to the zone containing either the DNS records (stage) or the "Traffic Management" groups (production).
+4. Update the record or records to CNAMEs pointing to the new load balancers and publish the change. 
+
+   .. note:: This could be improved by making these changes using the Dynect API. See the ``point_dns_to_stack`` method in ``stack_control.py`` to see how to do it in staging.
+5. Browse to the AWS web UI and locate the ELBs for the old stack
+   You can determine the existing ELBs by running the same command as above and point to the old stack name
+6. Once 30 seconds has elapsed since you updated the DNS (30 seconds is the DNS TTL) modify the listener for the tier that you've just changed DNS for.
+   
+   Change any https listeners from port ``443`` to ``10443``. Change any http listeners from port ``80`` to ``10080``.
+   This will force any clients still communicating with the old stack to be forced to query DNS and connect to the new stack.
+
+   .. note:: This process could be improved by handling these listener changes with AWS API calls.
 
 .. _Dynect: http://manage.dynect.net/
+
+.. _monitoring documentation: monitor.rst
+
+.. _stack_control.py documentation: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.rst
+
+.. _building identity applications and uploading the resulting packages: build.rst
