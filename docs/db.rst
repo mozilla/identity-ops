@@ -35,7 +35,7 @@ Mount the volume
 
 * edit /etc/fstab (in this example the volume is identified as /dev/xvdj1)
 
-  .. code-block:: bash
+  ::
 
     /dev/xvdj1 /data ext3 defaults 0 2
 
@@ -55,4 +55,3 @@ If it's a master, update the slaves /etc/chef/node.json to reflect the new maste
 .. code-block:: sql
 
     CHANGE MASTER TO MASTER_HOST = '1.2.3.4', MASTER_USER = 'replication-user-name', MASTER_PASSWORD = 'replication-password';
-

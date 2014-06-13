@@ -11,7 +11,9 @@ Monitor tier (Opsview)
 
 * tier name : ``monitor``
 
-Opsview is our primary availability monitoring system. We use it to actively interrogate the Identity applications as well as provide very limited performance monitoring.
+`Opsview core`_ is our primary availability monitoring system. We use it to actively interrogate the Identity applications as well as provide very limited performance monitoring.
+
+.. _Opsview core: http://www.opsview.com/solutions/core
 
 Accessing Opsview
 -----------------
@@ -48,7 +50,7 @@ The monitor tier's Chef provisioning code can be found here : https://github.com
 
 1. Create an ec2 instance by following the Manual Deployment instructions
 
-   * size : m1.small
+   * size : ``m1.small``
    * IAM role : ``identity``
    * Security Groups : ``identity-dev-monitor``, ``identity-dev-administrable``, ``identity-dev-temp-internet``
 

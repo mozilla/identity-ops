@@ -95,10 +95,10 @@ Manual deployment
 
 Some tiers are not autoscaled and consequently are manually deployed. This process could be scripted but as it is done infrequently it hasn't been yet. These manually deployed instances are part of the ``univ`` stack. These instructions are generic and apply to any non autoscaled tier such as
 
-* graphite
-* admin
-* monitor
-* dbread
+* ``graphite``
+* ``admin``
+* ``monitor``
+* ``dbread``
 
 1. Create an ec2 instance either on the command line or web gui
 

@@ -21,7 +21,7 @@ Code : `/etc/logrotate.d/bid_metrics`_ The logrotate config file for bid_metrics
 
 * Rotates the 2 files ``/var/browserid/log/verifier-metrics.json`` and ``/var/browserid/log/router-metrics.json``
 * gzips them
-* appends a datestamp to the filename (-2013-01-23)
+* appends a datestamp to the filename (``-2013-01-23``)
 * moves the rotated gziped renamed file to ``/opt/bid_metrics/queue``
 * appends the webhead hostname to the end of the filename
 * sets the file to read only to indicate that rotation is complete
