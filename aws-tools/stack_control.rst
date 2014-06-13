@@ -2,9 +2,14 @@
 Stack Control
 *************
 
-stack_control can be used to create, destroy and show information on Identity application stacks
+`stack_control.py`_ can be used to create, destroy and show information on Identity application stacks
 
-This tool uses the boto library to interact with the AWS API. To authenticate to the AWS API you need either to run this tool from an EC2 instance with an IAM role granting the system access to the API, or to enter your API credentials into a boto config file ( http://boto.readthedocs.org/en/latest/boto_config_tut.html#credentials ).
+This tool uses the `boto`_ library to interact with the AWS API. To authenticate to the AWS API you need either to run this tool from an EC2 instance with an IAM role granting the system access to the API, or to enter your API credentials into a boto config file ( http://boto.readthedocs.org/en/latest/boto_config_tut.html#credentials ). 
+
+``stack_control.py`` is typically run from a ``persona-builder`` server which has the needed permissions to create new Identity stacks.
+
+.. _boto: http://boto.readthedocs.org/
+.. _stack_control.py: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.py
 
 Config Files
 ============
@@ -95,8 +100,13 @@ The destroy function follows these steps
 5. Delete all launch configurations
 6. Delete all load balancers
 
+Currently stack_control does not call or integrate with `opsivew_control.rb`_. As a result, prior to destroying a stack it's best to destroy the monitors for the stack to avoid causing Opsview to send false positive alerts. More information on how to use opsview_control.rb can be found in the `opsview_control documentation`_ 
+
+.. _opsivew_control.rb: https://github.com/mozilla/identity-ops/blob/master/opsview-tools/opsview_control.rb
 
 Show
 ====
 
 The show function outputs a block of text in Markdown wrapped JSON describing the load balancers of the stack
+
+.. _opsview_control documentation: https://github.com/mozilla/identity-ops/blob/master/opsview-tools/opsview_control.rst
