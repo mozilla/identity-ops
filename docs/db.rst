@@ -13,8 +13,8 @@ How to build a DB
 Create an instance
 ------------------
 
-* type : m1.large
-* IAM Role : identity
+* type : ``m1.large``
+* IAM Role : ``identity``
 * ami : any base AMI
 * EBS optimized : enabled
 
@@ -28,11 +28,13 @@ Mount the volume
 ----------------
 
 * create mount point 
+
   .. code-block:: bash
 
     mkdir /data
 
 * edit /etc/fstab (in this example the volume is identified as /dev/xvdj1)
+
   .. code-block:: bash
 
     /dev/xvdj1 /data ext3 defaults 0 2
@@ -43,7 +45,7 @@ Provisiong the host
 -------------------
 
 * install chef
-* populate /etc/chef/node.json
+* populate ``/etc/chef/node.json``
 
 Update slaves
 -------------

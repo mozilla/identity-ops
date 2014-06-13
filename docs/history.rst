@@ -10,11 +10,11 @@ V1
 The first incarnation of Persona, then called BrowserID was a design by `Pete Fritchman`_ from October 2011. It consisted of
 
 * Physical servers
-* Dual datacenter deployment: phx1, scl2
+* Dual datacenter deployment: ``phx1``, ``scl2``
 * `Zeus software load balancers`_ doing layer 3 load balancing in front of the clusters of physical servers
 * MySQL database backend with a single global master DB and clusters of read-only slaves in each datacenter
 * `RSBAC`_ providing kernel level security
-* Puppet provisioning using a fork of the old infra team puppet repository (code located in svn.mozilla.org/sysadmins/puppet/weave/modules/browserid )
+* Puppet provisioning using a fork of the old infra team puppet repository (code located in ``svn.mozilla.org/sysadmins/puppet/weave/modules/browserid`` )
 * Manual physical deployment of servers and manual installation and configuration of Puppet
 * Monitoring
 
@@ -36,7 +36,7 @@ The first incarnation of Persona, then called BrowserID was a design by `Pete Fr
 
 .. _RSBAC: http://www.rsbac.org/
 .. _Pete Fritchman: https://github.com/fetep
-.. _Zeus load balancers: http://www.riverbed.com/us/products/stingray/
+.. _Zeus software load balancers: http://www.riverbed.com/us/products/stingray/
 
 V2
 ==
@@ -44,10 +44,10 @@ V2
 The second incarnation of Persona was a design by `Gene Wood`_ and `Jared Hirsch`_  from January 2013. The new AWS installation of Persona was completed and cutover to around April 2013. It consists of
 
 * `AWS`_ virtual servers
-* Dual region deployment: us-west-2, us-east-1
+* Dual region deployment: ``us-west-2``, ``us-east-1``
 * `AWS`_ load balancers in front of clusters of autoscaled ec2 instances
-* MySQL database backend with a single global master DB and clusters of read-only slaves in each datacenter. The single global master DB is the only physical server in the design and resides in the phx1 datacenter
-* VPN links between AWS regions and the phx1 datacenter to enable writing to the master DB
+* MySQL database backend with a single global master DB and clusters of read-only slaves in each datacenter. The single global master DB is the only physical server in the design and resides in the ``phx1`` datacenter
+* VPN links between AWS regions and the ``phx1`` datacenter to enable writing to the master DB
 * Chef provisioning using `greenfield`_ provisioning code specific to Persona (code located at https://github.com/mozilla/identity-ops/ )
 * Python boto driven creation of AWS resources and enabling of Chef provisioning on instances using `stack_control`_ 
 * Monitoring
@@ -58,7 +58,7 @@ The second incarnation of Persona was a design by `Gene Wood`_ and `Jared Hirsch
   - Graphite visualizing this cloudwatch data
   - No traditional CPU memory monitoring beyond what Cloudwatch provides
   
-  .. _cloudwatch2graphite: https://www.npmjs.org/package/cloudwatch2graphite
+  .. _cloudwatch2graphite: cloudwatch_graphite_connector.rst
   .. _Opsview core: http://www.opsview.com/solutions/core
 
 .. _stack_control: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.rst

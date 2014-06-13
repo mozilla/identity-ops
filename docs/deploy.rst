@@ -20,6 +20,7 @@ Stacks are ephemeral and live only as long as a given application version or pro
 A stack is identified by a four or less character name. By convention we use the month and day that the stack was built as it's unique name, for example ``0630``. 
 
 The ``univ`` stack in each region is special. This "universal" stack is not ephemeral, it is long lived. It contains services which
+
 * contain persistent data (databases)
 * rarely changes and doesn't need to be in the application stacks (proxy, admin)
 * needs to exist above and outside of the applications stacks (monitor, graphite, builder)
@@ -61,9 +62,6 @@ An alternative, less desirable, method to assert the rpm version is in the secre
 
 Automatic deployment
 ====================
-
-Automatic deployment overview
------------------------------
 
 1. If the new stack is to have a new application version of an identity application, then that new code needs to be built and packaged. Details on that can be found in the documentation on `building identity applications and uploading the resulting packages`_.
 2. The new stack will either require new Chef provisioning code or new identity application code or both. The version of the identity applications to run in a stack are defined in the provisioning code. More detail on that can be found above in the `Updating to a new Identity application version`_ section.
@@ -118,13 +116,13 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 
 3. Fetch the current or specific desired revision of the ``identity-ops`` git repo
 
-  .. code-block:: bash
+   .. code-block:: bash
 
       cd /root/identity-ops && git pull && git checkout HEAD
 
 4. Hydrate the machine with Chef
 
-  .. code-block:: bash
+   .. code-block:: bash
 
       chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json
 
@@ -135,20 +133,23 @@ Updating DNS
 
 DNS is hosted with `Dynect`_. Records can be updated through the web UI or their API. Unsurfaced code exists in ``stack_control.py`` in the ``point_dns_to_stack`` method which uses the Dynect API to update the DNS for a staging deploy. The code to do the same for production doesn't yet exist. That code would require interacting with the "Traffic Management" portion of the Dynect API.
 
-Since we have a single staging environment (in us-west-2), staging DNS records are simple CNAMEs. Production is hosted in two regions (us-west-2 and us-east-1) and is DNS load balanced using Dynect's "Traffic Management" service. This results in two AWS ELB load balancers being associated with each Dynect DNS name, one for each region.
+Since we have a single staging environment (in ``us-west-2``), staging DNS records are simple CNAMEs. Production is hosted in two regions (``us-west-2`` and ``us-east-1``) and is DNS load balanced using Dynect's "Traffic Management" service. This results in two AWS ELB load balancers being associated with each Dynect DNS name, one for each region.
 
 Our Dynect DNS records have 30 second TTLs. Browsers do not typically re-resolve DNS names at the rate the TTL requires therefore additional steps need to be taken to force users to follow the updated DNS. We remove the listeners from our old ELB load balancers to force browsers to fail to connect to the old stack and do a DNS lookup to get the new IPs. We remove listeners (as opposed to destroying the ELBs) in order to retain control of the IP addresses of the old stack's ELBs. This is to prevent the IPs being re-used by a different AWS customer resulting in clients going to other customer sites and getting certificate errors when they're served some other company's SSL cert.
 
-Typically, each loosely coupled identity service (persona, bridge-gmail, bridge-yahoo) is switched from an old stack to a new stack is completed to reduce user impact. This is done in contrast to switching all services simultaneously. This is the process that we execute for each service, serially.
+Typically, each loosely coupled identity service (persona, bridge-gmail, bridge-yahoo) is switched from an old stack to a new stack serially to reduce user impact. This is done in contrast to switching all services simultaneously. This is the process that we execute for each service, serially.
 
 1. Identify the names of the load balancers of the new stack that you'd like to point DNS names at
 
-   This is most easily done with the ``get_hosts`` script available on all bastion hosts. For example to determine the load balancers of the new production stack ``1120`` in ``us-east-1`` you could either, from the production bastion host in us-east-1, run
-      .. code-block:: bash
+   This is most easily done with the ``get_hosts`` script available on all bastion hosts. For example to determine the load balancers of the new production stack ``1120`` in ``us-east-1`` you could either, from the production bastion host in ``us-east-1``, run
+
+   .. code-block:: bash
    
        get_hosts --elb 1120
+
    or from any bastion host
-      .. code-block:: bash
+
+   .. code-block:: bash
    
        get_hosts --elb --region us-east-1 --env prod 1120
 

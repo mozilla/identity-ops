@@ -30,7 +30,7 @@ Opsview provides both a web UI and a REST API.
 | production  | us-east-1 | https://monitor.identity.us-east-1.prod.mozaws.net/  |
 +-------------+-----------+------------------------------------------------------+
 
-These URLs use the `Identity Gateway`_ service which runs on the Graphite_ servers. This means to access them you'll need
+These URLs use the `Identity Gateway`_ service which runs on the Graphite_ servers. To access them you'll need
 to authenticate with Persona using your email address which is on the `approved list of users`_. 
 
 Once you've authenticated with your email address you'll be presented with the Opsview application login screen. Here, login with the shared credentials which can be found at ``svn.mozilla.org/sysadmins/gpg/services/passwords.txt.gpg``. For staging you can login as either the read-only user ``identity`` with the password ``identity`` or as the administrator with the username ``admin`` and the password ``initial``.
@@ -48,9 +48,9 @@ The monitor tier's Chef provisioning code can be found here : https://github.com
 
 1. Create an ec2 instance by following the Manual Deployment instructions
 
-  * size : m1.small
-  * IAM role : identity
-  * Security Groups : identity-dev-monitor, identity-dev-administrable, identity-dev-temp-internet
+   * size : m1.small
+   * IAM role : ``identity``
+   * Security Groups : ``identity-dev-monitor``, ``identity-dev-administrable``, ``identity-dev-temp-internet``
 
 2. Populate the now running Opsview instance with monitors and monitoring templates.
 
@@ -81,7 +81,7 @@ Accessing Graphite
 | staging     | us-west-2 | https://perf.identity.us-west-2.stage.mozaws.net/ |
 +-------------+-----------+--------------------------------------------------+
 
-These URLs use the `Identity Gateway`_ service. This means to access them you'll need
+These URLs use the `Identity Gateway`_ service. To access them you'll need
 to authenticate with Persona using your email address which is on the `approved list of users`_. 
 
 Using Graphite
@@ -101,16 +101,17 @@ Graphite instances are not autoscaled as there is only one in each region/enviro
 The graphite tier's Chef provisioning code can be found here : https://github.com/mozilla/identity-ops/tree/master/chef/cookbooks/persona-graphite
 
 Create an ec2 instance by following the Manual Deployment instructions
-* size : m1.small
-* IAM role : identity
-* Security Groups : ?
+
+* size : ``m1.small``
+* IAM role : ``identity``
+* Security Groups : ``identity-prod-temp-internet``, ``identity-prod-public-webserver``, ``identity-prod-administrable``
 
 Identity Gateway
 ================
 
 * tier name : ``graphite`` (Identity Gateway is co-hosted on the graphite tier)
 
-The identity-gateway is an Apache HTTPD server that reverse proxies traffic in order to provide a persona-based authentication layer in front of the backing services using the `mod_auth_browserid`_  Apache module. Currently the identity-gateway protects the monitor and graphite tiers. It is co-hosted on the graphite tier.
+The identity-gateway is an Apache HTTPD server that reverse proxies traffic in order to provide a persona-based authentication layer in front of the backing services using the `mod_auth_browserid`_  Apache module. Currently the identity-gateway protects the ``monitor`` and ``graphite`` tiers. It is co-hosted on the ``graphite`` tier.
 
 .. _mod_auth_browserid: https://github.com/mozilla/identity-ops/tree/master/chef/cookbooks/identity-gateway
 
@@ -125,6 +126,7 @@ Nimsoft AKA WatchMouse
 * tier name : ``none`` (this is an external service)
 
 `Nimsoft`_ is a commercial service which we have monitor Persona to detect if
+
 * fetching https://login.persona.org/include.js returns a non-200 HTTP code in less than 5 seconds
 * the sha1 hash of the contents of https://login.persona.org/include.js fail to match one of two defined hashes
 * fetching https://login.persona.org/.well-known/browserid returns a non-200 HTTP code code in less than 5 seconds
@@ -132,7 +134,7 @@ Nimsoft AKA WatchMouse
 
 Nimsoft runs this check every 5 minutes from various test locations around the globe. If it detects two consecutive errors it emails infra-services@mozilla.com.
 
-The jmx code that controls this monitor is tracked in ``svn.mozilla.org/sysadmins/svc/watchmouse/bid-content.jmx ``.
+The jmx code that controls this monitor is tracked in ``svn.mozilla.org/sysadmins/svc/watchmouse/bid-content.jmx``.
 
 The sha1 hashes in this file need to be updated when new Persona application versions result in modified ``include.js`` code. The jmx code accommodates two sha1 hashes to enable loading in the new hash prior to deploying the new application version.
 

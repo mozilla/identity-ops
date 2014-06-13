@@ -13,18 +13,18 @@ For BrowserID, metrics generates data based on JSON files written by the applica
 Log Rotation
 ============
 
-Code : `/etc/cron.d/logrotate`_ Instead of using anacron to call logrotate, a cron.d file instructs cron to call logrotate. This is to fix the time of day when logrotate is run very specifically. logrotate runs at 3am every day
+Code : `/etc/cron.d/logrotate`_ Instead of using ``anacron`` to call logrotate, a ``cron.d`` file instructs cron to call logrotate. This is to fix the time of day when logrotate is run very specifically. logrotate runs at 3am every day
 
 Code : `/usr/local/bin/logrotate.cron`_ Logrotate is instantiated with this short script which runs the lograte binary, passing it the ``lograte.conf`` configuration file which includes ``/etc/logrotate.d/*``
 
 Code : `/etc/logrotate.d/bid_metrics`_ The logrotate config file for bid_metrics :
 
-        Rotates the 2 files ``/var/browserid/log/verifier-metrics.json`` and ``/var/browserid/log/router-metrics.json``
-        gzips them
-        appends a datestamp to the filename (-2013-01-23)
-        moves the rotated gziped renamed file to ``/opt/bid_metrics/queue``
-        appends the webhead hostname to the end of the filename
-        sets the file to read only to indicate that rotation is complete
+* Rotates the 2 files ``/var/browserid/log/verifier-metrics.json`` and ``/var/browserid/log/router-metrics.json``
+* gzips them
+* appends a datestamp to the filename (-2013-01-23)
+* moves the rotated gziped renamed file to ``/opt/bid_metrics/queue``
+* appends the webhead hostname to the end of the filename
+* sets the file to read only to indicate that rotation is complete
 
 logrotate itself will keep these files for 7 days.
 
@@ -54,9 +54,9 @@ Code : `/opt/bid_metrics/bin/process_metrics.sh`_
 
 The ``process_metrics.sh`` script, which is run on the persona-metric system :
 
-        moves everything from ``/opt/bid_metrics/incoming/`` to ``/opt/bid_metrics/queue/``
-        concatenates all gunziped verifier and all router metrics json files from all webheads into 2 respective aggregated json files, ``/opt/bid_metrics/etl/input/verifier-metrics.json`` and ``/opt/bid_metrics/etl/input/router-metrics.json``
-        calls ``/opt/bid_metrics/etl/run.sh``
+* moves everything from ``/opt/bid_metrics/incoming/`` to ``/opt/bid_metrics/queue/``
+* concatenates all gunziped verifier and all router metrics json files from all webheads into 2 respective aggregated json files, ``/opt/bid_metrics/etl/input/verifier-metrics.json`` and ``/opt/bid_metrics/etl/input/router-metrics.json``
+* calls ``/opt/bid_metrics/etl/run.sh``
 
 Code : `/opt/bid_metrics/etl/run.sh`_
 
@@ -97,13 +97,10 @@ Every day at 5am, metrics picks up the ETL output ``/data/stats/logs/bid_metrics
 Contacts
 ========
 
-We worked mainly with :aphadke from metrics on getting this setup. It also looks like :ericz owns some of the metrics cron jobs.
+We worked mainly with ``:aphadke`` from metrics on getting this setup. It also looks like ``:ericz`` owns some of the metrics cron jobs.
 
 Deprecated method that was used in the physical data centers
 ============================================================
-
-Log Collection
---------------
 
 Every day at 4am, adm1.scl2 runs a script to collect log files, as user bid_metrics. This user has a special ssh key on adm1.scl2 that can log in to all of the browserid webheads, as user bid_metrics.
 
