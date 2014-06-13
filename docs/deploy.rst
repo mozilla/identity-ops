@@ -75,7 +75,14 @@ Automatic deployment overview
    c) Update the Nimsoft monitor to reflect this new hash as well
    d) More information on these monitoring changes can be found in the `monitoring documentation`_ 
    
-5. Observe the Opsview monitors of the new stack, confirming that all the instances have hydrated and are green on all monitors
+5. Observe the Opsview monitors of the new stack, confirming that all the instances have hydrated and are green on all monitors.
+
+   You can also track the progress of the instances by watching the chef logs
+
+   .. code-block:: bash
+    
+        stack=0803
+        for host in `get_hosts $stack`; do echo $host;while ! ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no $host 'a="`tail -1 /var/log/chef.log`"; echo "$host `date` $a";echo "$a" | grep "`date +%Y-%m-%d`.*Report handlers complete"'; do sleep 2; done; done
 6. Communicate the stack name of the new stack to QA. Have QA test the new stack before it gets live traffic. Services QA has scripts that make it easy to fake DNS into using the new stack.
 7. Once QA signs off on the stack, update DNS to point to it. More info on how to do this can be found in the `Updating DNS`_ section.
 8. Notify QA that the new stack is live so they can test public relying parties with the new code.
