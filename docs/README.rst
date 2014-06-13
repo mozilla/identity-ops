@@ -13,13 +13,13 @@ Persona documentation
 * `Persona Pentaho metrics`_ 
 * `How to build a Persona base AMI`_ 
 
-.. _ How to build a Persona base AMI: persona_ami.rst
-.. _ Persona Pentaho metrics: pentaho_metrics.rst
+.. _How to build a Persona base AMI: persona_ami.rst
+.. _Persona Pentaho metrics: pentaho_metrics.rst
 .. _Monitoring: monitor.rst
-.. _ Legacy page locations: legacy_pages.rst
-.. _ Persona operational history: history.rst
+.. _Legacy page locations: legacy_pages.rst
+.. _Persona operational history: history.rst
 .. _Deployment: deploy.rst
-.. _ Persona Database: db.rst
-.. _ Cloudwatch Graphite Connector: cloudwatch_graphite_connector.rst 
-.. _ How to build identity application packages: build.rst
-.. _ Accessing hosts and services: access.rst
+.. _Persona Database: db.rst
+.. _Cloudwatch Graphite Connector: cloudwatch_graphite_connector.rst 
+.. _How to build identity application packages: build.rst
+.. _Accessing hosts and services: access.rst
