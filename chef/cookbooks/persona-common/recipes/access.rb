@@ -2,10 +2,9 @@
 # Cookbook Name:: persona-common
 # Recipe:: access
 #
-# Copyright 2013, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 include_recipe "chef-solo-search" # https://github.com/edelight/chef-solo-search
 include_recipe "users" # https://github.com/opscode-cookbooks/users

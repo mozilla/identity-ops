@@ -2,10 +2,9 @@
 # Cookbook Name:: persona-monitor
 # Recipe:: nagios_plugins
 #
-# Copyright 2013, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 # Install the Rackspace IUS repo to get python 2.7
 remote_file "#{Chef::Config[:file_cache_path]}/ius-release-1.0-11.ius.centos6.noarch.rpm" do

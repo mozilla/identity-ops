@@ -2,10 +2,9 @@
 # Cookbook Name:: persona-common
 # Recipe:: prompt
 #
-# Copyright 2013, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 if node[:stack][:name] && node[:stack][:type] && node[:aws_region] then
   ruby_block "set_root_prompt" do

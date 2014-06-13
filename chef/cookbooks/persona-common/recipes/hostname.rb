@@ -2,10 +2,9 @@
 # Cookbook Name:: persona-common
 # Recipe:: hostname
 #
-# Copyright 2013, YOUR_COMPANY_NAME
-#
-# All rights reserved - Do Not Redistribute
-#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
 # This is all done at compile time and not during convergence so that the 
 # new node[:fqdn] is available on the first run for use. To accomplish this
 # we must 1) add the fqdn to /etc/hosts 2) update the hostname with the
