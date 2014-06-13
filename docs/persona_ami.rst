@@ -3,6 +3,7 @@ How to build a Persona base AMI
 *******************************
 
 Here are the steps necessary to take a `Red Hat Enterprise Linux Derivative`_ and bring it to a state where it can be used as a base `AMI`_ for Persona. The overview of what's required is
+
 1. Wait while the instance establishes internet connectivity
 2. Install Chef
 3. Fetch the `identity-ops`_ Chef provisioning code repository with git
