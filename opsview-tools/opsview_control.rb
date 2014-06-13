@@ -445,11 +445,9 @@ p = Trollop::Parser.new do
 OpsView Control
 
 Usage:
-       ./opsview_control.rb import --sections attribute role [options]
-       ./opsview_control.rb export --url http://localhost:10000/rest [options]
-       ./opsview_control.rb destroystack --hostgroup "identity-dev Stack 0514" [options]
-       ./opsview_control.rb destroystack --hostgroup "identity-dev Stack 0514" --session-cookie-name myauthcookie --session-cookie-value user@example.com|ZgtjMZuFnsaopw6IDt3twGr9aDU= [options]
+       ./opsview_control.rb import --help
        ./opsview_control.rb export --help
+       ./opsview_control.rb destroystack --help
 EOS
   stop_on SUB_COMMANDS
 end
@@ -475,6 +473,15 @@ cmd = ARGV.shift # get the subcommand
 opts = case cmd
   when "import"
     Trollop::options do
+      banner <<-EOS
+OpsView Control : Import
+
+Usage:
+       ./opsview_control.rb import --sections attribute role [options]
+
+Options:
+
+EOS
       opt :sections, "Config sections you would like to import", :type => :strings,
         :default => ordered_section_list
       opt :include, "Specific items you would like include", :type => :strings,
@@ -495,6 +502,15 @@ opts = case cmd
     end
   when "export"
     Trollop::options do
+      banner <<-EOS
+OpsView Control : Export
+
+Usage:
+       ./opsview_control.rb export --url http://localhost:10000/rest [options]
+
+Options:
+
+EOS
       opt :sections, "Config sections you would like to export", :type => :strings, 
         :default => ordered_section_list
       opt :username, "OpsView API User Name", :type => :string, :default => 'admin'
@@ -507,6 +523,16 @@ opts = case cmd
     end
   when "destroystack"
     Trollop::options do
+      banner <<-EOS
+OpsView Control : Destroy Stack
+
+Usage:
+       ./opsview_control.rb destroystack --hostgroup "identity-dev Stack 0514" [options]
+       ./opsview_control.rb destroystack --hostgroup "identity-dev Stack 0514" --session-cookie-name myauthcookie --session-cookie-value user@example.com|ZgtjMZuFnsaopw6IDt3twGr9aDU= [options]
+
+Options:
+
+EOS
       opt :hostgroup, "Name of the hostgroup to destroy", :type => :string
       opt :username, "OpsView API User Name", :type => :string, :default => 'admin'
       opt :password, "OpsView API User Password", :type => :string, :default => 'initial'
