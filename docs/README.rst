@@ -11,8 +11,10 @@ Persona documentation
 * `Legacy page locations`_
 * `Monitoring`_
 * `Persona Pentaho metrics`_ 
-* `How to build a Persona base AMI`_ 
-
+* `How to build a Persona base AMI`_
+* `Persona application tiers`_
+  
+.. _Persona application tiers: tiers.rst
 .. _How to build a Persona base AMI: persona_ami.rst
 .. _Persona Pentaho metrics: pentaho_metrics.rst
 .. _Monitoring: monitor.rst
