@@ -122,7 +122,7 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
    b) Obtain the instances gpg private key from the persona-builder instance
    c) Decrypt the secrets and write them to ``/etc/chef/node.json``
 
-4. Fetch the current or specific desired revision of the ``identity-ops`` git repo
+4. Fetch the current or specific desired revision of the ``identity-ops`` git repo (this is where the chef configs will be taken from).
 
    .. code-block:: bash
 
