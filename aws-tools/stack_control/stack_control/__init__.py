@@ -217,7 +217,7 @@ def create_stack(region,
 
     policy_name = 'Mozilla-Security-Assurance-Ciphersuite-Policy-v-1-2'
 
-    ami_map = json.load(open('config/ami_map.json', 'r'))
+    ami_map = json.load(open('/etc/stack_control/ami_map.json', 'r'))
 
     sns_topics = {"us-west-2": "arn:aws:sns:us-west-2:351644144250:identity-alert",
                   "us-east-1": "arn:aws:sns:us-east-1:351644144250:identity-alert"}
@@ -235,7 +235,7 @@ def create_stack(region,
     existing_instance_profiles = [x for x in iam_roles_stack_resources if x.resource_type == 'AWS::IAM::InstanceProfile']
     instance_profile_map = dict([(x.logical_resource_id, x.physical_resource_id) for x in existing_instance_profiles])
 
-    for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
+    for load_balancers_params in json.load(open('/etc/stack_control/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('/etc/stack_control/elbs_private.json')):
         if application and load_balancers_params['application'] != application:
             continue
         load_balancers_params['name'] = '%s-%s' % (load_balancers_params['name'], name)
@@ -361,7 +361,7 @@ def create_stack(region,
     # I'm going to combine launch configuration and autoscale group because I don't
     # see us having more than one autoscale group for each launch configuration
 
-    for autoscale_params in json.load(open('config/autoscale.%s.json' % stack_type, 'r')):
+    for autoscale_params in json.load(open('/etc/stack_control/autoscale.%s.json' % stack_type, 'r')):
         if application and autoscale_params['application'] != application:
             continue
         launch_configuration_params = autoscale_params['launch_configuration']
@@ -370,7 +370,7 @@ def create_stack(region,
 #         if 'AWS_CONFIG_DIR' in os.environ:
 #             user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'userdata.%s.%s.json' % (stack_type, tier))
 #         else:
-#             user_data_filename = 'config/userdata.%s.%s.json' % (stack_type, tier)
+#             user_data_filename = '/etc/stack_control/userdata.%s.%s.json' % (stack_type, tier)
 
         gpg_filename_suffix = {'stage': 'login.anosrep.org',
                                'prod': 'login.persona.org'}[stack_type]
@@ -378,7 +378,7 @@ def create_stack(region,
             gpg_private_key_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 
                                                     '%s@%s.priv' % (tier, gpg_filename_suffix))
         else:
-            gpg_private_key_filename = 'config/%s@%s.priv' % (tier, gpg_filename_suffix)
+            gpg_private_key_filename = '/etc/stack_control/%s@%s.priv' % (tier, gpg_filename_suffix)
 
         with open(gpg_private_key_filename, 'r') as f:
             gpg_private_key = f.read()
@@ -586,7 +586,7 @@ def destroy_stack(region,
     launch_configurations = []
     load_balancers = []
     alarms = []
-    for autoscale_params in json.load(open('config/autoscale.%s.json' % stack_type, 'r')):
+    for autoscale_params in json.load(open('/etc/stack_control/autoscale.%s.json' % stack_type, 'r')):
         ag_name = '%s-%s-%s-%s' % (environment, stack_type, autoscale_params['launch_configuration']['tier'], name)
         ag = [x for x in existing_autoscale_groups if x.name == ag_name]
         autoscale_groups.extend(ag)
@@ -594,7 +594,7 @@ def destroy_stack(region,
 
     metric = "HTTPCode_Backend_5XX"
 
-    for load_balancers_params in json.load(open('config/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('config/elbs_private.json')):
+    for load_balancers_params in json.load(open('/etc/stack_control/elbs_public.%s.json' % stack_type, 'r')) + json.load(open('/etc/stack_control/elbs_private.json')):
         load_balancers_params['name'] = '%s-%s' % (load_balancers_params['name'], name)
         load_balancers.extend([x for x in existing_load_balancers if x.name == load_balancers_params['name']])
         alarms.extend(["%s %s" % (load_balancers_params['name'], metric)])
@@ -758,7 +758,7 @@ def point_dns_to_stack(region, stack_type, application, name):
     if 'AWS_CONFIG_DIR' in os.environ:
         user_data_filename = os.path.join(os.environ['AWS_CONFIG_DIR'], 'dynect.json')
     else:
-        user_data_filename = 'config/dynect.json'
+        user_data_filename = '/etc/stack_control/dynect.json'
 
     with open(user_data_filename, 'r') as f:
         dynect_credentials = json.load(f)
@@ -831,8 +831,7 @@ def collect_arguments():
     parsers['show'].add_argument('name', type=type_stackname, help='Stack name')
     return parser.parse_args()
     
-
-if __name__ == '__main__':
+def main():
     args = collect_arguments()
     if args.action == 'create':
         stack = create_stack(region=args.region,
@@ -857,4 +856,6 @@ if __name__ == '__main__':
 #                        stack_type='stage', 
 #                        application='bridge-yahoo',
 #                        name='1014')
-      
+
+if __name__ == '__main__':
+    main()

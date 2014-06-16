@@ -122,5 +122,5 @@ How to Build
     sudo gem install fpm
     git clone https://github.com/mozilla/identity-ops.git
     
-    cd aws-tools/stack_control # This is required
+    cd identity-ops/aws-tools/stack_control # This is required
     fpm -s python -t rpm --workdir ../ ./setup.py

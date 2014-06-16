@@ -73,12 +73,12 @@ setup(
     # need to place data files outside of your packages.
     # see http://docs.python.org/3.4/distutils/setupscript.html#installing-additional-files
     # In this case, 'data_file' will be installed into '<sys.prefix>/my_data'
-    data_files=[('/etc/stack_control', ['config/ami_map.json',
-                                        'config/autoscale.prod.json',
-                                        'config/autoscale.stage.json',
-                                        'config/elbs_private.json',
-                                        'config/elbs_public.prod.json',
-                                        'config/elbs_public.stage.json'])],
+    data_files=[('/etc/stack_control', ['stack_control/config/ami_map.json',
+                                        'stack_control/config/autoscale.prod.json',
+                                        'stack_control/config/autoscale.stage.json',
+                                        'stack_control/config/elbs_private.json',
+                                        'stack_control/config/elbs_public.prod.json',
+                                        'stack_control/config/elbs_public.stage.json'])],
 
     # To provide executable scripts, use entry points in preference to the
     # "scripts" keyword. Entry points provide cross-platform support and allow
