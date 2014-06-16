@@ -99,6 +99,7 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 * ``admin``
 * ``monitor``
 * ``dbread``
+* ``builder``
 
 1. Create an ec2 instance either on the command line or web gui
 
@@ -108,25 +109,32 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
    d) AMI ID : A persona-base AMI
    e) Security Groups : check the tiers documentation
 
-2. Inject the secrets
+2. Create ec2 instance tags (``get_hosts`` won't find your instance without these)
+
+   a) App : ``identity``
+   b) Env : ``stage`` or ``prod``
+   c) Stack : ``univ``
+   d) Tier : ``admin``, ``builder``, ``monitor``, etc.
+
+3. Inject the secrets
 
    a) Obtain the secrets from the secrets s3 bucket
    b) Obtain the instances gpg private key from the persona-builder instance
    c) Decrypt the secrets and write them to ``/etc/chef/node.json``
 
-3. Fetch the current or specific desired revision of the ``identity-ops`` git repo
+4. Fetch the current or specific desired revision of the ``identity-ops`` git repo
 
    .. code-block:: bash
 
       cd /root/identity-ops && git pull && git checkout HEAD
 
-4. Hydrate the machine with Chef
+5. Hydrate the machine with Chef
 
    .. code-block:: bash
 
       chef-solo -c /etc/chef/solo.rb -j /etc/chef/node.json
 
-5. Once the machine is up and healthy, set the DNS records in the ``stage.mozaws.net`` or ``prod.mozaws.net`` zones to reference the new instance. These zones are hosted in AWS Route 53 in the ``mozilla`` AWS Account.
+6. Once the machine is up and healthy, set the DNS records in the ``stage.mozaws.net`` or ``prod.mozaws.net`` zones to reference the new instance. These zones are hosted in AWS Route 53 in the ``mozilla`` AWS Account.
 
 Updating DNS
 ============
