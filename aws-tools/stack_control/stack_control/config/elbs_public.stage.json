@@ -1,0 +1,106 @@
+[
+    {
+        "name": "w-anosrep-org",
+        "application": "persona",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.anosrep.org"
+            ],
+            [
+                80,
+                8000,
+                "HTTP"
+            ]
+        ],
+        "healthcheck": {
+            "interval" : 30,
+            "target" : "HTTP:80/__heartbeat__?deep=1",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "w-login-anosrep-org",
+        "application": "persona",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ],
+            [
+                80,
+                8000,
+                "HTTP"
+            ]
+        ],
+        "healthcheck": {
+            "interval" : 30,
+            "target" : "HTTP:80/__heartbeat__?deep=1",
+            "healthy_threshold" : 3,
+            "timeout" : 5,
+            "unhealthy_threshold" : 5
+        }
+    },
+    {
+        "name": "yahoo-login-anosrep-org",
+        "application": "bridge-yahoo",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ]
+        ]
+    },
+    {
+        "name": "gmail-login-anosrep-org",
+        "application": "bridge-gmail",
+        "subnet" : "public",
+        "security_groups" :
+        [
+            "public-loadbalancer",
+            "administrable"
+        ],
+        "is_internal" : false,
+        "listeners" : 
+        [
+            [
+                443,
+                80,
+                "HTTPS",
+                "wildcard.login.anosrep.org"
+            ]
+        ]
+    }
+]

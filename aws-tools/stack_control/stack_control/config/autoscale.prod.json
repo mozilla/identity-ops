@@ -1,0 +1,97 @@
+[
+    {
+        "desired_capacity": 8,
+        "launch_configuration": {
+            "image_id": "Persona Base 20140128",
+            "instance_type": "c1.medium",
+            "security_groups": [
+                "frontend",
+                "internet-outbound",
+                "administrable"
+            ],
+            "instance_profile_logical_name": "IdentityWebheadProd",
+            "tier": "webhead"
+        },
+        "load_balancers": [
+            "persona-org"
+        ],
+        "subnet": "private",
+        "application": "persona"
+    },
+    {
+        "desired_capacity": 3,
+        "launch_configuration": {
+            "image_id": "Persona Base 20140128",
+            "instance_type": "c1.medium",
+            "security_groups": [
+                "frontend",
+                "internet-outbound",
+                "administrable"
+            ],
+            "instance_profile_logical_name": "IdentityBridgeYahooProd",
+            "tier": "bridge-yahoo"
+        },
+        "load_balancers": [
+            "yahoo-login-persona-org"
+        ],
+        "subnet": "private",
+        "application": "bridge-yahoo"
+    },
+    {
+        "desired_capacity": 3,
+        "launch_configuration": {
+            "image_id": "Persona Base 20140128",
+            "instance_type": "m1.small",
+            "security_groups": [
+                "frontend",
+                "internet-outbound",
+                "administrable"
+            ],
+            "instance_profile_logical_name": "IdentityBridgeGmailProd",
+            "tier": "bridge-gmail"
+        },
+        "load_balancers": [
+            "gmail-login-persona-org"
+        ],
+        "subnet": "private",
+        "application": "bridge-gmail"
+    },
+    {
+        "desired_capacity": 2,
+        "launch_configuration": {
+            "image_id": "Persona Base 20140128",
+            "instance_type": "c1.medium",
+            "security_groups": [
+                "middleware-http",
+                "administrable"
+            ],
+            "instance_profile_logical_name": "IdentityKeysignProd",
+            "tier": "keysign"
+        },
+        "load_balancers": [
+            "keysign"
+        ],
+        "subnet": "private",
+        "application": "persona"
+    },
+    {
+        "desired_capacity": 3,
+        "launch_configuration": {
+            "image_id": "Persona Base 20140128",
+            "instance_type": "c1.medium",
+            "security_groups": [
+                "middleware-http",
+                "dbwrite",
+                "internet-outbound",
+                "administrable"
+            ],
+            "instance_profile_logical_name": "IdentityDbwriteProd",
+            "tier": "dbwrite"
+        },
+        "load_balancers": [
+            "dbwrite"
+        ],
+        "subnet": "private",
+        "application": "persona"
+    }
+]
