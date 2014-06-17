@@ -61,7 +61,7 @@ The second incarnation of Persona was a design by `Gene Wood`_ and `Jared Hirsch
   .. _cloudwatch2graphite: cloudwatch_graphite_connector.rst
   .. _Opsview core: http://www.opsview.com/solutions/core
 
-.. _stack_control: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.rst
+.. _stack_control: https://github.com/mozilla/identity-ops/tree/master/aws-tools/stack_control
 .. _greenfield: http://en.wikipedia.org/wiki/Greenfield_project
 .. _AWS: http://aws.amazon.com/
 .. _Jared Hirsch: https://github.com/6a68

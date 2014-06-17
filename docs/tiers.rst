@@ -93,7 +93,7 @@ To get more detailed logging information from the squid servers you can add this
 
 This will output detailed logs into ``/var/log/squid/cache.log`` 
 
-.. _stack_control: https://github.com/mozilla/identity-ops/blob/master/aws-tools/stack_control.rst
+.. _stack_control: https://github.com/mozilla/identity-ops/tree/master/aws-tools/stack_control
 
 Monitor
 =======
