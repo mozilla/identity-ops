@@ -73,7 +73,7 @@ Automatic deployment
    .. code-block:: bash
 
         curl -k https://login.anosrep.org/include.js | sed 's/anosrep/persona/g' | sha1sum
-   c) If this is prod, and stage doesn't currently match, then deploy a stage stack that does, find the ``w-anosrep-org`` elb (with ``get_hosts``) and determine the new hash like this:
+   c) If this is prod, and stage doesn't currently match, then deploy a stage stack that does, and determine the hash like this:
 
    .. code-block:: bash
 
