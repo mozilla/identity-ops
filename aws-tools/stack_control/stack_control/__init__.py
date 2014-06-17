@@ -68,8 +68,26 @@ def create_stack(region,
     conn_ec2 = boto.ec2.connect_to_region(region)
     conn_cw = boto.ec2.cloudwatch.connect_to_region(region)
     conn_autoscale = boto.ec2.autoscale.connect_to_region(region)
-    conn_cfn = boto.cloudformation.connect_to_region(region)
     stack = {}
+
+    alt_cfn_regions = ['us-west-2', 'us-east-1']
+    alt_cfn_regions.remove(region)
+    try:
+        cfn_region = region
+        print('Trying to find IAM cfn stack in region: %s' % cfn_region)
+        conn_cfn = boto.cloudformation.connect_to_region(cfn_region)
+        iam_roles_stack_resources = conn_cfn.list_stack_resources('identity-iam-roles')
+    except:
+        print('Could not find IAM cfn stack in region: %s' % region)
+
+    try:
+        cfn_region = alt_cfn_regions.pop()
+        print('Trying to find IAM cfn stack in region: %s' % cfn_region)
+        conn_cfn = boto.cloudformation.connect_to_region(cfn_region)
+        iam_roles_stack_resources = conn_cfn.list_stack_resources('identity-iam-roles')
+    except:
+        print('Could not find IAM cfn stack, aborting.')
+        exit(1)
 
     # Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
     policy_attributes = {"ADH-AES128-GCM-SHA256": False,
@@ -231,7 +249,6 @@ def create_stack(region,
     existing_security_groups = conn_ec2.get_all_security_groups()
     existing_certs = conn_iam.get_all_server_certs(path_prefix=path)['list_server_certificates_response']['list_server_certificates_result']['server_certificate_metadata_list']
     existing_subnets = conn_vpc.get_all_subnets(filters=[('vpcId', [vpc.id])])
-    iam_roles_stack_resources = conn_cfn.list_stack_resources('identity-iam-roles')
     existing_instance_profiles = [x for x in iam_roles_stack_resources if x.resource_type == 'AWS::IAM::InstanceProfile']
     instance_profile_map = dict([(x.logical_resource_id, x.physical_resource_id) for x in existing_instance_profiles])
 
