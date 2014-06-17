@@ -1,1 +1,1 @@
-include DESCRIPTION.rst config/*.json
+include README.rst config/*.json
