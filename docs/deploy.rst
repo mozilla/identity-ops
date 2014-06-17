@@ -136,6 +136,10 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 
 6. Once the machine is up and healthy, set the DNS records in the ``stage.mozaws.net`` or ``prod.mozaws.net`` zones to reference the new instance. These zones are hosted in AWS Route 53 in the ``mozilla`` AWS Account.
 
+7. This only applies to the ``builder`` tier: copy gpg private key files to ``/etc/stack_control``
+
+   a) make sure you have one key for each tier deployed by ``stack_control``
+
 Updating DNS
 ============
 
