@@ -73,18 +73,17 @@ Automatic deployment
    .. code-block:: bash
 
         curl -k https://login.anosrep.org/include.js | sed 's/anosrep/persona/g' | sha1sum
-
    c) If this is prod, and stage doesn't currently match, then deploy a stage stack that does, find the ``w-anosrep-org`` elb (with ``get_hosts``) and determine the new hash like this:
+
    .. code-block:: bash
 
         # replace 9999 with the stack number
         # replace 123456789 with the resource id you retrieved via: get_hosts -e 9999
         curl -k https://w-anosrep-org-9999-123456789.us-west-2.elb.amazonaws.com/include.js | sed 's/anosrep/persona/g' | sha1sum
-
    d) If this is stage, then execute step 4, come back and use step 3.c to get the hash
-   d) Add this to the ``/etc/allowed-hashes.txt`` file on the monitoring server for that environment and region.
-   e) If this is prod, update the Nimsoft monitor to reflect this new hash as well
-   f) More information on these monitoring changes can be found in the `monitoring documentation`_
+   e) Add this to the ``/etc/allowed-hashes.txt`` file on the monitoring server for that environment and region.
+   f) If this is prod, update the Nimsoft monitor to reflect this new hash as well
+   g) More information on these monitoring changes can be found in the `monitoring documentation`_
 
 4. SSH into the persona-builder instance in the desired environment and region (via the bastion host) and run ``stack_control.py`` passing in the git hash or branch name that came out of `Updating to a new Identity application version`_. More information on running ``stack_control.py`` can be found in the `stack_control.py documentation`_
 5. Observe the Opsview monitors of the new stack, confirming that all the instances have hydrated and are green on all monitors.
