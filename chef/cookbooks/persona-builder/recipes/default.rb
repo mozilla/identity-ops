@@ -14,23 +14,15 @@ package "python-gnupg"
 package "python-boto"
 
 
-rpm = node[:persona][:builder][:rpms]["persona-manage_s3_secrets"]
+rpm_names = ["persona-manage_s3_secrets",
+             "python-stack_control"]
 
-remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
-   source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpm}"
-end
-
-package "python-manage_s3_secrets" do
-  source "#{Chef::Config[:file_cache_path]}/#{rpm}"
-end
-
-
-rpm = node[:persona][:builder][:rpms]["python-stack_control"]
-
-remote_file "#{Chef::Config[:file_cache_path]}/#{rpm}" do
-   source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{rpm}"
-end
-
-package "python-stack_control" do
-  source "#{Chef::Config[:file_cache_path]}/#{rpm}"
+for rpm_name in rpm_names do
+  remote_file "#{Chef::Config[:file_cache_path]}/#{node[:persona][:builder][:rpms][rpm_name]}" do
+     source "https://s3.amazonaws.com/mozilla-identity-us-standard/rpms/#{node[:persona][:builder][:rpms][rpm_name]}"
+  end
+  
+  package rpm_name do
+    source "#{Chef::Config[:file_cache_path]}/#{node[:persona][:builder][:rpms][rpm_name]}"
+  end
 end
