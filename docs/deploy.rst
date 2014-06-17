@@ -65,20 +65,34 @@ Automatic deployment
 
 1. If the new stack is to have a new application version of an identity application, then that new code needs to be built and packaged. Details on that can be found in the documentation on `building identity applications and uploading the resulting packages`_.
 2. The new stack will either require new Chef provisioning code or new identity application code or both. The version of the identity applications to run in a stack are defined in the provisioning code. More detail on that can be found above in the `Updating to a new Identity application version`_ section.
-3. SSH into the persona-builder instance in the desired environment and region (via the bastion host) and run ``stack_control.py`` passing in the git hash or branch name that came out of `Updating to a new Identity application version`_. More information on running ``stack_control.py`` can be found in the `stack_control.py documentation`_ 
-4. If the ``include.js`` content has changed with this new release
+3. If the ``include.js`` content has changed with this new release
 
    a) Determine the new sha1 hash of ``include.js``
-   b) Add this to the ``/etc/allowed-hashes.txt`` file on the monitoring server for that environment and region.
-   c) Update the Nimsoft monitor to reflect this new hash as well
-   d) More information on these monitoring changes can be found in the `monitoring documentation`_ 
-   
+   b) If this is prod, and stage currently matches the application code being deployed, the new hash can be determined with:
+
+   .. code-block:: bash
+
+        curl -k https://login.anosrep.org/include.js | sed 's/anosrep/persona/g' | sha1sum
+
+   c) If this is prod, and stage doesn't currently match, then deploy a stage stack that does, find the ``w-anosrep-org`` elb (with ``get_hosts``) and determine the new hash like this:
+   .. code-block:: bash
+
+        # replace 9999 with the stack number
+        # replace 123456789 with the resource id you retrieved via: get_hosts -e 9999
+        curl -k https://w-anosrep-org-9999-123456789.us-west-2.elb.amazonaws.com/include.js | sed 's/anosrep/persona/g' | sha1sum
+
+   d) If this is stage, then execute step 4, come back and use step 3.c to get the hash
+   d) Add this to the ``/etc/allowed-hashes.txt`` file on the monitoring server for that environment and region.
+   e) If this is prod, update the Nimsoft monitor to reflect this new hash as well
+   f) More information on these monitoring changes can be found in the `monitoring documentation`_
+
+4. SSH into the persona-builder instance in the desired environment and region (via the bastion host) and run ``stack_control.py`` passing in the git hash or branch name that came out of `Updating to a new Identity application version`_. More information on running ``stack_control.py`` can be found in the `stack_control.py documentation`_
 5. Observe the Opsview monitors of the new stack, confirming that all the instances have hydrated and are green on all monitors.
 
    You can also track the progress of the instances by watching the chef logs
 
    .. code-block:: bash
-    
+
         stack=0803
         for host in `get_hosts $stack`; do echo $host;while ! ssh -o ConnectTimeout=2 -o StrictHostKeyChecking=no $host 'a="`tail -1 /var/log/chef.log`"; echo "$host `date` $a";echo "$a" | grep "`date +%Y-%m-%d`.*Report handlers complete"'; do sleep 2; done; done
 6. Communicate the stack name of the new stack to QA. Have QA test the new stack before it gets live traffic. Services QA has scripts that make it easy to fake DNS into using the new stack.
