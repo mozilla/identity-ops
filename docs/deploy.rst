@@ -77,10 +77,14 @@ Automatic deployment
 
    .. code-block:: bash
 
-        # replace 9999 with the stack number
-        # replace 123456789 with the resource id you retrieved via: get_hosts -e 9999
-        curl -k https://w-anosrep-org-9999-123456789.us-west-2.elb.amazonaws.com/include.js | sed 's/anosrep/persona/g' | sha1sum
-   d) If this is stage, then execute step 4, come back and use step 3.c to get the hash
+        stack=9999
+        curl -k https://`get_hosts -e $stack | grep 'w-anosrep' | head -n 1`/include.js 2>/dev/null | sed 's/anosrep/persona/g' | sha1sum
+   d) If this is stage, then execute step 4, come back and do this to get the hash:
+
+   .. code-block:: bash
+
+        stack=9999
+        curl -k https://`get_hosts -e $stack | grep 'w-anosrep' | head -n 1`/include.js 2>/dev/null | sha1sum
    e) Add this to the ``/etc/allowed-hashes.txt`` file on the monitoring server for that environment and region.
    f) If this is prod, update the Nimsoft monitor to reflect this new hash as well
    g) More information on these monitoring changes can be found in the `monitoring documentation`_
