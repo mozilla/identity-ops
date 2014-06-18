@@ -18,6 +18,7 @@ include_recipe "persona-common::prompt"
 include_recipe "persona-common::daemontools"
 include_recipe "persona-common::iptables"
 include_recipe "persona-common::access"
+include_recipe "persona-common::sysctl"
 
 link "/etc/localtime" do
   to "/usr/share/zoneinfo/America/Los_Angeles"
