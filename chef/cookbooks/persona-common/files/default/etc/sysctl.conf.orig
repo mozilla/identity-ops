@@ -1,4 +1,4 @@
-ysctl configuration file for Red Hat Linux
+# Kernel sysctl configuration file for Red Hat Linux
 #
 # For binary values, 0 is disabled, 1 is enabled.  See sysctl(8) and
 # sysctl.conf(5) for more details.
