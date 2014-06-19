@@ -73,15 +73,15 @@ Graphite tier
 Accessing Graphite
 ------------------
 
-+-------------+-----------+--------------------------------------------------+
-| environment | region    | Graphite Web UI URL                              |
-+=============+===========+==================================================+
-| production  | us-west-2 | https://perf.identity.us-west-2.prod.mozaws.net/ |
-+-------------+-----------+--------------------------------------------------+
-| production  | us-east-1 | https://perf.identity.us-east-1.prod.mozaws.net/ |
-+-------------+-----------+--------------------------------------------------+
++-------------+-----------+---------------------------------------------------+
+| environment | region    | Graphite Web UI URL                               |
++=============+===========+===================================================+
+| production  | us-west-2 | https://perf.identity.us-west-2.prod.mozaws.net/  |
++-------------+-----------+---------------------------------------------------+
+| production  | us-east-1 | https://perf.identity.us-east-1.prod.mozaws.net/  |
++-------------+-----------+---------------------------------------------------+
 | staging     | us-west-2 | https://perf.identity.us-west-2.stage.mozaws.net/ |
-+-------------+-----------+--------------------------------------------------+
++-------------+-----------+---------------------------------------------------+
 
 These URLs use the `Identity Gateway`_ service. To access them you'll need
 to authenticate with Persona using your email address which is on the `approved list of users`_. 
