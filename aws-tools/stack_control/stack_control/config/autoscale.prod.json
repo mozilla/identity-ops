@@ -1,6 +1,6 @@
 [
     {
-        "desired_capacity": 8,
+        "desired_capacity": 2,
         "launch_configuration": {
             "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
@@ -19,7 +19,7 @@
         "application": "persona"
     },
     {
-        "desired_capacity": 3,
+        "desired_capacity": 2,
         "launch_configuration": {
             "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
@@ -38,7 +38,7 @@
         "application": "bridge-yahoo"
     },
     {
-        "desired_capacity": 3,
+        "desired_capacity": 2,
         "launch_configuration": {
             "image_id": "Persona Base 20140128",
             "instance_type": "m1.small",
@@ -75,7 +75,7 @@
         "application": "persona"
     },
     {
-        "desired_capacity": 3,
+        "desired_capacity": 2,
         "launch_configuration": {
             "image_id": "Persona Base 20140128",
             "instance_type": "c1.medium",
