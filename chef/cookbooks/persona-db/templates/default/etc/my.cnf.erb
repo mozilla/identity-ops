@@ -67,7 +67,7 @@ log-bin                = mysql-bin
 server-id              = <%= @server_id %>
 sync_binlog            = 1
 log_slave_updates      = 1
-relay_log_purge        = 0
+relay_log_purge        = 1
 replicate-do-db        = browserid
 
 <% if node[:persona][:db][:mysql][:replication_type] != "master" and node[:persona][:db][:mysql]["master-host"] %>
