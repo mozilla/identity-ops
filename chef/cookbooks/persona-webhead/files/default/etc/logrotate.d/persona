@@ -1,0 +1,11 @@
+/var/browserid/log/*.log {
+    daily
+      # default : weekly
+    rotate 2
+      # default : 4
+    missingok
+      # default : nomissingok
+    notifempty
+      # default : ifempty
+    copytruncate
+}
