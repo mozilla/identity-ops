@@ -92,6 +92,13 @@ daemontools_service "browserid-certifier" do
   log true
 end
 
+file "/etc/logrotate.d/bridge-yahoo" do
+  source "etc/logrotate.d/bridge-yahoo"
+  owner "root"
+  group "root"
+  mode 0644
+end
+
 daemontools_service "browserid-bigtent" do
   directory "/var/services/browserid-bigtent"
   template "browserid-bigtent"

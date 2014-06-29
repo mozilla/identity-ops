@@ -58,6 +58,13 @@ daemontools_service "browserid-dbwrite" do
   log true
 end
 
+file "/etc/logrotate.d/persona" do
+  source "etc/logrotate.d/persona"
+  owner "root"
+  group "root"
+  mode 0644
+end
+
 include_recipe "persona-common::nginx"
 
 cookbook_file "/etc/nginx/conf.d/iddbwrite.conf" do

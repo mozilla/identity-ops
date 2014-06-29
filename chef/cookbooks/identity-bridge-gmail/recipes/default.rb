@@ -87,6 +87,12 @@ daemontools_service "browserid-bridge-gmail" do
   log true
 end
 
+file "/etc/logrotate.d/bridge-gmail" do
+  source "etc/logrotate.d/bridge-gmail"
+  owner "root"
+  group "root"
+  mode 0644
+end
 
 # Configure nginx
 include_recipe "persona-common::nginx"
