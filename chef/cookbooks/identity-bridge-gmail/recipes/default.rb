@@ -87,7 +87,7 @@ daemontools_service "browserid-bridge-gmail" do
   log true
 end
 
-file "/etc/logrotate.d/bridge-gmail" do
+cookbook_file "/etc/logrotate.d/bridge-gmail" do
   source "etc/logrotate.d/bridge-gmail"
   owner "root"
   group "root"

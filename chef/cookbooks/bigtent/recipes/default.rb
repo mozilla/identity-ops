@@ -92,7 +92,7 @@ daemontools_service "browserid-certifier" do
   log true
 end
 
-file "/etc/logrotate.d/bridge-yahoo" do
+cookbook_file "/etc/logrotate.d/bridge-yahoo" do
   source "etc/logrotate.d/bridge-yahoo"
   owner "root"
   group "root"

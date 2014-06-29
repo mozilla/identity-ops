@@ -58,7 +58,7 @@ daemontools_service "browserid-dbwrite" do
   log true
 end
 
-file "/etc/logrotate.d/persona" do
+cookbook_file "/etc/logrotate.d/persona" do
   source "etc/logrotate.d/persona"
   owner "root"
   group "root"
