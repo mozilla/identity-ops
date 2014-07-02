@@ -1,4 +1,4 @@
-default["persona"]["webhead"]["rpms"]["browserid-server"] = "browserid-server-0.2014.06.13-1.el6_129046.x86_64.rpm"
+default["persona"]["webhead"]["rpms"]["browserid-server"] = "browserid-server-0.2014.06.13-2.el6_129046.x86_64.rpm"
 default["persona"]["loadtest"] = false
 
 default["persona"]["webhead"]["kpi_backend_sample_rate"] = 0.2
