@@ -71,23 +71,20 @@ def create_stack(region,
     stack = {}
 
     alt_cfn_regions = ['us-west-2', 'us-east-1']
-    alt_cfn_regions.remove(region)
-    try:
-        cfn_region = region
-        print('Trying to find IAM cfn stack in region: %s' % cfn_region)
+    iam_role_stack_name = 'identity-iam-roles'
+    iam_roles_stack_resources = None
+    for cfn_region in alt_cfn_regions:
         conn_cfn = boto.cloudformation.connect_to_region(cfn_region)
-        iam_roles_stack_resources = conn_cfn.list_stack_resources('identity-iam-roles')
-    except:
-        print('Could not find IAM cfn stack in region: %s' % region)
-
-    try:
-        cfn_region = alt_cfn_regions.pop()
-        print('Trying to find IAM cfn stack in region: %s' % cfn_region)
-        conn_cfn = boto.cloudformation.connect_to_region(cfn_region)
-        iam_roles_stack_resources = conn_cfn.list_stack_resources('identity-iam-roles')
-    except:
-        print('Could not find IAM cfn stack, aborting.')
-        exit(1)
+        if len([x.stack_name 
+                for x 
+                in conn_cfn.list_stacks(['CREATE_COMPLETE', 'UPDATE_COMPLETE'])
+                if x.stack_name == iam_role_stack_name]) == 1:
+            iam_roles_stack_resources = conn_cfn.list_stack_resources(iam_role_stack_name)
+            break
+    if not iam_roles_stack_resources:
+        logging.error('Could not find CloudFormation stack %s in regions %s. Aborting' % 
+                      (iam_role_stack_name, alt_cfn_regions))
+        sys.exit(1)
 
     # Apply recommendation from https://wiki.mozilla.org/Security/Server_Side_TLS
     policy_attributes = {"ADH-AES128-GCM-SHA256": False,

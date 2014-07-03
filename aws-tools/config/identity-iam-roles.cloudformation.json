@@ -238,6 +238,7 @@
                               "ec2:DescribeSubnets",
                               "iam:ListServerCertificates",
                               "cloudformation:ListStackResources",
+                              "cloudformation:ListStacks",
                               "autoscaling:DescribeAutoScalingGroups",
                               "autoscaling:DescribeLaunchConfigurations"
                            ],
@@ -357,6 +358,7 @@
                               "ec2:DescribeSubnets",
                               "iam:ListServerCertificates",
                               "cloudformation:ListStackResources",
+                              "cloudformation:ListStacks",
                               "autoscaling:DescribeAutoScalingGroups",
                               "autoscaling:DescribeLaunchConfigurations"
                            ],
