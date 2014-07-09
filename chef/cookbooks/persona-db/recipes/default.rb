@@ -150,5 +150,3 @@ if node[:persona][:db][:mysql][:replication_type] == "backup" then
     action :nothing
   end
 end
-
-include_recipe "persona-common::monitor"
