@@ -157,6 +157,26 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 
    a) make sure you have one key for each tier deployed by ``stack_control``
 
+8. This only applies to mysql slaves: initiate mysql replication
+
+   a) get a backup of the master
+
+   .. code-block:: bash
+
+      # from the mysql master as root
+      mysqldump --master-data browserid | gzip -c > dump.sql.gz
+
+   b) copy the backup to the slave
+   c) load the backup on the slave and start replication
+
+   .. code-block:: bash
+
+      # from the new slave as root
+      echo 'create database browserid;' | mysql
+      echo 'STOP SLAVE' | mysql
+      gunzip < dump.sql.gz | mysql browserid
+      echo 'START SLAVE' | mysql
+
 Updating DNS
 ============
 
