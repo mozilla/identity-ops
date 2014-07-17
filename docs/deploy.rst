@@ -180,7 +180,7 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 Updating DNS
 ============
 
-DNS is hosted with AWS Route53. Records can be updated through the web UI or the API. @relud is planning to add a feature to ``stack_control.py`` that will automatically update DNS for stage and prod deploys.
+DNS is hosted with AWS Route53. Records can be updated through the web UI or the API. `relud`_ is planning to add a feature to ``stack_control.py`` that will automatically update DNS for stage and prod deploys.
 
 Since both prod and stage are deployed in single AWS regions (``us-east-1`` and ``us-west-2`` respectively), DNS records are just CNAMEs pointing to ELBs.
 
@@ -214,6 +214,8 @@ Typically, each loosely coupled identity service (persona, bridge-gmail, bridge-
    Change any https listeners from port ``443`` to ``10443``. Change any http listeners from port ``80`` to ``10080``.
 
    This will force any clients still communicating with the old stack to be forced to query DNS and connect to the new stack.
+
+.. _relud: https://github.com/relud
 
 .. _AWS Console: https://signin.aws.amazon.com/console
 
