@@ -17,7 +17,7 @@ A stack exists in a single AWS region. Stacks with the same name may be present 
 
 Stacks are ephemeral and live only as long as a given application version or provision code version needs to exist. When deploying new application code or provisioning code, a new stack is created with the new code. It exists in addition to the current live stack. Traffic is then moved from the live stack running the old code to the new stack running the new code. Finally, the old stack is destroyed.
 
-A stack is identified by a four or less character name. By convention we use the month and day that the stack was built as it's unique name, for example ``0630``. 
+A stack is identified by a four or less character name. By convention we use the month and day that the stack was built as it's unique name, for example ``0630``.
 
 The ``univ`` stack in each region is special. This "universal" stack is not ephemeral, it is long lived. It contains services which
 
@@ -40,10 +40,10 @@ Here's an example of the process to update to a new version of Persona. Let's sa
    a) The ``webhead``, ``keysign``, and ``dbwrite`` tiers all install the same RPM. This stems from the fact that in dev these are all hosted on the same system. This means that a change to any one tier results in a need to update all three tiers.
    b) The location of the default attributes file in each cookbook is at ``attributes/default.rb``
 
-      i. `identity-ops/chef/cookbooks/persona-dbwrite/attributes/default.rb`_ 
+      i. `identity-ops/chef/cookbooks/persona-dbwrite/attributes/default.rb`_
       ii. `identity-ops/chef/cookbooks/persona-keysign/attributes/default.rb`_
-      iii. `identity-ops/chef/cookbooks/persona-webhead/attributes/default.rb`_ 
-      
+      iii. `identity-ops/chef/cookbooks/persona-webhead/attributes/default.rb`_
+
       .. _identity-ops/chef/cookbooks/persona-dbwrite/attributes/default.rb: https://github.com/mozilla/identity-ops/blob/master/chef/cookbooks/persona-dbwrite/attributes/default.rb
       .. _identity-ops/chef/cookbooks/persona-keysign/attributes/default.rb: https://github.com/mozilla/identity-ops/blob/master/chef/cookbooks/persona-keysign/attributes/default.rb
       .. _identity-ops/chef/cookbooks/persona-webhead/attributes/default.rb: https://github.com/mozilla/identity-ops/blob/master/chef/cookbooks/persona-webhead/attributes/default.rb
@@ -180,11 +180,11 @@ Some tiers are not autoscaled and consequently are manually deployed. This proce
 Updating DNS
 ============
 
-DNS is hosted with `Dynect`_. Records can be updated through the web UI or their API. Unsurfaced code exists in ``stack_control.py`` in the ``point_dns_to_stack`` method which uses the Dynect API to update the DNS for a staging deploy. The code to do the same for production doesn't yet exist. That code would require interacting with the "Traffic Management" portion of the Dynect API.
+DNS is hosted with AWS Route53. Records can be updated through the web UI or the API. @relud is planning to add a feature to ``stack_control.py`` that will automatically update DNS for stage and prod deploys.
 
-Since we have a single staging environment (in ``us-west-2``), staging DNS records are simple CNAMEs. Production is hosted in two regions (``us-west-2`` and ``us-east-1``) and is DNS load balanced using Dynect's "Traffic Management" service. This results in two AWS ELB load balancers being associated with each Dynect DNS name, one for each region.
+Since both prod and stage are deployed in single AWS regions (``us-east-1`` and ``us-west-2`` respectively), DNS records are just CNAMEs pointing to ELBs.
 
-Our Dynect DNS records have 30 second TTLs. Browsers do not typically re-resolve DNS names at the rate the TTL requires therefore additional steps need to be taken to force users to follow the updated DNS. We remove the listeners from our old ELB load balancers to force browsers to fail to connect to the old stack and do a DNS lookup to get the new IPs. We remove listeners (as opposed to destroying the ELBs) in order to retain control of the IP addresses of the old stack's ELBs. This is to prevent the IPs being re-used by a different AWS customer resulting in clients going to other customer sites and getting certificate errors when they're served some other company's SSL cert.
+Our Route53 DNS records have 30 second TTLs. Browsers do not typically re-resolve DNS names at the rate the TTL requires therefore additional steps need to be taken to force users to follow the updated DNS. We remove the listeners from our old ELB load balancers to force browsers to fail to connect to the old stack and do a DNS lookup to get the new IPs. We remove listeners (as opposed to destroying the ELBs) in order to retain control of the IP addresses of the old stack's ELBs. This is to prevent the IPs being re-used by a different AWS customer resulting in clients going to other customer sites and getting certificate errors when they're served some other company's SSL cert.
 
 Typically, each loosely coupled identity service (persona, bridge-gmail, bridge-yahoo) is switched from an old stack to a new stack serially to reduce user impact. This is done in contrast to switching all services simultaneously. This is the process that we execute for each service, serially.
 
@@ -193,30 +193,29 @@ Typically, each loosely coupled identity service (persona, bridge-gmail, bridge-
    This is most easily done with the ``get_hosts`` script available on all bastion hosts. For example to determine the load balancers of the new production stack ``1120`` in ``us-east-1`` you could either, from the production bastion host in ``us-east-1``, run
 
    .. code-block:: bash
-   
+
        get_hosts --elb 1120
 
    or from any bastion host
 
    .. code-block:: bash
-   
+
        get_hosts --elb --region us-east-1 --env prod 1120
 
-2. Log into `Dynect`_ with your user account.
-3. Navigate to the zone containing either the DNS records (stage) or the "Traffic Management" groups (production).
-4. Update the record or records to CNAMEs pointing to the new load balancers and publish the change. 
+2. Log into the `AWS Console`_ with your user account.
+3. Navigate to the Route53 service, and double-click either ``persona.org.`` (prod) or ``anosrep.org`` (stage)
+4. Update the record to the CNAME pointing to the new load balancers and publish the change.
+5. Navigate to the EC2 service, load balancer section, and locate the ELBs for the old stack
 
-   .. note:: This could be improved by making these changes using the Dynect API. See the ``point_dns_to_stack`` method in ``stack_control.py`` to see how to do it in staging.
-5. Browse to the AWS web UI and locate the ELBs for the old stack
-   You can determine the existing ELBs by running the same command as above and point to the old stack name
+   You can determine the ELBs entering the old stack name in the search box
+
 6. Once 30 seconds has elapsed since you updated the DNS (30 seconds is the DNS TTL) modify the listener for the tier that you've just changed DNS for.
-   
+
    Change any https listeners from port ``443`` to ``10443``. Change any http listeners from port ``80`` to ``10080``.
+
    This will force any clients still communicating with the old stack to be forced to query DNS and connect to the new stack.
 
-   .. note:: This process could be improved by handling these listener changes with AWS API calls.
-
-.. _Dynect: http://manage.dynect.net/
+.. _AWS Console: https://signin.aws.amazon.com/console
 
 .. _monitoring documentation: monitor.rst
 
