@@ -82,14 +82,7 @@ for svc in ["webhead", "verifier", "router", "static" ] do
   end
 end
 
-cookbook_file "/etc/logrotate.d/persona" do
-  source "etc/logrotate.d/persona"
-  owner "root"
-  group "root"
-  mode 0644
-end
-
-include_recipe "persona-webhead::metrics"
+include_recipe "persona-webhead::logrotate"
 
 include_recipe "persona-common::nginx"
 
