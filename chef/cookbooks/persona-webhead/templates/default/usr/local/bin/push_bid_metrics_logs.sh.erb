@@ -1,6 +1,0 @@
-#!/bin/bash
-
-if scp -o StrictHostKeyChecking=no /opt/bid_metrics/queue/* <%= @server %>:/opt/bid_metrics/incoming/; then
-  # scp push was successful
-  rm -v -f /opt/bid_metrics/queue/*
-fi
