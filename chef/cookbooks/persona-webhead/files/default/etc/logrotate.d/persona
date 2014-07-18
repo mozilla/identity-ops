@@ -1,4 +1,4 @@
-/var/browserid/log/*.log /var/browserid/log/*.json {
+/var/browserid/log/* {
     daily
       # default : weekly
     rotate 2
