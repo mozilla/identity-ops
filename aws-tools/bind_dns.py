@@ -148,7 +148,11 @@ if args.region not in all_regions:
                  % (args.region, ', '.join(all_regions)))
 
 conn_cfn = boto.cloudformation.connect_to_region(args.region)
-all_stacks = conn_cfn.describe_stacks()
+
+all_stacks = stacks = conn_cfn.describe_stacks()
+while stacks.next_token:
+    stacks = conn_cfn.describe_stacks(next_token=stacks.next_token)
+    all_stacks.extend(stacks)
 
 # If no stackname argument is given and there's an alias
 # Look through all stack outputs to see if any contain the alias
@@ -172,7 +176,7 @@ stacks = [x for x in all_stacks
 if len(stacks) == 0:
     parser.error("argument STACKNAME: invalid choice: %s (choose from %s)" 
         % (args.stackname, 
-           ', '.join([x.stack_name for x in conn_cfn.describe_stacks()])))
+           ', '.join([x.stack_name for x in all_stacks])))
 
 # This assumes we don't get multiple stack results from our search
 # Validate that the resource exists

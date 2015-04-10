@@ -64,7 +64,11 @@ else:
     logging.basicConfig(level=logging.INFO)
 
 conn_cfn = boto.cloudformation.connect_to_region(args.region)
-all_stacks = conn_cfn.describe_stacks()
+
+all_stacks = stacks = conn_cfn.describe_stacks()
+while stacks.next_token:
+    stacks = conn_cfn.describe_stacks(next_token=stacks.next_token)
+    all_stacks.extend(stacks)
 
 if not args.stackname:
     if args.output == "list" or args.output == "table":
